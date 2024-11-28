@@ -10,6 +10,7 @@
       </p>
       <router-link to="/sign-up">Sign Up</router-link>
       <router-link to="/sign-in">Sign In</router-link>
+      <router-link to="/quiz">Take Quiz</router-link>
       <router-view />
     </div>
   </template>
