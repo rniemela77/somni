@@ -31,7 +31,7 @@ export default {
                 const { sessionId } = await response.json();
 
                 // Redirect to Stripe Checkout
-                const stripe = await loadStripe("pk_test_51QQFgPFqyPsEGf4nQ1oezEOKY6EIKNtvUHpxN9POIrmnQbs6iyyKcu8mkZXjLfC8cVGEQgKFDW4OB82hjx3bwrei00P7p3VJEr");
+                const stripe = await loadStripe(process.env.VUE_APP_STRIPE_PUBLIC_KEY);
                 await stripe.redirectToCheckout({ sessionId });
             } catch (error) {
                 console.error("Error creating checkout session:", error);
