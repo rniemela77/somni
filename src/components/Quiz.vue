@@ -35,7 +35,7 @@ export default {
     async mounted() {
         try {
             // Fetch quiz data from Firestore
-            const quizRef = doc(db, "quizzes", "K1TQryizWyxIrKaeKgaE"); // Replace with your actual document ID
+            const quizRef = doc(db, "quizzes", "quiz1"); // Replace with your actual document ID
             const quizSnap = await getDoc(quizRef);
 
             if (quizSnap.exists()) {
