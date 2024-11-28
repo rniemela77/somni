@@ -1,19 +1,20 @@
 <template>
     <div>
-      <h1>Welcome to the Self-Development Platform</h1>
+        <h1>Welcome</h1>
+        <p v-if="userState.user">Logged in as: {{ userState.user.email }}</p>
+        <p v-else>Not logged in</p>
+        <router-link to="/sign-up">Sign Up</router-link>
+        <router-link to="/sign-in">Sign In</router-link>
+        <router-view />
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "App",
-  };
-  </script>
-  
-  <style>
-  h1 {
-    text-align: center;
-    font-family: Arial, sans-serif;
-  }
-  </style>
-  
+</template>
+
+<script>
+import { inject } from "vue";
+export default {
+    setup() {
+        const userState = inject("userState");
+        return { userState };
+    },
+};
+</script>
