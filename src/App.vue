@@ -12,6 +12,7 @@
         <router-link to="/sign-in">Sign In</router-link>
         <router-link to="/quiz">Take Quiz</router-link>
         <router-link to="/results">View Results</router-link>
+        <router-link to="/payment">Make Payment</router-link>
         <router-view />
     </div>
 </template>
