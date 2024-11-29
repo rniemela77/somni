@@ -2,5 +2,5 @@
 ## App local development
 `npm run dev`
 
-## Backend local development (stripe)
+## Backend local development (for testing stripe)
 `npm run server`

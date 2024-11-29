@@ -1,28 +1,30 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore, setDoc, doc } from "firebase/firestore";
-import { quizData } from "./quizData.js";
-import { firebaseConfig } from "./firebase.js";
+import { initializeApp, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const serviceAccount = require("./firebase-service-account.json");
+import quizzes from "./quizData.js";
 
-// Seed Firestore with quiz data
+// Initialize Firebase Admin with the service account
+const app = initializeApp({
+  credential: cert(serviceAccount),
+});
+
+const db = getFirestore();
+
 const seedFirestore = async () => {
   try {
-    for (const quiz of quizData.quizzes) {
-      const quizRef = doc(db, "quizzes", quiz.id); // Document ID matches quiz.id
-      await setDoc(quizRef, {
+    for (const quiz of quizzes) {
+      await db.collection("quizzes").doc(quiz.id).set({
         title: quiz.title,
         questions: quiz.questions,
       });
       console.log(`Quiz ${quiz.id} added successfully!`);
     }
     console.log("Firestore seeding complete!");
-    process.exit(0); // Exit the process successfully
   } catch (error) {
     console.error("Error seeding Firestore:", error);
-    process.exit(1); // Exit the process with an error code
   }
 };
 
