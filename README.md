@@ -1,4 +1,7 @@
 # somni
+## Frontend/App URL
+[somni-2b37f.web.app](https://somni-2b37f.web.app/)
+
 ## App local development
 `npm run dev`
 
@@ -17,3 +20,6 @@ Render.com
 
 ## Database
 Firebase.google.com
+
+## Payment
+Stripe
