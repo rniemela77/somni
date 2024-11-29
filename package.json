@@ -1,28 +1,20 @@
 {
-  "dependencies": {
-    "@stripe/stripe-js": "^5.2.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
-    "firebase": "^11.0.2",
-    "firebase-admin": "^13.0.1",
-    "stripe": "^17.4.0",
-    "vue": "^3.5.13",
-    "vue-router": "^4.0.13"
-  },
-  "name": "somni",
+  "name": "frontend",
   "version": "1.0.0",
-  "description": "",
+  "private": true,
+  "description": "Vue frontend for Somni",
   "main": "src/main.js",
   "scripts": {
     "dev": "vite",
-    "server": "node server.js",
     "build": "vite build",
-    "seed": "node seedFirestore.js"
+    "preview": "vite preview"
   },
-  "type": "module",
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vue-router": "^4.0.13",
+    "firebase": "^11.0.2",
+    "@stripe/stripe-js": "^5.2.0"
+  },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "vite": "^6.0.1"

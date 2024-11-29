@@ -3,8 +3,8 @@ import { getFirestore } from "firebase-admin/firestore";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-const serviceAccount = require("./firebase-service-account.json");
-import quizzes from "./quizData.js";
+const serviceAccount = require("../firebase-service-account.json");
+import quizzes from "../quizData.js";
 
 // Initialize Firebase Admin with the service account
 const app = initializeApp({

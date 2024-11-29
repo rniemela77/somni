@@ -1,13 +1,19 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import Stripe from "stripe";
 import cors from "cors";
 
+// Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Route to create a Stripe checkout session
 app.post("/create-checkout-session", async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
@@ -26,8 +32,8 @@ app.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: "http://localhost:5173/success",
-      cancel_url: "http://localhost:5173/cancel",
+      success_url: `${process.env.CLIENT_URL}/success`, // Dynamic success URL
+      cancel_url: `${process.env.CLIENT_URL}/cancel`,  // Dynamic cancel URL
     });
 
     res.json({ sessionId: session.id });
@@ -37,5 +43,6 @@ app.post("/create-checkout-session", async (req, res) => {
   }
 });
 
-const PORT = 4242;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// Start the server
+const PORT = process.env.PORT || 4242;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
