@@ -1,41 +1,60 @@
 <template>
-    <div>
+    <div class="quiz-container">
         <!-- Quiz Selection Section -->
         <div v-if="!selectedQuiz">
             <h2>Select a Quiz</h2>
-            <div v-if="availableQuizzes.length === 0">
+            <div v-if="availableQuizzes.length === 0" class="message">
                 <p>Loading quizzes...</p>
             </div>
-            <div v-else class="quiz-list">
+            <div v-else class="quiz-grid">
                 <div v-for="quiz in availableQuizzes" 
                      :key="quiz.id" 
-                     class="quiz-item"
-                     @click="selectQuiz(quiz.id)">
+                     class="quiz-card">
                     <h3>{{ quiz.title }}</h3>
+                    <div class="quiz-card-footer">
+                        <button class="start-button" @click="selectQuiz(quiz.id)">Start Quiz</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Quiz Questions Section -->
-        <div v-else>
-            <h2>{{ quizTitle }}</h2>
-            <form @submit.prevent="submitQuiz">
-                <div v-for="(question, index) in questions" :key="question.id">
-                    <p>{{ question.text }}</p>
-                    <div>
-                        <label v-for="(option, i) in question.options" :key="i">
-                            <input type="radio" :name="'question-' + index" :value="option" v-model="answers[question.id]"
-                                required />
-                            {{ option }}
+        <div v-else class="active-quiz">
+            <div class="quiz-header">
+                <h2>{{ quizTitle }}</h2>
+                <button class="back-button" @click="backToSelection">
+                    ← Back to Quiz Selection
+                </button>
+            </div>
+
+            <form @submit.prevent="submitQuiz" class="quiz-form">
+                <div v-for="(question, index) in questions" 
+                     :key="question.id"
+                     class="question-card">
+                    <p class="question-number">Question {{ index + 1 }}</p>
+                    <p class="question-text">{{ question.text }}</p>
+                    <div class="options-grid">
+                        <label v-for="(option, i) in question.options" 
+                               :key="i"
+                               class="option-label">
+                            <input type="radio" 
+                                   :name="'question-' + index" 
+                                   :value="option" 
+                                   v-model="answers[question.id]"
+                                   required />
+                            <span class="option-text">{{ option }}</span>
                         </label>
                     </div>
                 </div>
-                <div class="button-group">
-                    <button type="button" @click="backToSelection">Back to Quiz Selection</button>
-                    <button type="submit">Submit</button>
+
+                <div class="submit-section">
+                    <button type="submit" class="submit-button">Submit Quiz</button>
                 </div>
             </form>
-            <p v-if="message">{{ message }}</p>
+
+            <p v-if="message" class="message" :class="{ 'error': message.includes('Error') }">
+                {{ message }}
+            </p>
         </div>
     </div>
 </template>
@@ -127,47 +146,183 @@ export default {
 </script>
 
 <style scoped>
-form {
-    margin-top: 20px;
+.quiz-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.quiz-list {
+.quiz-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     margin-top: 20px;
 }
 
-.quiz-item {
-    padding: 20px;
+.quiz-card {
+    background: white;
     border: 1px solid #ddd;
     border-radius: 8px;
-    cursor: pointer;
+    padding: 20px;
     transition: all 0.2s ease;
-}
-
-.quiz-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-color: #007bff;
-}
-
-.button-group {
-    margin-top: 20px;
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-button {
-    padding: 10px 20px;
+.quiz-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.quiz-card-footer {
+    margin-top: 15px;
+}
+
+.start-button {
+    width: 100%;
     background-color: #007bff;
     color: white;
     border: none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-button:hover {
+.start-button:hover {
     background-color: #0056b3;
+}
+
+.active-quiz {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 1em;
+    padding: 5px 10px;
+    transition: color 0.2s;
+}
+
+.back-button:hover {
+    color: #0056b3;
+}
+
+.quiz-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.question-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.question-number {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 8px;
+}
+
+.question-text {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.options-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.option-label {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option-label:hover {
+    border-color: #007bff;
+    background: #f0f7ff;
+}
+
+.option-label input[type="radio"] {
+    margin-right: 12px;
+}
+
+.option-text {
+    font-size: 1em;
+    color: #444;
+}
+
+.submit-section {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.message {
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+@media (max-width: 768px) {
+    .quiz-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
