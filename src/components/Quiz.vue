@@ -41,6 +41,7 @@
                                    :name="'question-' + index" 
                                    :value="option" 
                                    v-model="answers[question.id]"
+                                   :disabled="isSubmitting || submissionSuccess"
                                    required />
                             <span class="option-text">{{ option }}</span>
                         </label>
@@ -48,13 +49,23 @@
                 </div>
 
                 <div class="submit-section">
-                    <button type="submit" class="submit-button">Submit Quiz</button>
+                    <button type="submit" 
+                            class="submit-button"
+                            :disabled="isSubmitting || submissionSuccess">
+                        {{ isSubmitting ? 'Submitting...' : 'Submit Quiz' }}
+                    </button>
                 </div>
             </form>
 
             <p v-if="message" class="message" :class="{ 'error': message.includes('Error') }">
                 {{ message }}
             </p>
+
+            <div v-if="submissionSuccess" class="take-another-section">
+                <button @click="backToSelection" class="take-another-button">
+                    Take another Quiz
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -73,6 +84,8 @@ export default {
             questions: [],
             answers: {},
             message: "",
+            isSubmitting: false,
+            submissionSuccess: false,
         };
     },
     async mounted() {
@@ -118,12 +131,17 @@ export default {
             this.questions = [];
             this.answers = {};
             this.message = "";
+            this.submissionSuccess = false;
         },
         async submitQuiz() {
+            this.isSubmitting = true;
+            this.message = "";
+            
             try {
                 const user = auth.currentUser;
                 if (!user) {
                     this.message = "You must be logged in to submit the quiz.";
+                    this.isSubmitting = false;
                     return;
                 }
                 const userId = user.uid;
@@ -135,10 +153,13 @@ export default {
                     timestamp: new Date(),
                 });
                 this.message = "Quiz submitted successfully!";
-                this.answers = {};
+                this.submissionSuccess = true;
             } catch (error) {
                 console.error("Error submitting quiz:", error);
                 this.message = "Error submitting quiz. Please try again.";
+                this.submissionSuccess = false;
+            } finally {
+                this.isSubmitting = false;
             }
         },
     },
@@ -312,6 +333,35 @@ export default {
 .message.error {
     background-color: #f8d7da;
     color: #721c24;
+}
+
+.take-another-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.take-another-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.take-another-button:hover {
+    background-color: #218838;
+}
+
+.submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.option-label input:disabled + .option-text {
+    color: #666;
+    cursor: not-allowed;
 }
 
 @media (max-width: 768px) {
