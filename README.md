@@ -12,7 +12,7 @@ Subconscious Impressions
 
 ## Quiz questions
 - Questions are located in /quizData.js
-- Seed the database with questions with `cd backend && npm run seed`
+- Seed the database with questions with `npm run seed`
 
 ## Secrets/Keys
 - Frontend has .env.development and .env.production
