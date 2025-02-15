@@ -38,18 +38,7 @@
 </template>
 
 <script>
-import { db } from "../../firebase";
-import {
-    doc,
-    getDoc,
-    query,
-    collection,
-    where,
-    getDocs,
-    orderBy,
-} from "firebase/firestore";
-import { auth } from "../../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { quizService, resultsService, authService } from '../services/firebase';
 
 export default {
     data() {
@@ -81,82 +70,34 @@ export default {
             }).format(date);
         },
         async loadQuizzes() {
-            try {
-                const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
-                this.availableQuizzes = quizzesSnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    title: doc.data().title
-                }));
-            } catch (error) {
+            const { quizzes, error } = await quizService.getAllQuizzes();
+            if (error) {
                 console.error("Error loading quizzes:", error);
+                return;
             }
+            this.availableQuizzes = quizzes;
         },
-        async loadResults(userId) {
-            try {
-                // Fetch all user's quiz results
-                const resultsQuery = query(
-                    collection(db, "results"),
-                    where("userId", "==", userId),
-                    orderBy("timestamp", "desc")
-                );
-                const resultsSnapshot = await getDocs(resultsQuery);
-
-                if (resultsSnapshot.empty) {
-                    this.results = [];
-                    return;
-                }
-
-                // Process each result
-                const processedResults = await Promise.all(
-                    resultsSnapshot.docs.map(async (resultDoc) => {
-                        const resultData = resultDoc.data();
-                        
-                        // Fetch the corresponding quiz
-                        const quizRef = doc(db, "quizzes", resultData.quizId);
-                        const quizSnap = await getDoc(quizRef);
-                        
-                        if (!quizSnap.exists()) {
-                            console.error(`Quiz ${resultData.quizId} not found`);
-                            return null;
-                        }
-
-                        const quizData = quizSnap.data();
-                        
-                        // Combine questions with answers
-                        const answers = quizData.questions.map((question) => ({
-                            questionText: question.text,
-                            userAnswer: resultData.answers[question.id],
-                        }));
-
-                        return {
-                            quizId: resultData.quizId,
-                            quizTitle: quizData.title,
-                            timestamp: resultData.timestamp,
-                            answers
-                        };
-                    })
-                );
-
-                // Filter out any null results (from quizzes that weren't found)
-                this.results = processedResults.filter(result => result !== null);
-            } catch (error) {
-                console.error("Error fetching results:", error);
-            }
-        }
-    },
-    async mounted() {
-        await this.loadQuizzes();
-        
-        onAuthStateChanged(auth, async (user) => {
+        async loadResults() {
+            const user = authService.getCurrentUser();
             if (!user) {
                 console.error("User not logged in");
                 this.loading = false;
                 return;
             }
-            
-            await this.loadResults(user.uid);
+
+            const { results, error } = await resultsService.getUserResults(user.uid);
+            if (error) {
+                console.error("Error fetching results:", error);
+                return;
+            }
+
+            this.results = results;
             this.loading = false;
-        });
+        }
+    },
+    async mounted() {
+        await this.loadQuizzes();
+        await this.loadResults();
     }
 };
 </script>

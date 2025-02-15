@@ -7,7 +7,6 @@ export const userState = reactive({
 });
 
 auth.onAuthStateChanged((user) => {
-  console.log("Auth state changed:", user);
   userState.user = user;
 });
 

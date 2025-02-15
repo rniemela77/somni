@@ -72,9 +72,7 @@
 </template>
 
 <script>
-import { db } from "../../firebase";
-import { collection, addDoc, doc, getDoc, getDocs } from "firebase/firestore";
-import { auth } from "../../firebase";
+import { quizService, resultsService, authService } from '../services/firebase';
 
 export default {
     data() {
@@ -94,37 +92,25 @@ export default {
     },
     methods: {
         async loadQuizzes() {
-            try {
-                const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
-                this.availableQuizzes = quizzesSnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    title: doc.data().title
-                }));
-            } catch (error) {
-                console.error("Error loading quizzes:", error);
+            const { quizzes, error } = await quizService.getAllQuizzes();
+            if (error) {
                 this.message = "Error loading quizzes.";
+                return;
             }
+            this.availableQuizzes = quizzes;
         },
         async selectQuiz(quizId) {
-            try {
-                const quizRef = doc(db, "quizzes", quizId);
-                const quizSnap = await getDoc(quizRef);
-
-                if (quizSnap.exists()) {
-                    const quizData = quizSnap.data();
-                    this.quizTitle = quizData.title;
-                    this.questions = quizData.questions;
-                    this.selectedQuiz = quizId;
-                    this.answers = {};
-                    this.message = "";
-                } else {
-                    console.error("Quiz document does not exist!");
-                    this.message = "Error: Quiz not found.";
-                }
-            } catch (error) {
-                console.error("Error fetching quiz data:", error);
+            const { quiz, error } = await quizService.getQuizById(quizId);
+            if (error) {
                 this.message = "Error loading quiz.";
+                return;
             }
+            
+            this.quizTitle = quiz.title;
+            this.questions = quiz.questions;
+            this.selectedQuiz = quizId;
+            this.answers = {};
+            this.message = "";
         },
         backToSelection() {
             this.selectedQuiz = null;
@@ -138,30 +124,28 @@ export default {
             this.isSubmitting = true;
             this.message = "";
             
-            try {
-                const user = auth.currentUser;
-                if (!user) {
-                    this.message = "You must be logged in to submit the quiz.";
-                    this.isSubmitting = false;
-                    return;
-                }
-                const userId = user.uid;
+            const user = authService.getCurrentUser();
+            if (!user) {
+                this.message = "You must be logged in to submit the quiz.";
+                this.isSubmitting = false;
+                return;
+            }
 
-                await addDoc(collection(db, "results"), {
-                    userId: userId,
-                    quizId: this.selectedQuiz,
-                    answers: this.answers,
-                    timestamp: new Date(),
-                });
-                this.message = "Quiz submitted successfully!";
-                this.submissionSuccess = true;
-            } catch (error) {
-                console.error("Error submitting quiz:", error);
+            const { resultId, error } = await resultsService.submitQuizResult(
+                user.uid,
+                this.selectedQuiz,
+                this.answers
+            );
+
+            if (error) {
                 this.message = "Error submitting quiz. Please try again.";
                 this.submissionSuccess = false;
-            } finally {
-                this.isSubmitting = false;
+            } else {
+                this.message = "Quiz submitted successfully!";
+                this.submissionSuccess = true;
             }
+            
+            this.isSubmitting = false;
         },
     },
 };
