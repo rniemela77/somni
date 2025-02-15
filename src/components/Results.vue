@@ -2,6 +2,9 @@
     <div>
         <h2>Your Quiz Results</h2>
         
+        <!-- User Tags Section -->
+        <UserTags class="tags-section" />
+        
         <!-- Quiz Filter -->
         <div class="filter-section">
             <label for="quizFilter">Filter by Quiz: </label>
@@ -39,8 +42,12 @@
 
 <script>
 import { quizService, resultsService, authService } from '../services/firebase';
+import UserTags from './UserTags.vue';
 
 export default {
+    components: {
+        UserTags
+    },
     data() {
         return {
             results: [],
@@ -103,6 +110,10 @@ export default {
 </script>
 
 <style scoped>
+.tags-section {
+    margin-bottom: var(--spacing-xl);
+}
+
 .filter-section {
     margin: 20px 0;
 }
