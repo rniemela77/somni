@@ -5,7 +5,7 @@
       <p class="hero-text">Test your knowledge with our interactive quizzes</p>
       
       <div class="cta-buttons">
-        <template v-if="!userState.user">
+        <template v-if="!authStore.isAuthenticated">
           <router-link to="/signin" class="btn btn-primary">Get Started</router-link>
           <router-link to="/signup" class="btn btn-outline">Create Account</router-link>
         </template>
@@ -19,13 +19,13 @@
 </template>
 
 <script>
-import { inject } from 'vue';
+import { useAuthStore } from '../stores/auth';
 
 export default {
   name: 'Home',
   setup() {
-    const userState = inject('userState');
-    return { userState };
+    const authStore = useAuthStore();
+    return { authStore };
   }
 };
 </script>

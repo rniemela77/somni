@@ -13,11 +13,11 @@
           <router-link to="/quiz" class="nav-link" active-class="active">Quizzes</router-link>
           <router-link to="/results" class="nav-link" active-class="active">Results</router-link>
           <div class="nav-divider"></div>
-          <template v-if="!userState.user">
+          <template v-if="!authStore.isAuthenticated">
             <router-link to="/signin" class="nav-link btn btn-primary">Sign In</router-link>
           </template>
           <template v-else>
-            <span class="user-info">{{ userState.user.email }}</span>
+            <span class="user-info">{{ authStore.user.email }}</span>
             <button @click="handleSignOut" class="nav-link btn btn-outline">Sign Out</button>
           </template>
         </div>
@@ -50,28 +50,24 @@
 </template>
 
 <script>
-import { inject } from 'vue';
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase';
+import { useAuthStore } from './stores/auth';
 import { useRouter } from 'vue-router';
 
 export default {
   name: 'App',
   setup() {
-    const userState = inject('userState');
+    const authStore = useAuthStore();
     const router = useRouter();
 
     const handleSignOut = async () => {
-      try {
-        await signOut(auth);
+      const { error } = await authStore.logout();
+      if (!error) {
         router.push('/signin');
-      } catch (error) {
-        console.error('Error signing out:', error);
       }
     };
 
     return {
-      userState,
+      authStore,
       handleSignOut
     };
   }
