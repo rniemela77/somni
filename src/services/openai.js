@@ -10,10 +10,23 @@ const defaultOptions = {
   stream: false
 };
 
+// Default prompt templates
+const defaultPrompts = {
+  // Personality description from all quiz answers
+  personalityDescription: {
+    prompt1: 'Here are quiz results for someone taking a personality test. Please analyze the personality based on these responses:\n\n',
+    prompt2: '{{formattedResults}}',
+    prompt3: '\n\nWrite exactly 3 sentences that describe the core feeling or personality of the person who answered these questions. Focus on emotional patterns, personality traits, and psychological insights that emerge from these answers.'
+  }
+};
+
 // OpenAI Service
 export const openaiService = {
   // Store current configuration
   config: { ...defaultOptions },
+  
+  // Store prompt templates
+  promptTemplates: { ...defaultPrompts },
   
   // Update configuration
   updateConfig(newConfig) {
@@ -30,6 +43,37 @@ export const openaiService = {
   // Get current configuration
   getConfig() {
     return { ...this.config };
+  },
+  
+  // Update prompt templates
+  updatePromptTemplates(category, newTemplates) {
+    if (!this.promptTemplates[category]) {
+      this.promptTemplates[category] = {};
+    }
+    
+    this.promptTemplates[category] = { 
+      ...this.promptTemplates[category], 
+      ...newTemplates 
+    };
+    
+    return this.promptTemplates[category];
+  },
+  
+  // Get prompt templates
+  getPromptTemplates(category) {
+    return category ? 
+      { ...(this.promptTemplates[category] || {}) } : 
+      { ...this.promptTemplates };
+  },
+  
+  // Reset prompt templates to defaults
+  resetPromptTemplates(category = null) {
+    if (category) {
+      this.promptTemplates[category] = { ...defaultPrompts[category] };
+    } else {
+      this.promptTemplates = { ...defaultPrompts };
+    }
+    return this.promptTemplates;
   },
   
   // Send a prompt to OpenAI and get a completion
@@ -86,28 +130,6 @@ export const openaiService = {
     }
   },
   
-  // Analyze quiz results and provide insights
-  async analyzeQuizResults(results, quizTitle, customPrompt = null) {
-    try {
-      // Format the results into a meaningful prompt
-      let formattedResults = '';
-      results.forEach((result, index) => {
-        formattedResults += `Question ${index+1}: ${result.questionText}\n`;
-        formattedResults += `Your Answer: ${result.userAnswer}\n\n`;
-      });
-      
-      // Default prompt or custom prompt
-      const promptText = customPrompt || 
-        `Here are quiz results for someone taking a personality test titled "${quizTitle}". Please analyze their personality based on these responses:\n\n${formattedResults}\n\nPlease provide a thoughtful analysis of this person's personality traits, tendencies, and psychological patterns based solely on these quiz answers.`;
-      
-      // Get completion from OpenAI
-      return this.getCompletion(promptText);
-    } catch (error) {
-      console.error('Error analyzing quiz results:', error);
-      return { completion: null, error: error.message, usage: null };
-    }
-  },
-  
   // Analyze all quiz results and generate personality description
   async analyzePersonality(quizResults, customPrompt = null) {
     try {
@@ -119,9 +141,20 @@ export const openaiService = {
         formattedResults += `Answer: ${item.answer}\n\n`;
       });
       
-      // Default prompt or custom prompt
-      const promptText = customPrompt || 
-        `Here are quiz results for someone taking a personality test. Please analyze the personality based on these responses:\n\n${formattedResults}\n\nWrite exactly 3 sentences that describe the core feeling or personality of the person who answered these questions. Focus on emotional patterns, personality traits, and psychological insights that emerge from these answers.`;
+      // Get the prompt templates
+      const templates = this.promptTemplates.personalityDescription;
+      
+      // Build the prompt using the template parts or use custom prompt
+      let promptText;
+      if (customPrompt) {
+        promptText = customPrompt;
+      } else {
+        const prompt1 = templates.prompt1;
+        const prompt2 = templates.prompt2.replace('{{formattedResults}}', formattedResults);
+        const prompt3 = templates.prompt3;
+        
+        promptText = prompt1 + prompt2 + prompt3;
+      }
       
       console.log('Analyzing personality based on', quizResults.length, 'quiz answers');
       

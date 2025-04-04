@@ -7,11 +7,13 @@
         
         <!-- Generate Description Button -->
         <div class="generate-description-section">
-            <button @click="generateDescription" 
-                    class="generate-btn"
-                    :disabled="generatingDescription">
-                {{ generatingDescription ? 'GENERATING...' : 'GENERATE DESCRIPTION' }}
-            </button>
+            <div class="description-header">
+                <button @click="generateDescription" 
+                        class="generate-btn"
+                        :disabled="generatingDescription">
+                    {{ generatingDescription ? 'GENERATING...' : 'GENERATE DESCRIPTION' }}
+                </button>
+            </div>
             
             <div v-if="coreFeeling" class="feeling-result">
                 <h3>Your Core Feeling Analysis</h3>
@@ -53,24 +55,6 @@
                         Your Answer: <span class="answer">{{ answer.userAnswer }}</span>
                     </li>
                 </ul>
-                
-                <!-- OpenAI analysis button -->
-                <div class="analysis-section">
-                    <button @click="analyzeResult(result)" 
-                            class="analyze-btn"
-                            :disabled="analyzing === result.id">
-                        {{ analyzing === result.id ? 'Analyzing...' : 'Analyze with AI' }}
-                    </button>
-                    
-                    <div v-if="result.id === currentAnalysisId && aiAnalysis" class="analysis-result">
-                        <h4>AI Analysis</h4>
-                        <div class="analysis-content">{{ aiAnalysis }}</div>
-                    </div>
-                    
-                    <div v-if="result.id === currentAnalysisId && aiError" class="analysis-error">
-                        {{ aiError }}
-                    </div>
-                </div>
             </div>
         </div>
         
@@ -101,19 +85,40 @@
                                v-model.number="openaiConfig.max_tokens" 
                                min="100" max="4000">
                     </div>
+                    
+                    <!-- Add prompt template configuration -->
+                    <div class="form-group prompt-templates">
+                        <h4>Prompt Templates</h4>
+                        <div class="prompt-template-group">
+                            <label for="prompt1">Opening Prompt:</label>
+                            <textarea id="prompt1" 
+                                     v-model="promptTemplates.prompt1"
+                                     rows="3"
+                                     placeholder="Opening part of the prompt..."></textarea>
+                        </div>
+                        
+                        <div class="prompt-template-group">
+                            <label for="prompt2">User Data Placeholder:</label>
+                            <p class="template-note">This section will be automatically filled with formatted user responses.</p>
+                        </div>
+                        
+                        <div class="prompt-template-group">
+                            <label for="prompt3">Closing Prompt:</label>
+                            <textarea id="prompt3" 
+                                     v-model="promptTemplates.prompt3"
+                                     rows="3"
+                                     placeholder="Closing part of the prompt..."></textarea>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="dialog-actions">
                     <button @click="saveConfig" class="btn-primary">Save</button>
+                    <button @click="resetPrompts" class="btn-reset">Reset Prompts</button>
                     <button @click="closeConfig" class="btn-secondary">Cancel</button>
                 </div>
             </div>
         </div>
-        
-        <!-- OpenAI Config Button -->
-        <button @click="openConfig" class="config-btn">
-            <span>AI Settings</span>
-        </button>
     </div>
 </template>
 
@@ -133,12 +138,6 @@ export default {
             selectedQuizId: "",
             loading: true,
             
-            // OpenAI analysis related data
-            analyzing: null,
-            aiAnalysis: null,
-            aiError: null,
-            currentAnalysisId: null,
-            
             // Core feeling description
             generatingDescription: false,
             coreFeeling: null,
@@ -146,7 +145,10 @@ export default {
             
             // OpenAI configuration
             openaiConfig: { ...openaiService.getConfig() },
-            showConfigDialog: false
+            showConfigDialog: false,
+            
+            // Prompt templates
+            promptTemplates: { ...openaiService.getPromptTemplates('personalityDescription') }
         };
     },
     computed: {
@@ -225,37 +227,10 @@ export default {
             }
         },
         
-        // OpenAI analysis methods
-        async analyzeResult(result) {
-            this.aiAnalysis = null;
-            this.aiError = null;
-            this.analyzing = result.id;
-            this.currentAnalysisId = result.id;
-            
-            try {
-                console.log(`Analyzing quiz "${result.quizTitle}" with ${result.answers.length} answers`);
-                
-                const { completion, error, usage } = await openaiService.analyzeQuizResults(
-                    result.answers,
-                    result.quizTitle
-                );
-                
-                if (error) {
-                    this.aiError = `Error: ${error}`;
-                } else {
-                    this.aiAnalysis = completion;
-                    console.log('Token usage:', usage);
-                }
-            } catch (error) {
-                this.aiError = `Error: ${error.message}`;
-            } finally {
-                this.analyzing = null;
-            }
-        },
-        
         // OpenAI configuration methods
         openConfig() {
             this.openaiConfig = { ...openaiService.getConfig() };
+            this.promptTemplates = { ...openaiService.getPromptTemplates('personalityDescription') };
             this.showConfigDialog = true;
         },
         
@@ -265,7 +240,12 @@ export default {
         
         saveConfig() {
             openaiService.updateConfig(this.openaiConfig);
+            openaiService.updatePromptTemplates('personalityDescription', this.promptTemplates);
             this.showConfigDialog = false;
+        },
+        
+        resetPrompts() {
+            this.promptTemplates = { ...openaiService.resetPromptTemplates('personalityDescription') };
         },
         
         // Generate core feeling description from all answers
@@ -303,13 +283,18 @@ export default {
             this.feelingError = null;
             
             try {
+                // Get current templates to display for debugging
+                const templates = openaiService.getPromptTemplates('personalityDescription');
+                console.log('Using prompt templates:', templates);
+                
                 // Use the dedicated method for analyzing personality
-                const { completion, error } = await openaiService.analyzePersonality(this.allAnswers);
+                const { completion, error, usage } = await openaiService.analyzePersonality(this.allAnswers);
                 
                 if (error) {
                     this.feelingError = `Error: ${error}`;
                 } else {
                     this.coreFeeling = completion;
+                    console.log('Token usage:', usage);
                 }
             } catch (error) {
                 this.feelingError = `Error: ${error.message}`;
@@ -514,30 +499,19 @@ strong {
     cursor: pointer;
 }
 
-.config-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #5e35b1;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.config-btn:hover {
-    background-color: #4527a0;
-}
-
-/* Generate Description Styles */
 .generate-description-section {
     margin: 20px 0;
     padding: 20px;
     background-color: #f9f6ff;
     border-radius: 8px;
     border: 1px solid #e1d7f5;
+}
+
+.description-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 .generate-btn {
@@ -562,6 +536,10 @@ strong {
     background-color: #9e9e9e;
     cursor: not-allowed;
     transform: none;
+}
+
+.settings-btn {
+    display: none;
 }
 
 .feeling-result {
@@ -591,5 +569,41 @@ strong {
     color: #c62828;
     border-radius: 4px;
     border-left: 4px solid #c62828;
+}
+
+/* Prompt Templates Styles */
+.prompt-templates {
+    margin-top: 25px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 15px;
+}
+
+.prompt-template-group {
+    margin-bottom: 15px;
+}
+
+.prompt-template-group textarea {
+    width: 100%;
+    font-family: monospace;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.template-note {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 5px 0;
+    font-style: italic;
+}
+
+.btn-reset {
+    background-color: #f5a623;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
 }
 </style>
