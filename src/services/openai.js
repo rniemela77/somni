@@ -16,11 +16,21 @@ const defaultPrompts = {
   personalityDescription: {
     prompt1: 'Here are quiz results for someone taking a personality test. Please analyze the personality based on these responses:\n\n',
     prompt2: '{{formattedResults}}',
-    prompt3: "\n\nWrite exactly two sentences that describe the core personality of the individual based on their quiz responses, focusing on uncovering hidden emotional patterns and key psychological traits. Then, write one sentence identifying the archetype they best fit. Finally, provide a series of keywords that represent aspects of their personality, including elements they may not have previously recognized." +
-    "\n\n Example:" +
-    "\n\n Core Personality: The individual is a natural leader who is charismatic and persuasive. They are highly motivated and driven, but can also be quite stubborn and inflexible." +
-    "\n\n Archetype: The Leader" +  
-    "\n\n Keywords: charismatic, persuasive, motivated, driven, stubborn, inflexible"
+    prompt3: "\n\nAnalyze this person's personality along the four MBTI dimensions with a score from -2 to +2 for each dimension:" +
+    "\n\n1. INTROVERT_EXTROVERT (from -2 = strongly introverted to +2 = strongly extroverted)" +
+    "\n2. SENSING_INTUITION (from -2 = strongly sensing to +2 = strongly intuitive)" + 
+    "\n3. THINKING_FEELING (from -2 = strongly thinking to +2 = strongly feeling)" +
+    "\n4. JUDGING_PERCEIVING (from -2 = strongly judging to +2 = strongly perceiving)" +
+    "\n\nThen, write exactly two sentences that describe the core personality of the individual based on their quiz responses, focusing on uncovering hidden emotional patterns and key psychological traits. Then, write one sentence identifying the archetype they best fit. Finally, provide a series of keywords that represent aspects of their personality, including elements they may not have previously recognized." +
+    "\n\nFormat your response like this:" +
+    "\n\nDIMENSIONS:" +
+    "\nINTROVERT_EXTROVERT: [score]" +
+    "\nSENSING_INTUITION: [score]" +
+    "\nTHINKING_FEELING: [score]" +
+    "\nJUDGING_PERCEIVING: [score]" +
+    "\n\nCore Personality: [Two sentences describing core personality]" +
+    "\n\nArchetype: [Name of archetype]" +  
+    "\n\nKeywords: [comma-separated list of keywords]"
   }
 };
 

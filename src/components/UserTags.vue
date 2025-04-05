@@ -74,6 +74,11 @@ export default {
         tags.value = userData.tags;
       }
     };
+    
+    // Method to refresh dimensions from the database
+    const refreshDimensions = async () => {
+      await loadPersonality();
+    };
 
     onMounted(loadPersonality);
 
@@ -82,7 +87,8 @@ export default {
       tags,
       PERSONALITY_DIMENSIONS,
       getMarkerPosition,
-      getDimensionValue
+      getDimensionValue,
+      refreshDimensions
     };
   }
 };

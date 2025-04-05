@@ -2,9 +2,6 @@
     <div>
         <h2>Your Quiz Results</h2>
         
-        <!-- User Tags Section -->
-        <UserTags class="tags-section" />
-        
         <!-- Generate Description Button -->
         <div class="generate-description-section">
             <div class="description-header">
@@ -17,6 +14,7 @@
             
             <div v-if="coreFeeling" class="feeling-result">
                 <h3>Your Core Feeling Analysis</h3>
+                
                 <div class="feeling-content">
                     <div v-if="parsedFeeling.core" class="feeling-section core-personality">
                         <h4>Core Personality:</h4>
@@ -29,6 +27,76 @@
                     <div v-if="parsedFeeling.keywords" class="feeling-section keywords">
                         <h4>Keywords:</h4>
                         <p class="keyword-list">{{ parsedFeeling.keywords }}</p>
+                    </div>
+                    
+                    <!-- Dimensions Section as part of the analysis -->
+                    <div class="feeling-section mbti-dimensions">
+                        <h4>Personality Dimensions:</h4>
+                        <div class="dimensions-container">
+                            <!-- INTROVERT_EXTROVERT -->
+                            <div class="dimension-item">
+                                <h5>Introversion-Extroversion</h5>
+                                <div class="dimension-scale">
+                                    <span class="scale-label left">Introvert</span>
+                                    <div class="scale-bar-container">
+                                        <div class="scale-bar">
+                                        <div class="scale-marker"
+                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions.INTROVERT_EXTROVERT || 0) + '%' }">
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <span class="scale-label right">Extrovert</span>
+                                </div>
+                            </div>
+                            
+                            <!-- SENSING_INTUITION -->
+                            <div class="dimension-item">
+                                <h5>Sensing-Intuition</h5>
+                                <div class="dimension-scale">
+                                    <span class="scale-label left">Sensing</span>
+                                    <div class="scale-bar-container">
+                                        <div class="scale-bar">
+                                        <div class="scale-marker"
+                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions.SENSING_INTUITION || 0) + '%' }">
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <span class="scale-label right">Intuition</span>
+                                </div>
+                            </div>
+                            
+                            <!-- THINKING_FEELING -->
+                            <div class="dimension-item">
+                                <h5>Thinking-Feeling</h5>
+                                <div class="dimension-scale">
+                                    <span class="scale-label left">Thinking</span>
+                                    <div class="scale-bar-container">
+                                        <div class="scale-bar">
+                                        <div class="scale-marker"
+                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions.THINKING_FEELING || 0) + '%' }">
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <span class="scale-label right">Feeling</span>
+                                </div>
+                            </div>
+                            
+                            <!-- JUDGING_PERCEIVING -->
+                            <div class="dimension-item">
+                                <h5>Judging-Perceiving</h5>
+                                <div class="dimension-scale">
+                                    <span class="scale-label left">Judging</span>
+                                    <div class="scale-bar-container">
+                                        <div class="scale-bar">
+                                        <div class="scale-marker"
+                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions.JUDGING_PERCEIVING || 0) + '%' }">
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <span class="scale-label right">Perceiving</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -138,12 +206,10 @@
 <script>
 import { quizService, resultsService, authService } from '../services/firebase';
 import { openaiService } from '../services/openai';
-import UserTags from './UserTags.vue';
+import { updateDimensionValue, PERSONALITY_DIMENSIONS, getUserPersonality } from '../../firebase';
 
 export default {
-    components: {
-        UserTags
-    },
+    components: {},
     data() {
         return {
             results: [],
@@ -167,8 +233,23 @@ export default {
             parsedFeeling: {
                 core: null,
                 archetype: null,
-                keywords: null
-            }
+                keywords: null,
+                dimensions: {
+                    INTROVERT_EXTROVERT: 0,
+                    SENSING_INTUITION: 0,
+                    THINKING_FEELING: 0,
+                    JUDGING_PERCEIVING: 0
+                }
+            },
+            
+            // User dimensions
+            userDimensions: {},
+            
+            // Personality tags
+            userTags: [],
+            
+            // Dimensions updated flag
+            dimensionsUpdated: false
         };
     },
     computed: {
@@ -191,9 +272,39 @@ export default {
                 });
             });
             return answers;
+        },
+        // Get dimensions that should be displayed in the sliders
+        displayDimensions() {
+            // After analysis is done, use the parsed dimensions
+            if (this.coreFeeling && this.parsedFeeling.dimensions) {
+                return this.parsedFeeling.dimensions;
+            }
+            // Otherwise use the user's stored dimensions
+            return this.userDimensions;
         }
     },
     methods: {
+        // Get dimension value with fallback
+        getDimensionValue(key) {
+            return this.userDimensions[key] ?? 0;
+        },
+        
+        // Convert dimension value (-2 to 2) to position percentage (0 to 100)
+        getMarkerPosition(value) {
+            // Convert from -2,2 range to 0,100 range
+            return ((value + 2) / 4) * 100;
+        },
+        
+        // Load user's personality data
+        async loadUserPersonality() {
+            const user = authService.getCurrentUser();
+            if (user) {
+                const userData = await getUserPersonality(user.uid);
+                this.userDimensions = userData.dimensions || {};
+                this.userTags = userData.tags || [];
+            }
+        },
+        
         formatDate(timestamp) {
             if (!timestamp) return "";
             const date = timestamp.toDate();
@@ -301,6 +412,7 @@ export default {
             this.generatingDescription = true;
             this.coreFeeling = null;
             this.feelingError = null;
+            this.dimensionsUpdated = false; // Reset dimensions updated flag
             
             try {
                 // Get current templates to display for debugging
@@ -329,12 +441,52 @@ export default {
             const result = {
                 core: null,
                 archetype: null,
-                keywords: null
+                keywords: null,
+                dimensions: {
+                    INTROVERT_EXTROVERT: 0,
+                    SENSING_INTUITION: 0,
+                    THINKING_FEELING: 0,
+                    JUDGING_PERCEIVING: 0
+                }
             };
             
             // Check if there's any text to parse
             if (!text || typeof text !== 'string') {
                 return result;
+            }
+            
+            console.log('Parsing personality analysis:', text.substring(0, 200) + '...');
+            
+            // Extract MBTI dimensions first
+            const dimensionsSection = text.match(/DIMENSIONS:([\s\S]*?)(?=Core Personality:|$)/i);
+            if (dimensionsSection) {
+                console.log('Found dimensions section:', dimensionsSection[1]);
+                const dimensionsText = dimensionsSection[1];
+                
+                // Extract each dimension value
+                const ieMatch = dimensionsText.match(/INTROVERT_EXTROVERT:\s*([-+]?\d+(\.\d+)?)/i);
+                const snMatch = dimensionsText.match(/SENSING_INTUITION:\s*([-+]?\d+(\.\d+)?)/i);
+                const tfMatch = dimensionsText.match(/THINKING_FEELING:\s*([-+]?\d+(\.\d+)?)/i);
+                const jpMatch = dimensionsText.match(/JUDGING_PERCEIVING:\s*([-+]?\d+(\.\d+)?)/i);
+                
+                if (ieMatch) {
+                    result.dimensions.INTROVERT_EXTROVERT = parseFloat(ieMatch[1]);
+                    console.log('Parsed INTROVERT_EXTROVERT:', result.dimensions.INTROVERT_EXTROVERT);
+                }
+                if (snMatch) {
+                    result.dimensions.SENSING_INTUITION = parseFloat(snMatch[1]);
+                    console.log('Parsed SENSING_INTUITION:', result.dimensions.SENSING_INTUITION);
+                }
+                if (tfMatch) {
+                    result.dimensions.THINKING_FEELING = parseFloat(tfMatch[1]);
+                    console.log('Parsed THINKING_FEELING:', result.dimensions.THINKING_FEELING);
+                }
+                if (jpMatch) {
+                    result.dimensions.JUDGING_PERCEIVING = parseFloat(jpMatch[1]);
+                    console.log('Parsed JUDGING_PERCEIVING:', result.dimensions.JUDGING_PERCEIVING);
+                }
+            } else {
+                console.log('No dimensions section found in the text');
             }
             
             // Try to extract sections using regex patterns
@@ -393,12 +545,45 @@ export default {
                 }
             }
             
+            console.log('Final parsed dimensions:', result.dimensions);
+            
+            // Update user profile with new dimension values
+            this.updateUserProfile(result.dimensions);
+            
             return result;
+        },
+        
+        // Update user's personality dimensions in profile
+        async updateUserProfile(dimensions) {
+            try {
+                const user = authService.getCurrentUser();
+                if (!user) return;
+                
+                // Update each dimension that has a valid value
+                for (const [dimension, value] of Object.entries(dimensions)) {
+                    if (value !== null && !isNaN(value)) {
+                        // Clamp values to valid range (-2 to 2)
+                        const clampedValue = Math.max(-2, Math.min(2, value));
+                        await updateDimensionValue(user.uid, dimension, clampedValue);
+                        
+                        // Update local dimensions
+                        this.userDimensions[dimension] = clampedValue;
+                    }
+                }
+                
+                // Set dimensionsUpdated flag
+                this.dimensionsUpdated = true;
+            } catch (error) {
+                console.error('Error updating user profile dimensions:', error);
+            }
         }
     },
     async mounted() {
+        console.log('Loading data...');
+        console.log('PERSONALITY_DIMENSIONS:', PERSONALITY_DIMENSIONS);
         await this.loadQuizzes();
         await this.loadResults();
+        await this.loadUserPersonality();
     }
 };
 </script>
@@ -472,6 +657,93 @@ strong {
 
 .answer {
     color: #007bff;
+}
+
+/* Dimensions Slider Styles */
+.mbti-dimensions {
+    border-left: 3px solid #9575cd !important;
+}
+
+.dimensions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin: 15px 0 0 0;
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+    border-left: none;
+    box-shadow: none;
+}
+
+.dimension-item h5 {
+    margin-bottom: 10px;
+    color: #5e35b1;
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.dimension-scale {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-height: 40px;
+}
+
+.scale-label {
+    min-width: 80px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.scale-label.left {
+    text-align: right;
+    color: #3949ab;
+}
+
+.scale-label.right {
+    text-align: left;
+    color: #e91e63;
+}
+
+.scale-bar-container {
+    flex-grow: 1;
+    padding: 12px 0;
+}
+
+.scale-bar {
+    height: 6px;
+    background: linear-gradient(to right, #3949ab, #e91e63);
+    border-radius: 8px;
+    position: relative;
+}
+
+.scale-bar:before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    height: 15px;
+    width: 2px;
+    background-color: rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%);
+    top: -5px;
+}
+
+.scale-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 22px;
+    height: 22px;
+    background: white;
+    border: 3px solid #6d4aff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* OpenAI Analysis Styles */
@@ -740,5 +1012,9 @@ strong {
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.dimensions-updated {
+    display: none; /* Hide this element entirely */
 }
 </style>
