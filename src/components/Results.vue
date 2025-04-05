@@ -1003,84 +1003,88 @@ strong {
 }
 
 .feeling-section {
-    margin-bottom: 0;
-    padding: 16px 20px;
-    border-radius: 0;
-    background-color: var(--bg-primary);
-    position: relative;
+    padding: 20px 25px;
+    border-radius: var(--radius-sm);
+    background-color: rgba(255, 255, 255, 0.8);
     border-left: 2px solid transparent;
-    transition: all var(--transition-fast);
+    transition: background-color var(--transition);
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
 .feeling-section:hover {
-    box-shadow: none;
-    background-color: var(--bg-secondary);
-    transform: none;
-}
-
-.feeling-section.core {
-    border-left-color: var(--primary);
-}
-
-.feeling-section.archetype {
-    border-left-color: var(--primary-light);
-}
-
-.feeling-section.keywords {
-    border-left-color: var(--secondary-light);
-}
-
-.feeling-section::before {
-    display: none;
+    background-color: var(--bg-primary);
 }
 
 .feeling-section h4 {
     color: var(--text-primary);
     margin-top: 0;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     font-weight: 500;
-    font-size: 1rem;
-    letter-spacing: -0.01em;
-}
-
-.feeling-section h4::before {
-    display: none;
+    font-size: 0.95rem;
 }
 
 .feeling-section p {
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.5;
     color: var(--text-secondary);
     flex-grow: 1;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
+}
+
+/* Dimensions Section */
+.mbti-dimensions {
+    border-left: none !important;
+    background-color: var(--bg-primary);
+    padding: 25px;
+    margin-top: 10px;
+    border-top: 1px solid var(--bg-muted);
+}
+
+.dimensions-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .dimensions-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px 40px;
+    }
+}
+
+.dimension-item {
+    margin-bottom: 0;
+    background-color: transparent;
+    padding: 0;
+}
+
+.dimension-item h5 {
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.92rem;
+    text-align: center;
 }
 
 .keyword-list {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 4px;
+    margin-top: 8px;
 }
 
 .keyword-list span {
     display: inline-block;
     background-color: rgba(58, 81, 153, 0.04);
-    padding: 2px 10px;
+    padding: 3px 12px;
     border-radius: var(--radius-sm);
-    font-size: 0.8rem;
-    font-weight: 400;
+    font-size: 0.82rem;
     color: var(--text-secondary);
     border: 1px solid rgba(58, 81, 153, 0.08);
-    letter-spacing: 0.01em;
-    transition: all var(--transition-fast);
-}
-
-.keyword-list span:hover {
-    background-color: rgba(58, 81, 153, 0.06);
-    color: var(--primary);
 }
 
 .feeling-error {
@@ -1528,21 +1532,7 @@ h2.section-title::after {
     position: relative;
 }
 
-.main-content::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(circle at 20% 30%, rgba(140, 156, 214, 0.03) 0%, transparent 80%),
-        radial-gradient(circle at 80% 60%, rgba(169, 190, 166, 0.03) 0%, transparent 80%);
-    z-index: -1;
-    pointer-events: none;
-}
-
-/* Minimize scrollbar styling */
+/* Simplify scrollbar styling */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -1557,11 +1547,7 @@ h2.section-title::after {
     border-radius: 3px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.15);
-}
-
-/* Add some nice typography refinements */
+/* Typography refinements */
 h2.section-title {
     font-weight: 500;
     color: var(--text-primary);
@@ -1569,21 +1555,19 @@ h2.section-title {
 
 .feeling-section h4 {
     font-size: 0.95rem;
-    letter-spacing: -0.01em;
 }
 
 .feeling-result h3 {
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
 }
 
-/* Add subtle animation to the main container */
+/* Container styling */
 .personality-analysis-section {
-    transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+    transition: box-shadow var(--transition);
 }
 
 .personality-analysis-section:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.03);
+    box-shadow: var(--shadow-md);
 }
 
 .description-header {

@@ -138,7 +138,7 @@ export default {
   color: var(--primary);
   text-decoration: none;
   font-weight: 600;
-  transition: color var(--transition-fast);
+  transition: color var(--transition);
 }
 
 .auth-link:hover {

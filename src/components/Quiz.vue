@@ -185,27 +185,11 @@ export default {
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
     margin: 0;
-    opacity: 0.8;
 }
 
 .active-quiz {
     max-width: 800px;
     margin: 0 auto;
-    position: relative;
-}
-
-.active-quiz::before {
-    content: '';
-    position: absolute;
-    top: -100px;
-    left: -100px;
-    right: -100px;
-    height: 300px;
-    background: var(--gradient-primary);
-    opacity: 0.05;
-    transform: rotate(-3deg);
-    z-index: -1;
-    border-radius: var(--radius-xl);
 }
 
 .quiz-header {
@@ -214,7 +198,7 @@ export default {
     align-items: center;
     margin-bottom: var(--spacing-xl);
     padding-bottom: var(--spacing-md);
-    border-bottom: 2px solid var(--glass-border);
+    border-bottom: 1px solid var(--bg-muted);
 }
 
 .quiz-form {
@@ -224,8 +208,7 @@ export default {
 }
 
 .question-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
+    background: var(--bg-primary);
 }
 
 .question-number {
@@ -235,16 +218,6 @@ export default {
     margin-bottom: var(--spacing-sm);
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-xs);
-}
-
-.question-number::after {
-    content: '';
-    display: block;
-    height: 2px;
-    width: 20px;
-    background: var(--gradient-primary);
-    margin-left: var(--spacing-xs);
 }
 
 .question-text {
@@ -263,30 +236,15 @@ export default {
     display: flex;
     align-items: center;
     padding: var(--spacing-md) var(--spacing-lg);
-    background: var(--glass-bg);
-    border: 2px solid var(--glass-border);
-    border-radius: var(--radius-lg);
+    background: var(--bg-primary);
+    border: 1px solid var(--bg-muted);
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all var(--transition-fast);
-    position: relative;
-    overflow: hidden;
-}
-
-.option-label::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-primary);
-    opacity: 0;
-    transition: opacity var(--transition-fast);
+    transition: border-color var(--transition);
 }
 
 .option-label:hover {
     border-color: var(--primary);
-    transform: translateX(var(--spacing-xs));
 }
 
 .option-label input[type="radio"] {
@@ -294,15 +252,11 @@ export default {
     width: 20px;
     height: 20px;
     accent-color: var(--primary);
-    position: relative;
-    z-index: 1;
 }
 
 .option-text {
     font-size: var(--font-size-md);
     color: var(--text-secondary);
-    position: relative;
-    z-index: 1;
 }
 
 .option-label:has(input:checked) {
@@ -310,15 +264,10 @@ export default {
     background: var(--primary-bg);
 }
 
-.option-label:has(input:checked)::before {
-    opacity: 0.1;
-}
-
 /* Disabled states */
 .option-label:has(input:disabled) {
     opacity: 0.7;
     cursor: not-allowed;
-    transform: none;
 }
 
 .option-label input:disabled + .option-text {
@@ -329,19 +278,6 @@ export default {
     display: flex;
     justify-content: center;
     margin-top: var(--spacing-xl);
-    position: relative;
-}
-
-.submit-section::before {
-    content: '';
-    position: absolute;
-    top: -var(--spacing-lg);
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 2px;
-    background: var(--gradient-primary);
-    opacity: 0.3;
 }
 
 .submit-button {
@@ -387,11 +323,6 @@ export default {
 
     .option-label {
         padding: var(--spacing-sm) var(--spacing-md);
-    }
-
-    .active-quiz::before {
-        left: -50px;
-        right: -50px;
     }
 }
 </style>

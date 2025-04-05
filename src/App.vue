@@ -83,7 +83,7 @@ export default {
 
 .navbar {
   background-color: var(--bg-primary);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-sm);
   padding: var(--spacing-md) 0;
   position: sticky;
   top: 0;
@@ -100,11 +100,6 @@ export default {
 .nav-brand {
   text-decoration: none;
   padding: var(--spacing-xs) var(--spacing-sm);
-  transition: transform var(--transition-fast);
-}
-
-.nav-brand:hover {
-  transform: translateY(-1px);
 }
 
 .gradient-text {
@@ -131,9 +126,8 @@ export default {
   font-weight: 500;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
+  transition: color var(--transition);
   position: relative;
-  letter-spacing: 0.01em;
 }
 
 .nav-link:not(.btn)::after {
@@ -145,7 +139,7 @@ export default {
   height: 2px;
   background-color: var(--primary);
   opacity: 0;
-  transition: opacity var(--transition-fast);
+  transition: opacity var(--transition);
 }
 
 .nav-link:not(.btn):hover::after,
@@ -153,10 +147,7 @@ export default {
   opacity: 1;
 }
 
-.nav-link:not(.btn):hover {
-  color: var(--primary);
-}
-
+.nav-link:not(.btn):hover,
 .nav-link.active {
   color: var(--primary);
 }
@@ -184,19 +175,6 @@ export default {
   flex: 1;
   padding: var(--spacing-xl) 0;
   background-color: var(--bg-secondary);
-  position: relative;
-}
-
-.main-content::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100px;
-  background-color: var(--primary-bg);
-  opacity: 0.6;
-  pointer-events: none;
 }
 
 .footer {
@@ -226,7 +204,7 @@ export default {
 .footer-link {
   color: var(--text-secondary);
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color var(--transition);
 }
 
 .footer-link:hover {
@@ -236,7 +214,7 @@ export default {
 /* Transitions */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity var(--transition-normal);
+  transition: opacity var(--transition);
 }
 
 .fade-enter-from,

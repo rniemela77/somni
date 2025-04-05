@@ -161,7 +161,7 @@ export default {
   font-size: var(--font-size-xs);
   font-weight: 500;
   color: var(--text-primary);
-  transition: all var(--transition-normal);
+  transition: all var(--transition);
   box-shadow: var(--shadow-sm);
 }
 
@@ -187,7 +187,7 @@ export default {
 .tag {
   padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--radius-lg);
-  background: var(--gradient-primary);
+  background-color: var(--primary);
   color: white;
   font-weight: 500;
   box-shadow: var(--shadow-sm);
