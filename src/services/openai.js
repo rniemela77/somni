@@ -5,7 +5,7 @@ import { generateAnalysisPrompt } from '../config/personalityAnalysis';
 // Configuration options
 const defaultOptions = {
   model: 'gpt-4',
-  temperature: 0.7,
+  temperature: 0.7, // higher temperature = more creative
   max_tokens: 1000,
   api_version: '2023-05-15',
   stream: false

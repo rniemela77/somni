@@ -81,7 +81,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     id: "core",
     title: "Core Personality",
     description: "A concise description of the core aspects of the individual's personality, focusing on uncovering hidden emotional patterns and key psychological traits.",
-    promptInstructions: "Write exactly two sentences that describe the core personality of the individual based on their quiz responses, focusing on uncovering hidden emotional patterns and key psychological traits.",
+    promptInstructions: "Write exactly two sentences that describe the core personality of the individual based on their quiz responses. Focus on revealing unique, non-obvious emotional patterns and psychological traits that provide genuine insight. Avoid generic descriptions that could apply to many people.",
     display: {
       order: 1,
       borderColor: "#5e35b1"
@@ -91,7 +91,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     id: "archetype",
     title: "Archetype",
     description: "A specific personality archetype that best represents the individual's psychological makeup.",
-    promptInstructions: "Write one sentence identifying the archetype they best fit (e.g., Visionary, Caregiver, Explorer, Sage, etc.).",
+    promptInstructions: "Identify a unique and specific archetype that best fits this person. Go beyond common archetypes (like Hero, Rebel, Caregiver) and consider unusual or complex ones (like Alchemist, Shapeshifter, Divine Child, Trickster, Mystic, etc). Be creative and unexpected in your selection, while still accurately reflecting their personality.",
     display: {
       order: 2,
       borderColor: "#7e57c2"
@@ -101,7 +101,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     id: "keywords",
     title: "Keywords",
     description: "A set of key traits, qualities, and characteristics that define the individual's personality, including aspects they may not have previously recognized.",
-    promptInstructions: "Provide a series of keywords (5-10) that represent aspects of their personality, including elements they may not have previously recognized.",
+    promptInstructions: "Provide 5-7 distinctive keywords that represent this person's personality. Include at least 2 unexpected or paradoxical traits they may not recognize in themselves. Avoid generic terms like 'kind' or 'intelligent' - instead use more specific, nuanced, and evocative words.",
     display: {
       order: 3,
       borderColor: "#9575cd"
@@ -111,7 +111,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     id: "spiritAnimal",
     title: "Spirit Animal",
     description: "An animal that embodies the essence of the individual's personality traits, strengths, and natural tendencies.",
-    promptInstructions: "Identify a spirit animal that best represents this person's personality traits and explain in one sentence why this animal reflects their essence.",
+    promptInstructions: "Identify a distinctive spirit animal that best represents this person's personality traits. Look beyond common choices (like wolf, lion, eagle) and consider unexpected animals (including insects, marine life, or lesser-known species) that offer a more nuanced reflection. Explain in one sentence why this specific animal reflects their essence.",
     display: {
       order: 4,
       borderColor: "#673ab7"
@@ -121,9 +121,19 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     id: "mythologicalFigure",
     title: "Mythological Figure",
     description: "A character from mythology or folklore whose qualities, journey, or attributes mirror the individual's personality.",
-    promptInstructions: "Identify a mythological or folklore figure (e.g., Greek gods, heroes, or cultural icons) that best matches this person's personality and explain in one sentence why this figure reflects their character.",
+    promptInstructions: "Identify a unique and specific mythological or folklore figure from ANY cultural tradition (Norse, Celtic, Egyptian, Chinese, Indian, Native American, African, etc. - not just Greek/Roman) that best matches this person's personality. Be creative and avoid commonly chosen figures like Athena, Zeus, or Apollo. Explain in one sentence why this figure reflects their character.",
     display: {
       order: 5,
+      borderColor: "#512da8"
+    }
+  },
+  typeOfFood: {
+    id: "typeOfFood",
+    title: "Type of Food",
+    description: "A type of food that best represents the individual's personality.",
+    promptInstructions: "Identify a very specific type of food (not just a general category like 'pasta' but a specific dish like 'squid ink risotto') that best represents this person's personality. Consider cuisines from around the world and avoid obvious choices. The food should have complexity that mirrors their personality traits. Explain in one sentence why this specific food reflects their character.",
+    display: {
+      order: 6,
       borderColor: "#512da8"
     }
   }

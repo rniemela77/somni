@@ -157,68 +157,6 @@
                 </ul>
             </div>
         </div>
-        
-        <!-- OpenAI Configuration Dialog -->
-        <div v-if="showConfigDialog" class="config-dialog-overlay">
-            <div class="config-dialog">
-                <h3>OpenAI Configuration</h3>
-                <div class="config-form">
-                    <div class="form-group">
-                        <label for="model">Model:</label>
-                        <select id="model" v-model="openaiConfig.model">
-                            <option value="gpt-4">GPT-4</option>
-                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="temperature">Temperature:</label>
-                        <input type="range" id="temperature" 
-                               v-model.number="openaiConfig.temperature" 
-                               min="0" max="1" step="0.1">
-                        <span>{{ openaiConfig.temperature }}</span>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="maxTokens">Max Tokens:</label>
-                        <input type="number" id="maxTokens" 
-                               v-model.number="openaiConfig.max_tokens" 
-                               min="100" max="4000">
-                    </div>
-                    
-                    <!-- Add prompt template configuration -->
-                    <div class="form-group prompt-templates">
-                        <h4>Prompt Templates</h4>
-                        <div class="prompt-template-group">
-                            <label for="prompt1">Opening Prompt:</label>
-                            <textarea id="prompt1" 
-                                     v-model="promptTemplates.prompt1"
-                                     rows="3"
-                                     placeholder="Opening part of the prompt..."></textarea>
-                        </div>
-                        
-                        <div class="prompt-template-group">
-                            <label for="prompt2">User Data Placeholder:</label>
-                            <p class="template-note">This section will be automatically filled with formatted user responses.</p>
-                        </div>
-                        
-                        <div class="prompt-template-group">
-                            <label for="prompt3">Closing Prompt:</label>
-                            <textarea id="prompt3" 
-                                     v-model="promptTemplates.prompt3"
-                                     rows="3"
-                                     placeholder="Closing part of the prompt..."></textarea>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="dialog-actions">
-                    <button @click="saveConfig" class="btn-primary">Save</button>
-                    <button @click="resetPrompts" class="btn-reset">Reset Prompts</button>
-                    <button @click="closeConfig" class="btn-secondary">Cancel</button>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -249,13 +187,6 @@ export default {
             generatingDescription: false,
             coreFeeling: null,
             feelingError: null,
-            
-            // OpenAI configuration
-            openaiConfig: { ...openaiService.getConfig() },
-            showConfigDialog: false,
-            
-            // Prompt templates
-            promptTemplates: { ...openaiService.getPromptTemplates('personalityDescription') },
             
             // Parsed feeling (using configuration)
             parsedFeeling: {
@@ -386,27 +317,6 @@ export default {
             } finally {
                 this.loading = false;
             }
-        },
-        
-        // OpenAI configuration methods
-        openConfig() {
-            this.openaiConfig = { ...openaiService.getConfig() };
-            this.promptTemplates = { ...openaiService.getPromptTemplates('personalityDescription') };
-            this.showConfigDialog = true;
-        },
-        
-        closeConfig() {
-            this.showConfigDialog = false;
-        },
-        
-        saveConfig() {
-            openaiService.updateConfig(this.openaiConfig);
-            openaiService.updatePromptTemplates('personalityDescription', this.promptTemplates);
-            this.showConfigDialog = false;
-        },
-        
-        resetPrompts() {
-            this.promptTemplates = { ...openaiService.resetPromptTemplates('personalityDescription') };
         },
         
         // Generate core feeling description from all answers

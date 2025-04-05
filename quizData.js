@@ -1,21 +1,184 @@
 /*
   Quiz question instructions:
-  - The questions must not lead the user to think that there is a right or wrong answer
-  - The questions must be everyday occurences that are easy to understand
-  - The answers should be short and concise
-  - The answers should not be too abstract
-  - The questions and answers should be culturally neutral
-  - The questions and answers should be appropriate for a general audience
-  - The questions and answers should be designed to learn about the user's personality
-  - The questions and answers should be designed to learn about the user's personality
-    by bypassing the conscious mind and going straight to the subconscious.
-  - The quiz identifies how the user reacts to everyday occurences.
-  - The quiz should not require the user to think too much about the question.
-  - The quiz should be designed to be answered quickly and easily.
-  - The quiz should be designed to be answered in a single sentence or phrase.
+Keep It Brief & Clear:
+- Use short, uncomplicated statements to minimize overthinking.
+- Avoid multi-part or overly detailed queries.
+
+Be Indirect & Metaphorical:
+- Frame questions with imagery, analogies, or symbolic scenarios rather than direct personality prompts.
+- Draw on nature, weather, or journeys to trigger subconscious associations.
+
+Embed Subtle Priming (NLP Techniques):
+- Weave in sensory or emotional words in a neutral context, encouraging instinctive reactions.
+- Start prompts with phrases like “Imagine…” or “Picture yourself…” to shift users into a more receptive mindset.
+
+Use Forced-Choice Formats:
+- Provide two or more equally appealing or contrasting options.
+- Ensure no option seems obviously “right” or “desirable.”
+
+Offer Contextual, Everyday Scenarios:
+- Ask how they’d respond or feel in typical, relatable situations—or abstract ones that let them project thoughts freely.
+- Steer clear of direct self-assessments.
+
+Stay Subtle to Bypass Defenses:
+- Keep the tone casual, avoiding “test-like” language.
+- Avoid overt introspection cues that might make users self-conscious.
+
+Focus on Emotions & Sensations:
+- Direct attention toward gut feelings and immediate bodily or emotional impressions.
+- This encourages less filtered, more subconscious-driven answers.
+
+Randomize Question Order:
+- Shuffle questions and mix “light” items with deeper ones so the underlying pattern isn’t obvious.
+- Prevent users from spotting recurring themes.
+
+Maintain Neutral, Supportive Tone:
+- Avoid any wording suggesting judgment or leading toward a preferred answer.
+- Balance your language to keep all choices plausible.
+
+Encourage Quick Responses:
+- Prompt users to answer immediately, reducing analytical overdrive.
+- Minimize the time between question reading and response.
+
+Hide the Purpose & Scoring:
+- Don’t disclose how each question ties to personality traits.  
+- Keep scoring systems and rationales confidential to ensure authentic answers.
 */
 
 const quizzes = [
+  {
+    "id": "odd-occurrences",
+    "title": "Odd Occurrences",
+    "questions": [
+      {
+        "id": 1,
+        "text": "You notice a new door in a familiar room. What do you do?",
+        "options": [
+          "Open it immediately",
+          "Study it for clues",
+          "Stick with the known rooms",
+          "Ask someone about it"
+        ]
+      },
+      {
+        "id": 2,
+        "text": "While walking in a forest, you spot a hidden path. You...",
+        "options": [
+          "Explore it without hesitation",
+          "Mark it for later",
+          "Ignore it and stay on the main trail",
+          "Consult a map or guide first"
+        ]
+      },
+      {
+        "id": 3,
+        "text": "A friend hands you a sealed box. Your first thought is...",
+        "options": [
+          "Shake it to guess what's inside",
+          "Examine the wrapping for clues",
+          "Set it aside until a better moment",
+          "Ask for hints before opening"
+        ]
+      },
+      {
+        "id": 4,
+        "text": "You find an old journal with unreadable handwriting. You...",
+        "options": [
+          "Try to decipher bits and pieces",
+          "Rewrite it in clearer text",
+          "Look for pictures or drawings inside",
+          "Leave it; some secrets are best left alone"
+        ]
+      },
+      {
+        "id": 5,
+        "text": "On a spontaneous trip, you reach a crossroads. You...",
+        "options": [
+          "Pick the direction that excites you most",
+          "Take the safest-looking route",
+          "Ask a passerby for advice",
+          "Turn back to familiar territory"
+        ]
+      },
+      {
+        "id": 6,
+        "text": "At a café, you’re offered a mystery dish for free. You...",
+        "options": [
+          "Dive in without hesitation",
+          "Ask what's in it first",
+          "Politely decline",
+          "Let someone else taste it first"
+        ]
+      },
+      {
+        "id": 7,
+        "text": "A friend offers you a chance to speak publicly. You...",
+        "options": [
+          "Accept immediately",
+          "Ask for details and prepare thoroughly",
+          "Decline politely",
+          "Suggest someone else take the spotlight"
+        ]
+      }
+    ]
+  },  
+  {
+  "id": "daily-choices",
+  "title": "Everyday Choices",
+  "questions": [
+    {
+      "id": 1,
+      "text": "You notice a new door in a familiar room. What do you do?",
+      "options": [
+        "Open it immediately",
+        "Study it for clues",
+        "Stick with the known rooms",
+        "Ask someone about it"
+      ]
+    },
+    {
+      "id": 2,
+      "text": "A sudden change in the weather catches you off guard. How do you react?",
+      "options": [
+        "Embrace the shift",
+        "Prepare cautiously",
+        "Watch and wait",
+        "Maintain your routine"
+      ]
+    },
+    {
+      "id": 3,
+      "text": "A friend offers an unexpected suggestion. Your first thought?",
+      "options": [
+        "Jump in without thinking",
+        "Pause to reflect",
+        "Ask for more details",
+        "Decline quickly"
+      ]
+    },
+    {
+      "id": 4,
+      "text": "You glimpse something unusual in passing. What is your instinct?",
+      "options": [
+        "Investigate quietly",
+        "Observe from afar",
+        "Seek another's view",
+        "Dismiss it immediately"
+      ]
+    },
+    {
+      "id": 5,
+      "text": "Midday, you sense a subtle shift in your mood. How do you respond?",
+      "options": [
+        "Let it guide you",
+        "Analyze its cause",
+        "Stay on your path",
+        "Look for hidden meaning"
+      ]
+    }
+  ]
+},
+
   {
     id: "daily-choices",
     title: "Everyday Choices",
