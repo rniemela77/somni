@@ -106,6 +106,26 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
       order: 3,
       borderColor: "#9575cd"
     }
+  },
+  spiritAnimal: {
+    id: "spiritAnimal",
+    title: "Spirit Animal",
+    description: "An animal that embodies the essence of the individual's personality traits, strengths, and natural tendencies.",
+    promptInstructions: "Identify a spirit animal that best represents this person's personality traits and explain in one sentence why this animal reflects their essence.",
+    display: {
+      order: 4,
+      borderColor: "#673ab7"
+    }
+  },
+  mythologicalFigure: {
+    id: "mythologicalFigure",
+    title: "Mythological Figure",
+    description: "A character from mythology or folklore whose qualities, journey, or attributes mirror the individual's personality.",
+    promptInstructions: "Identify a mythological or folklore figure (e.g., Greek gods, heroes, or cultural icons) that best matches this person's personality and explain in one sentence why this figure reflects their character.",
+    display: {
+      order: 5,
+      borderColor: "#512da8"
+    }
   }
 };
 
