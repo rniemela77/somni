@@ -83,7 +83,7 @@ export default {
 
 .navbar {
   background-color: var(--bg-primary);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
   padding: var(--spacing-md) 0;
   position: sticky;
   top: 0;
@@ -100,7 +100,6 @@ export default {
 .nav-brand {
   text-decoration: none;
   padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-md);
   transition: transform var(--transition-fast);
 }
 
@@ -109,19 +108,15 @@ export default {
 }
 
 .gradient-text {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary);
   font-size: var(--font-size-xl);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .gradient-text-alt {
-  background: var(--gradient-secondary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--secondary);
   font-size: var(--font-size-xl);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .nav-links {
@@ -135,26 +130,27 @@ export default {
   color: var(--text-secondary);
   font-weight: 500;
   padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
   position: relative;
+  letter-spacing: 0.01em;
 }
 
 .nav-link:not(.btn)::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
+  bottom: -2px;
+  left: var(--spacing-md);
+  right: var(--spacing-md);
   height: 2px;
-  background: var(--gradient-primary);
-  transition: all var(--transition-fast);
-  transform: translateX(-50%);
+  background-color: var(--primary);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
 }
 
 .nav-link:not(.btn):hover::after,
 .nav-link:not(.btn).active::after {
-  width: 80%;
+  opacity: 1;
 }
 
 .nav-link:not(.btn):hover {
@@ -163,7 +159,6 @@ export default {
 
 .nav-link.active {
   color: var(--primary);
-  background-color: var(--primary-bg);
 }
 
 .nav-divider {
@@ -178,8 +173,8 @@ export default {
   font-size: var(--font-size-sm);
   padding: var(--spacing-xs) var(--spacing-sm);
   background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  max-width: 200px;
+  border-radius: var(--radius-sm);
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -198,9 +193,9 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  height: 200px;
-  background: var(--gradient-primary);
-  opacity: 0.03;
+  height: 100px;
+  background-color: var(--primary-bg);
+  opacity: 0.6;
   pointer-events: none;
 }
 

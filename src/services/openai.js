@@ -1,5 +1,6 @@
 // OpenAI API service for interacting with GPT models
 // This service handles API calls to OpenAI GPT models
+import { generateAnalysisPrompt } from '../config/personalityAnalysis';
 
 // Configuration options
 const defaultOptions = {
@@ -10,7 +11,7 @@ const defaultOptions = {
   stream: false
 };
 
-// Default prompt templates
+// Default prompt templates (legacy, will eventually be replaced by config)
 const defaultPrompts = {
   // Personality description from all quiz answers
   personalityDescription: {
@@ -60,34 +61,27 @@ export const openaiService = {
   },
   
   // Update prompt templates
-  updatePromptTemplates(category, newTemplates) {
-    if (!this.promptTemplates[category]) {
-      this.promptTemplates[category] = {};
+  updatePromptTemplates(template, newTemplates) {
+    if (this.promptTemplates[template]) {
+      this.promptTemplates[template] = { ...this.promptTemplates[template], ...newTemplates };
     }
-    
-    this.promptTemplates[category] = { 
-      ...this.promptTemplates[category], 
-      ...newTemplates 
-    };
-    
-    return this.promptTemplates[category];
+    return this.promptTemplates[template];
   },
   
   // Get prompt templates
-  getPromptTemplates(category) {
-    return category ? 
-      { ...(this.promptTemplates[category] || {}) } : 
-      { ...this.promptTemplates };
+  getPromptTemplates(template = null) {
+    if (template) {
+      return { ...this.promptTemplates[template] };
+    }
+    return { ...this.promptTemplates };
   },
   
   // Reset prompt templates to defaults
-  resetPromptTemplates(category = null) {
-    if (category) {
-      this.promptTemplates[category] = { ...defaultPrompts[category] };
-    } else {
-      this.promptTemplates = { ...defaultPrompts };
+  resetPromptTemplates(template) {
+    if (defaultPrompts[template]) {
+      this.promptTemplates[template] = { ...defaultPrompts[template] };
     }
-    return this.promptTemplates;
+    return this.promptTemplates[template];
   },
   
   // Send a prompt to OpenAI and get a completion
@@ -155,19 +149,15 @@ export const openaiService = {
         formattedResults += `Answer: ${item.answer}\n\n`;
       });
       
-      // Get the prompt templates
-      const templates = this.promptTemplates.personalityDescription;
-      
-      // Build the prompt using the template parts or use custom prompt
+      // Build the prompt
       let promptText;
+      
       if (customPrompt) {
+        // Use custom prompt if provided
         promptText = customPrompt;
       } else {
-        const prompt1 = templates.prompt1;
-        const prompt2 = templates.prompt2.replace('{{formattedResults}}', formattedResults);
-        const prompt3 = templates.prompt3;
-        
-        promptText = prompt1 + prompt2 + prompt3;
+        // Use the new config-based prompt generator
+        promptText = generateAnalysisPrompt(formattedResults);
       }
       
       console.log('Analyzing personality based on', quizResults.length, 'quiz answers');

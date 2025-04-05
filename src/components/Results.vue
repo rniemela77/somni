@@ -1,6 +1,67 @@
 <template>
     <div>
-        <h2>Your Quiz Results</h2>
+        <h2 class="section-title">Your Quiz Results</h2>
+        
+        <!-- Personality Analysis Section -->
+        <div v-if="hasSavedAnalysis" class="personality-analysis-section">
+            <div class="feeling-result">
+                <h3>Your Personal Analysis</h3>
+                <div class="analysis-source">
+                    <span class="saved-analysis-badge">Loaded from your saved profile</span>
+                </div>
+                
+                <div class="feeling-content">
+                    <!-- Show message when dimensions exist but no analysis sections -->
+                    <div v-if="needsFullAnalysis" 
+                         class="feeling-section missing-analysis">
+                        <h4>Complete Your Analysis</h4>
+                        <p>We found your personality dimensions, but you haven't generated a full analysis yet. 
+                           Click the "GENERATE FULL ANALYSIS" button below to get detailed insights about your personality.</p>
+                    </div>
+                
+                    <!-- Dynamically generate analysis sections based on config -->
+                    <template v-for="section in getSortedAnalysisSections()" :key="section.id">
+                        <div v-if="parsedFeeling[section.id]" 
+                             class="feeling-section" 
+                             :class="section.id">
+                            <h4>{{ section.title }}</h4>
+                            <p v-if="section.id !== 'keywords'">{{ parsedFeeling[section.id] }}</p>
+                            <div v-else class="keyword-list">
+                                <span v-for="(keyword, index) in parsedFeeling[section.id].split(',').map(k => k.trim())" 
+                                      :key="index"
+                                      :style="{ backgroundColor: getKeywordColor(index) }">
+                                    {{ keyword }}
+                                </span>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <!-- Dimensions Section -->
+                    <div class="feeling-section mbti-dimensions">
+                        <h4>Personality Dimensions:</h4>
+                        <div class="dimensions-container">
+                            <!-- Generate dimension sliders dynamically -->
+                            <div v-for="dimension in Object.values(personalityDimensions)" 
+                                 :key="dimension.id"
+                                 class="dimension-item">
+                                <h5>{{ dimension.name }}</h5>
+                                <div class="dimension-scale">
+                                    <span class="scale-label left">{{ dimension.leftLabel }}</span>
+                                    <div class="scale-bar-container">
+                                        <div class="scale-bar">
+                                        <div class="scale-marker"
+                                            :style="{ left: getMarkerPosition(displayDimensions[dimension.id] || 0) + '%' }">
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <span class="scale-label right">{{ dimension.rightLabel }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- Generate Description Button -->
         <div class="generate-description-section">
@@ -8,92 +69,50 @@
                 <button @click="generateDescription" 
                         class="generate-btn"
                         :disabled="generatingDescription">
-                    {{ generatingDescription ? 'GENERATING...' : 'GENERATE DESCRIPTION' }}
+                    {{ generatingDescription ? 'GENERATING...' : (hasSavedAnalysis ? (needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS') : 'GENERATE DESCRIPTION') }}
                 </button>
             </div>
             
-            <div v-if="coreFeeling" class="feeling-result">
+            <div v-if="coreFeeling && !hasSavedAnalysis" class="feeling-result">
                 <h3>Your Core Feeling Analysis</h3>
                 
                 <div class="feeling-content">
-                    <div v-if="parsedFeeling.core" class="feeling-section core-personality">
-                        <h4>Core Personality:</h4>
-                        <p>{{ parsedFeeling.core }}</p>
-                    </div>
-                    <div v-if="parsedFeeling.archetype" class="feeling-section archetype">
-                        <h4>Archetype:</h4>
-                        <p>{{ parsedFeeling.archetype }}</p>
-                    </div>
-                    <div v-if="parsedFeeling.keywords" class="feeling-section keywords">
-                        <h4>Keywords:</h4>
-                        <p class="keyword-list">{{ parsedFeeling.keywords }}</p>
-                    </div>
+                    <!-- Dynamically generate analysis sections for new analysis -->
+                    <template v-for="section in getSortedAnalysisSections()" :key="section.id">
+                        <div v-if="parsedFeeling[section.id]" 
+                             class="feeling-section" 
+                             :class="section.id">
+                            <h4>{{ section.title }}</h4>
+                            <p v-if="section.id !== 'keywords'">{{ parsedFeeling[section.id] }}</p>
+                            <div v-else class="keyword-list">
+                                <span v-for="(keyword, index) in parsedFeeling[section.id].split(',').map(k => k.trim())" 
+                                      :key="index"
+                                      :style="{ backgroundColor: getKeywordColor(index) }">
+                                    {{ keyword }}
+                                </span>
+                            </div>
+                        </div>
+                    </template>
                     
-                    <!-- Dimensions Section as part of the analysis -->
+                    <!-- Dimensions Section -->
                     <div class="feeling-section mbti-dimensions">
                         <h4>Personality Dimensions:</h4>
                         <div class="dimensions-container">
-                            <!-- INTROVERT_EXTROVERT -->
-                            <div class="dimension-item">
-                                <h5>Introversion-Extroversion</h5>
+                            <!-- Generate dimension sliders dynamically -->
+                            <div v-for="dimension in Object.values(personalityDimensions)" 
+                                 :key="dimension.id"
+                                 class="dimension-item">
+                                <h5>{{ dimension.name }}</h5>
                                 <div class="dimension-scale">
-                                    <span class="scale-label left">Introvert</span>
+                                    <span class="scale-label left">{{ dimension.leftLabel }}</span>
                                     <div class="scale-bar-container">
                                         <div class="scale-bar">
                                         <div class="scale-marker"
-                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions.INTROVERT_EXTROVERT || 0) + '%' }">
+                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions[dimension.id] || 0) + '%' }">
                                         </div>
                                         </div>
                                     </div>
-                                    <span class="scale-label right">Extrovert</span>
-                                </div>
-                            </div>
-                            
-                            <!-- SENSING_INTUITION -->
-                            <div class="dimension-item">
-                                <h5>Sensing-Intuition</h5>
-                                <div class="dimension-scale">
-                                    <span class="scale-label left">Sensing</span>
-                                    <div class="scale-bar-container">
-                                        <div class="scale-bar">
-                                        <div class="scale-marker"
-                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions.SENSING_INTUITION || 0) + '%' }">
-                                        </div>
-                                        </div>
-                                    </div>
-                                    <span class="scale-label right">Intuition</span>
-                                </div>
-                            </div>
-                            
-                            <!-- THINKING_FEELING -->
-                            <div class="dimension-item">
-                                <h5>Thinking-Feeling</h5>
-                                <div class="dimension-scale">
-                                    <span class="scale-label left">Thinking</span>
-                                    <div class="scale-bar-container">
-                                        <div class="scale-bar">
-                                        <div class="scale-marker"
-                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions.THINKING_FEELING || 0) + '%' }">
-                                        </div>
-                                        </div>
-                                    </div>
-                                    <span class="scale-label right">Feeling</span>
-                                </div>
-                            </div>
-                            
-                            <!-- JUDGING_PERCEIVING -->
-                            <div class="dimension-item">
-                                <h5>Judging-Perceiving</h5>
-                                <div class="dimension-scale">
-                                    <span class="scale-label left">Judging</span>
-                                    <div class="scale-bar-container">
-                                        <div class="scale-bar">
-                                        <div class="scale-marker"
-                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions.JUDGING_PERCEIVING || 0) + '%' }">
-                                        </div>
-                                        </div>
-                                    </div>
-                                    <span class="scale-label right">Perceiving</span>
+                                    <span class="scale-label right">{{ dimension.rightLabel }}</span>
                                 </div>
                             </div>
                         </div>
@@ -206,7 +225,16 @@
 <script>
 import { quizService, resultsService, authService } from '../services/firebase';
 import { openaiService } from '../services/openai';
-import { updateDimensionValue, PERSONALITY_DIMENSIONS, getUserPersonality } from '../../firebase';
+import { 
+  updateDimensionValue, 
+  getUserPersonality, 
+  updateUserPersonalityAnalysis, 
+  getUserPersonalityAnalysis 
+} from '../../firebase';
+import { 
+  PERSONALITY_DIMENSIONS, 
+  PERSONALITY_ANALYSIS_SECTIONS 
+} from '../config/personalityAnalysis';
 
 export default {
     components: {},
@@ -229,17 +257,9 @@ export default {
             // Prompt templates
             promptTemplates: { ...openaiService.getPromptTemplates('personalityDescription') },
             
-            // Parsed feeling
+            // Parsed feeling (using configuration)
             parsedFeeling: {
-                core: null,
-                archetype: null,
-                keywords: null,
-                dimensions: {
-                    INTROVERT_EXTROVERT: 0,
-                    SENSING_INTUITION: 0,
-                    THINKING_FEELING: 0,
-                    JUDGING_PERCEIVING: 0
-                }
+                dimensions: {},
             },
             
             // User dimensions
@@ -249,7 +269,17 @@ export default {
             userTags: [],
             
             // Dimensions updated flag
-            dimensionsUpdated: false
+            dimensionsUpdated: false,
+            
+            // Flag to show if we have saved analysis data
+            hasSavedAnalysis: false,
+            
+            // Flag to determine if a full analysis is needed
+            needsFullAnalysis: false,
+            
+            // Configuration
+            personalityDimensions: PERSONALITY_DIMENSIONS,
+            personalityAnalysisSections: PERSONALITY_ANALYSIS_SECTIONS
         };
     },
     computed: {
@@ -413,6 +443,8 @@ export default {
             this.coreFeeling = null;
             this.feelingError = null;
             this.dimensionsUpdated = false; // Reset dimensions updated flag
+            this.hasSavedAnalysis = false;  // Reset the saved analysis flag
+            this.needsFullAnalysis = false; // Reset the needs full analysis flag
             
             try {
                 // Get current templates to display for debugging
@@ -438,93 +470,84 @@ export default {
             }
         },
         parsePersonalityAnalysis(text) {
+            // Initialize parsed result with dimensions from config
             const result = {
-                core: null,
-                archetype: null,
-                keywords: null,
-                dimensions: {
-                    INTROVERT_EXTROVERT: 0,
-                    SENSING_INTUITION: 0,
-                    THINKING_FEELING: 0,
-                    JUDGING_PERCEIVING: 0
-                }
+                dimensions: {}
             };
+            
+            // Initialize all dimensions with default values
+            Object.keys(this.personalityDimensions).forEach(key => {
+                result.dimensions[key] = 0;
+            });
+            
+            // Initialize all analysis sections with null
+            Object.keys(this.personalityAnalysisSections).forEach(key => {
+                result[key] = null;
+            });
             
             // Check if there's any text to parse
             if (!text || typeof text !== 'string') {
+                console.warn('No text to parse in parsePersonalityAnalysis');
                 return result;
             }
             
-            console.log('Parsing personality analysis:', text.substring(0, 200) + '...');
+            console.log('Parsing personality analysis text, length:', text.length);
+            console.log('Text sample:', text.substring(0, 200) + '...');
             
-            // Extract MBTI dimensions first
+            // Extract MBTI dimensions using config
             const dimensionsSection = text.match(/DIMENSIONS:([\s\S]*?)(?=Core Personality:|$)/i);
             if (dimensionsSection) {
-                console.log('Found dimensions section:', dimensionsSection[1]);
+                console.log('Found dimensions section');
                 const dimensionsText = dimensionsSection[1];
                 
-                // Extract each dimension value
-                const ieMatch = dimensionsText.match(/INTROVERT_EXTROVERT:\s*([-+]?\d+(\.\d+)?)/i);
-                const snMatch = dimensionsText.match(/SENSING_INTUITION:\s*([-+]?\d+(\.\d+)?)/i);
-                const tfMatch = dimensionsText.match(/THINKING_FEELING:\s*([-+]?\d+(\.\d+)?)/i);
-                const jpMatch = dimensionsText.match(/JUDGING_PERCEIVING:\s*([-+]?\d+(\.\d+)?)/i);
-                
-                if (ieMatch) {
-                    result.dimensions.INTROVERT_EXTROVERT = parseFloat(ieMatch[1]);
-                    console.log('Parsed INTROVERT_EXTROVERT:', result.dimensions.INTROVERT_EXTROVERT);
-                }
-                if (snMatch) {
-                    result.dimensions.SENSING_INTUITION = parseFloat(snMatch[1]);
-                    console.log('Parsed SENSING_INTUITION:', result.dimensions.SENSING_INTUITION);
-                }
-                if (tfMatch) {
-                    result.dimensions.THINKING_FEELING = parseFloat(tfMatch[1]);
-                    console.log('Parsed THINKING_FEELING:', result.dimensions.THINKING_FEELING);
-                }
-                if (jpMatch) {
-                    result.dimensions.JUDGING_PERCEIVING = parseFloat(jpMatch[1]);
-                    console.log('Parsed JUDGING_PERCEIVING:', result.dimensions.JUDGING_PERCEIVING);
-                }
+                // Extract each dimension value using config
+                Object.keys(this.personalityDimensions).forEach(dimensionKey => {
+                    const dimension = this.personalityDimensions[dimensionKey];
+                    const regex = new RegExp(`${dimensionKey}:\\s*([-+]?\\d+(\\.\\d+)?)`, 'i');
+                    const match = dimensionsText.match(regex);
+                    
+                    if (match) {
+                        result.dimensions[dimensionKey] = parseFloat(match[1]);
+                        console.log(`Parsed ${dimensionKey}:`, result.dimensions[dimensionKey]);
+                    }
+                });
             } else {
-                console.log('No dimensions section found in the text');
+                console.warn('No dimensions section found in the text');
             }
             
-            // Try to extract sections using regex patterns
-            const coreMatch = text.match(/Core Personality:(.+?)(?=Archetype:|Keywords:|$)/s);
-            const archetypeMatch = text.match(/Archetype:(.+?)(?=Core Personality:|Keywords:|$)/s);
-            const keywordsMatch = text.match(/Keywords:(.+?)(?=Core Personality:|Archetype:|$)/s);
-            
-            if (coreMatch) {
-                result.core = coreMatch[1].trim();
-            }
-            
-            if (archetypeMatch) {
-                result.archetype = archetypeMatch[1].trim();
-            }
-            
-            if (keywordsMatch) {
-                result.keywords = keywordsMatch[1].trim();
-            }
+            // Extract each analysis section using config
+            Object.keys(this.personalityAnalysisSections).forEach(sectionKey => {
+                const section = this.personalityAnalysisSections[sectionKey];
+                const regex = new RegExp(`${section.title}:(.+?)(?=${Object.values(this.personalityAnalysisSections).map(s => s.title).join('|')}:|$)`, 'is');
+                const match = text.match(regex);
+                
+                if (match) {
+                    result[sectionKey] = match[1].trim();
+                    console.log(`Parsed ${section.title}:`, result[sectionKey]?.substring(0, 50) + '...');
+                } else {
+                    console.warn(`No ${section.title} section found`);
+                }
+            });
             
             // If regex didn't find structured format, fall back to simple line-based parsing
-            if (!result.core && !result.archetype && !result.keywords) {
+            const allSectionsEmpty = Object.keys(this.personalityAnalysisSections).every(key => !result[key]);
+            
+            if (allSectionsEmpty) {
+                console.log('Using fallback line-based parsing');
                 const lines = text.split('\n').filter(line => line.trim());
                 
-                // Assume the first paragraph is core personality
+                // Get section keys in order of display
+                const sectionKeys = Object.keys(this.personalityAnalysisSections);
+                
                 let currentSection = 0;
                 let currentText = '';
                 
                 for (const line of lines) {
                     if (line.trim() === '') {
                         // Empty line marks section boundary
-                        if (currentText) {
-                            if (currentSection === 0) {
-                                result.core = currentText;
-                            } else if (currentSection === 1) {
-                                result.archetype = currentText;
-                            } else if (currentSection === 2) {
-                                result.keywords = currentText;
-                            }
+                        if (currentText && currentSection < sectionKeys.length) {
+                            result[sectionKeys[currentSection]] = currentText;
+                            console.log(`Set ${sectionKeys[currentSection]} from line parsing`);
                             currentSection++;
                             currentText = '';
                         }
@@ -534,48 +557,165 @@ export default {
                 }
                 
                 // Handle the last section
-                if (currentText) {
-                    if (currentSection === 0) {
-                        result.core = currentText;
-                    } else if (currentSection === 1) {
-                        result.archetype = currentText;
-                    } else if (currentSection === 2) {
-                        result.keywords = currentText;
-                    }
+                if (currentText && currentSection < sectionKeys.length) {
+                    result[sectionKeys[currentSection]] = currentText;
+                    console.log(`Set ${sectionKeys[currentSection]} from last section`);
                 }
             }
             
-            console.log('Final parsed dimensions:', result.dimensions);
+            console.log('Final parsed data:', {
+                dimensions: result.dimensions,
+                sections: Object.keys(this.personalityAnalysisSections).map(key => 
+                    `${key}: ${result[key] ? 'Present' : 'Missing'}`)
+            });
             
             // Update user profile with new dimension values
-            this.updateUserProfile(result.dimensions);
+            this.updateUserProfile(result);
             
             return result;
         },
         
-        // Update user's personality dimensions in profile
-        async updateUserProfile(dimensions) {
+        // Update user's personality profile with all the parsed data
+        async updateUserProfile(parsedResult) {
             try {
                 const user = authService.getCurrentUser();
-                if (!user) return;
+                if (!user) {
+                    console.error('Cannot update profile: no user logged in');
+                    return;
+                }
+                
+                console.log('Updating user profile with parsed results');
                 
                 // Update each dimension that has a valid value
-                for (const [dimension, value] of Object.entries(dimensions)) {
+                for (const [dimension, value] of Object.entries(parsedResult.dimensions)) {
                     if (value !== null && !isNaN(value)) {
                         // Clamp values to valid range (-2 to 2)
-                        const clampedValue = Math.max(-2, Math.min(2, value));
+                        const dimensionConfig = this.personalityDimensions[dimension];
+                        const [min, max] = dimensionConfig.range;
+                        const clampedValue = Math.max(min, Math.min(max, value));
+                        
                         await updateDimensionValue(user.uid, dimension, clampedValue);
                         
                         // Update local dimensions
                         this.userDimensions[dimension] = clampedValue;
+                        this.parsedFeeling.dimensions[dimension] = clampedValue;
                     }
                 }
                 
-                // Set dimensionsUpdated flag
+                // Prepare the analysis data for saving from all analysis sections
+                const analysisDataToSave = {};
+                
+                Object.keys(this.personalityAnalysisSections).forEach(sectionKey => {
+                    analysisDataToSave[sectionKey] = parsedResult[sectionKey] || null;
+                    
+                    // Also update local parsed feeling data
+                    this.parsedFeeling[sectionKey] = parsedResult[sectionKey];
+                });
+                
+                console.log('Saving personality analysis data:', analysisDataToSave);
+                
+                await updateUserPersonalityAnalysis(user.uid, analysisDataToSave);
+                console.log('Successfully updated user personality analysis in Firebase');
+                
+                // Set flags
                 this.dimensionsUpdated = true;
+                this.hasSavedAnalysis = true;
+                this.needsFullAnalysis = false;
+                
+                // Reload the saved data to confirm it was saved correctly
+                await this.loadSavedPersonalityAnalysis();
             } catch (error) {
-                console.error('Error updating user profile dimensions:', error);
+                console.error('Error updating user profile:', error);
             }
+        },
+        
+        // Load the saved personality analysis data
+        async loadSavedPersonalityAnalysis() {
+            try {
+                const user = authService.getCurrentUser();
+                if (!user) {
+                    console.log('No user logged in, cannot load personality analysis');
+                    return;
+                }
+                
+                // Load both personality dimensions and analysis data
+                const userPersonality = await getUserPersonality(user.uid);
+                const analysisData = await getUserPersonalityAnalysis(user.uid);
+                
+                console.log('Loaded user personality:', userPersonality);
+                console.log('Loaded personality analysis:', analysisData);
+                
+                // Initialize parsedFeeling with default structure from config
+                this.parsedFeeling = {
+                    dimensions: {}
+                };
+                
+                // Add all dimensions with default values
+                Object.keys(this.personalityDimensions).forEach(key => {
+                    this.parsedFeeling.dimensions[key] = 0;
+                });
+                
+                // Add all analysis sections with null
+                Object.keys(this.personalityAnalysisSections).forEach(key => {
+                    this.parsedFeeling[key] = null;
+                });
+                
+                // Load dimensions
+                if (userPersonality && userPersonality.dimensions) {
+                    // Update the dimensions in our parsed feeling
+                    Object.entries(userPersonality.dimensions).forEach(([key, value]) => {
+                        this.parsedFeeling.dimensions[key] = value;
+                    });
+                }
+                
+                // Track whether we have valid data
+                let hasAnalysisData = false;
+                
+                // Load analysis sections
+                if (analysisData && analysisData.personalityAnalysis) {
+                    Object.keys(this.personalityAnalysisSections).forEach(sectionKey => {
+                        if (analysisData.personalityAnalysis[sectionKey]) {
+                            this.parsedFeeling[sectionKey] = analysisData.personalityAnalysis[sectionKey];
+                            hasAnalysisData = true;
+                        }
+                    });
+                }
+                
+                // Check if we have any dimensions with non-zero values
+                const hasDimensionData = Object.values(this.parsedFeeling.dimensions).some(value => value !== 0);
+                
+                if (hasAnalysisData || hasDimensionData) {
+                    this.coreFeeling = "Loaded from previous analysis";
+                    this.hasSavedAnalysis = true;
+                    console.log('Setting hasSavedAnalysis to true');
+                    
+                    // Set needsFullAnalysis flag if we have dimensions but no analysis text
+                    this.needsFullAnalysis = hasDimensionData && !hasAnalysisData;
+                    console.log('Needs full analysis:', this.needsFullAnalysis);
+                } else {
+                    console.log('No saved analysis data found');
+                }
+            } catch (error) {
+                console.error('Error loading saved personality analysis:', error);
+            }
+        },
+        // Add method to access analysis sections in order
+        getSortedAnalysisSections() {
+            return Object.values(this.personalityAnalysisSections)
+                .sort((a, b) => a.display.order - b.display.order);
+        },
+        getKeywordColor(index) {
+            // Array of soft background colors for the keywords
+            const colors = [
+                'rgba(58, 81, 153, 0.08)',   // primary color
+                'rgba(92, 116, 87, 0.08)',   // secondary color
+                'rgba(140, 156, 214, 0.15)', // primary light
+                'rgba(169, 190, 166, 0.15)', // secondary light
+                'rgba(78, 136, 199, 0.08)',  // info color
+            ];
+            
+            // Cycle through the colors for each keyword
+            return colors[index % colors.length];
         }
     },
     async mounted() {
@@ -584,43 +724,78 @@ export default {
         await this.loadQuizzes();
         await this.loadResults();
         await this.loadUserPersonality();
+        await this.loadSavedPersonalityAnalysis(); // Load the saved personality analysis
     }
 };
 </script>
 
 <style scoped>
 .tags-section {
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
 }
 
 .filter-section {
-    margin: 20px 0;
+    margin: 24px 0;
+    display: flex;
+    align-items: center;
 }
 
 .quiz-filter {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    margin-left: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--bg-muted);
+    margin-left: 12px;
     min-width: 200px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+    font-size: 0.9rem;
+}
+
+.quiz-filter:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary-bg);
+}
+
+.quiz-filter:hover:not(:focus) {
+    border-color: var(--text-muted);
 }
 
 .results-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
 }
 
 .result-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: none;
+    border-radius: var(--radius-sm);
     padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-primary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+
+.result-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 0;
+    background-color: var(--primary-light);
+    transition: height var(--transition-normal);
 }
 
 .result-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.result-card:hover::before {
+    height: 100%;
 }
 
 .result-header {
@@ -629,11 +804,11 @@ export default {
     align-items: center;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--bg-muted);
 }
 
 .timestamp {
-    color: #666;
+    color: var(--text-muted);
     font-size: 0.9em;
 }
 
@@ -644,377 +819,776 @@ ul {
 
 li {
     margin-bottom: 15px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
+    padding: 14px;
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    position: relative;
+    border-left: none;
+}
+
+li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 2px;
+    background-color: var(--primary-light);
+    opacity: 0.6;
+}
+
+li:hover {
+    background-color: rgba(140, 156, 214, 0.05);
 }
 
 strong {
-    color: #333;
+    color: var(--text-primary);
     display: block;
     margin-bottom: 5px;
 }
 
 .answer {
-    color: #007bff;
+    color: var(--primary);
 }
 
-/* Dimensions Slider Styles */
-.mbti-dimensions {
-    border-left: 3px solid #9575cd !important;
-}
-
+/* Dimensions Styling */
 .dimensions-container {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    margin: 15px 0 0 0;
-    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .dimensions-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.dimension-item {
+    margin-bottom: 0;
     background-color: transparent;
+    padding: 0;
     border-radius: 0;
-    border-left: none;
+    transition: all var(--transition-fast);
+}
+
+.dimension-item:hover {
+    background-color: transparent;
     box-shadow: none;
 }
 
 .dimension-item h5 {
     margin-bottom: 10px;
-    color: #5e35b1;
-    font-weight: 600;
-    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0;
     text-align: center;
 }
 
-.dimension-scale {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    min-height: 40px;
-}
-
-.scale-label {
-    min-width: 80px;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.scale-label.left {
-    text-align: right;
-    color: #3949ab;
-}
-
-.scale-label.right {
-    text-align: left;
-    color: #e91e63;
-}
-
-.scale-bar-container {
-    flex-grow: 1;
-    padding: 12px 0;
-}
-
 .scale-bar {
-    height: 6px;
-    background: linear-gradient(to right, #3949ab, #e91e63);
-    border-radius: 8px;
+    height: 2px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    border-radius: 0;
     position: relative;
+    opacity: 0.7;
 }
 
 .scale-bar:before {
     content: "";
     position: absolute;
     left: 50%;
-    height: 15px;
-    width: 2px;
-    background-color: rgba(0, 0, 0, 0.2);
+    height: 5px;
+    width: 1px;
+    background-color: var(--text-muted);
     transform: translateX(-50%);
-    top: -5px;
+    top: -2px;
+    opacity: 0.2;
 }
 
 .scale-marker {
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 22px;
-    height: 22px;
+    width: 8px;
+    height: 8px;
     background: white;
-    border: 3px solid #6d4aff;
+    border: 1px solid var(--primary);
     border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(58, 81, 153, 0.03);
+    transition: all var(--transition-fast);
+}
+
+.scale-bar-container:hover .scale-marker {
+    box-shadow: 0 0 0 3px rgba(58, 81, 153, 0.06);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.dimension-scale {
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: all 0.4s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    gap: 8px;
+    min-height: 32px;
 }
 
-/* OpenAI Analysis Styles */
-.analysis-section {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px dashed #ddd;
+.scale-bar-container {
+    flex-grow: 1;
+    padding: 6px 0;
+    position: relative;
 }
 
-.analyze-btn {
-    background-color: #5e35b1;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
+.scale-label {
+    min-width: 75px;
+    font-weight: 400;
+    font-size: 0.8rem;
+    letter-spacing: 0;
+    line-height: 1.4;
+    opacity: 0.8;
+}
+
+.scale-label.left {
+    text-align: right;
+    color: var(--primary);
+    padding-right: 4px;
+}
+
+.scale-label.right {
+    text-align: left;
+    color: var(--secondary);
+    padding-left: 4px;
+}
+
+.feeling-result {
+    margin-top: 0;
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+    border-left: none;
+    box-shadow: none;
+    position: relative;
+}
+
+.feeling-result::before {
+    display: none;
+}
+
+.feeling-result h3 {
+    margin-top: 0;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--spacing-md);
     font-weight: 500;
-    transition: background-color 0.2s;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    padding-bottom: 12px;
 }
 
-.analyze-btn:hover {
-    background-color: #4527a0;
+.feeling-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: var(--spacing-md);
 }
 
-.analyze-btn:disabled {
-    background-color: #9e9e9e;
-    cursor: not-allowed;
+@media (min-width: 768px) {
+    .feeling-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .feeling-section.mbti-dimensions {
+        grid-column: span 2;
+    }
 }
 
-.analysis-result {
+.feeling-section {
+    margin-bottom: 0;
+    padding: 16px 20px;
+    border-radius: 0;
+    background-color: var(--bg-primary);
+    position: relative;
+    border-left: 2px solid transparent;
+    transition: all var(--transition-fast);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.feeling-section:hover {
+    box-shadow: none;
+    background-color: var(--bg-secondary);
+    transform: none;
+}
+
+.feeling-section.core {
+    border-left-color: var(--primary);
+}
+
+.feeling-section.archetype {
+    border-left-color: var(--primary-light);
+}
+
+.feeling-section.keywords {
+    border-left-color: var(--secondary-light);
+}
+
+.feeling-section::before {
+    display: none;
+}
+
+.feeling-section h4 {
+    color: var(--text-primary);
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+}
+
+.feeling-section h4::before {
+    display: none;
+}
+
+.feeling-section p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    flex-grow: 1;
+    font-size: 0.9rem;
+}
+
+.keyword-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.keyword-list span {
+    display: inline-block;
+    background-color: rgba(58, 81, 153, 0.04);
+    padding: 2px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    border: 1px solid rgba(58, 81, 153, 0.08);
+    letter-spacing: 0.01em;
+    transition: all var(--transition-fast);
+}
+
+.keyword-list span:hover {
+    background-color: rgba(58, 81, 153, 0.06);
+    color: var(--primary);
+}
+
+.feeling-error {
     margin-top: 15px;
-    padding: 15px;
-    background-color: #f0f4f8;
-    border-radius: 4px;
-    border-left: 4px solid #5e35b1;
+    padding: 12px 16px;
+    background-color: rgba(209, 71, 71, 0.05);
+    color: var(--error);
+    border-radius: var(--radius-sm);
+    border-left: none;
+    position: relative;
+    overflow: hidden;
 }
 
-.analysis-content {
-    white-space: pre-line;
+.feeling-error::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background-color: var(--error);
+}
+
+.missing-analysis {
+    margin-bottom: 20px;
+    padding: 16px;
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    border-left: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.missing-analysis::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background-color: var(--primary);
+}
+
+.missing-analysis h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.missing-analysis p {
+    margin: 0;
     line-height: 1.5;
 }
 
-.analysis-error {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #ffebee;
-    color: #c62828;
-    border-radius: 4px;
-    border-left: 4px solid #c62828;
-}
-
-/* Config Dialog Styles */
+/* Config Dialog */
 .config-dialog-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    backdrop-filter: blur(3px);
 }
 
 .config-dialog {
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    padding: 24px;
     width: 400px;
     max-width: 90%;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.config-form {
-    margin: 20px 0;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.dialog-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.btn-primary {
-    background-color: #5e35b1;
-    color: white;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
 }
 
-.btn-secondary {
-    background-color: #f5f5f5;
-    color: #333;
-    border: 1px solid #ddd;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.generate-description-section {
-    margin: 20px 0;
-    padding: 20px;
-    background-color: #f9f6ff;
-    border-radius: 8px;
-    border: 1px solid #e1d7f5;
-}
-
-.description-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.generate-btn {
-    background-color: #4527a0;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    letter-spacing: 0.5px;
-    transition: background-color 0.2s, transform 0.1s;
-}
-
-.generate-btn:hover {
-    background-color: #3a1f8c;
-    transform: translateY(-1px);
-}
-
-.generate-btn:disabled {
-    background-color: #9e9e9e;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.settings-btn {
-    display: none;
-}
-
-.feeling-result {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    border-left: 4px solid #4527a0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.feeling-result h3 {
-    margin-top: 0;
-    color: #4527a0;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-}
-
-.feeling-content {
-    line-height: 1.6;
-    font-size: 1.05rem;
-    color: #333;
-}
-
-.feeling-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    border-radius: 6px;
-    background-color: #f9f7fe;
-}
-
-.feeling-section:last-child {
-    margin-bottom: 0;
-}
-
-.core-personality {
-    border-left: 3px solid #5e35b1;
-}
-
-.archetype {
-    border-left: 3px solid #7e57c2;
-}
-
-.keywords {
-    border-left: 3px solid #9575cd;
-}
-
-.feeling-section h4 {
-    color: #4527a0;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-weight: 600;
-}
-
-.feeling-section p {
-    margin: 0;
-    line-height: 1.5;
-}
-
-.keyword-list {
-    font-style: italic;
-}
-
-.feeling-error {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #ffebee;
-    color: #c62828;
-    border-radius: 4px;
-    border-left: 4px solid #c62828;
-}
-
-/* Prompt Templates Styles */
 .prompt-templates {
     margin-top: 25px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--bg-muted);
     padding-top: 15px;
-}
-
-.prompt-template-group {
-    margin-bottom: 15px;
 }
 
 .prompt-template-group textarea {
     width: 100%;
-    font-family: monospace;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    font-family: 'SF Mono', 'Courier New', monospace;
+    padding: 12px;
+    border: 1px solid var(--bg-muted);
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
+    background-color: var(--bg-secondary);
 }
 
 .template-note {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-muted);
     margin: 5px 0;
     font-style: italic;
 }
 
 .btn-reset {
-    background-color: #f5a623;
-    color: white;
-    border: none;
+    background-color: transparent;
+    color: var(--warning);
+    border: 1px solid var(--warning);
     padding: 8px 16px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
+    transition: all var(--transition-fast);
 }
 
-.dimensions-updated {
-    display: none; /* Hide this element entirely */
+.btn-reset:hover {
+    background-color: var(--warning);
+    color: white;
+}
+
+.generate-description-section {
+    margin: 32px auto;
+    padding: 30px;
+    background-color: rgba(247, 249, 252, 0.7);
+    border-radius: var(--radius-sm);
+    border: none;
+    position: relative;
+    max-width: 950px;
+}
+
+.generate-description-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 1px;
+    background-color: var(--primary);
+}
+
+.analysis-source {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.saved-analysis-badge {
+    background-color: transparent;
+    color: var(--success);
+    padding: 0;
+    font-size: 0.8rem;
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    box-shadow: none;
+}
+
+.saved-analysis-badge::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--success);
+    display: inline-block;
+}
+
+.core::before {
+    background-color: var(--primary);
+}
+
+.archetype::before {
+    background-color: var(--primary-light);
+}
+
+.keywords::before {
+    background-color: var(--secondary-light);
+}
+
+/* Main page title */
+h2.section-title {
+    font-size: 1.4rem;
+    margin-bottom: var(--spacing-xl);
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    font-weight: 500;
+    position: relative;
+    display: inline-block;
+    max-width: 950px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+h2.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 30px;
+    height: 1px;
+    background-color: var(--primary-light);
+}
+
+/* Quiz Results Container */
+.quiz-results-container {
+    margin-top: var(--spacing-xl);
+}
+
+/* Analysis Source Section */
+.analysis-source {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Dimensions Section Title */
+.mbti-dimensions {
+    border-left: none !important;
+    background-color: rgba(255, 255, 255, 0.5);
+    position: relative;
+    padding: 28px 24px;
+    border-radius: 0;
+    margin-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mbti-dimensions::before {
+    display: none;
+}
+
+.mbti-dimensions h4 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+}
+
+.mbti-dimensions h4::before {
+    display: none;
+}
+
+/* Analysis Styles */
+.analysis-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--bg-muted);
+}
+
+.generate-btn {
+    background-color: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 8px 24px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+}
+
+.generate-btn:hover {
+    background-color: var(--primary);
+    color: white;
+    transform: none;
+    letter-spacing: 0.02em;
+}
+
+.generate-btn:disabled {
+    background-color: transparent;
+    color: var(--text-muted);
+    border-color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.analysis-result {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--primary);
+}
+
+.personality-analysis-section {
+    margin: var(--spacing-xl) 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: var(--radius-sm);
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    position: relative;
+    max-width: 950px;
+    margin-left: auto;
+    margin-right: auto;
+    transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+}
+
+.personality-analysis-section:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.03);
+}
+
+.feeling-result h3 {
+    margin-top: 0;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--spacing-lg);
+    font-weight: 500;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    padding-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.analysis-source {
+    margin-left: auto;
+    margin-bottom: 0;
+}
+
+.feeling-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+    .feeling-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px 40px;
+    }
+    
+    .feeling-section.mbti-dimensions {
+        grid-column: span 2;
+        margin-top: 10px;
+    }
+}
+
+.feeling-section {
+    margin-bottom: 0;
+    padding: 22px 26px;
+    border-radius: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    position: relative;
+    border-left: 2px solid transparent;
+    transition: all var(--transition-fast);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.feeling-section:hover {
+    box-shadow: none;
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: none;
+}
+
+.feeling-section h4 {
+    color: var(--text-primary);
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+}
+
+.feeling-section p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    flex-grow: 1;
+    font-size: 0.92rem;
+}
+
+/* Dimensions Section Title */
+.mbti-dimensions {
+    border-left: none !important;
+    background-color: rgba(255, 255, 255, 0.5);
+    position: relative;
+    padding: 28px 24px;
+    border-radius: 0;
+    margin-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dimensions-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .dimensions-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px 60px;
+    }
+}
+
+.dimension-item {
+    margin-bottom: 0;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    transition: all var(--transition-fast);
+}
+
+.dimension-item h5 {
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.92rem;
+    letter-spacing: 0;
+    text-align: center;
+}
+
+.keyword-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.keyword-list span {
+    display: inline-block;
+    background-color: rgba(58, 81, 153, 0.04);
+    padding: 3px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    border: 1px solid rgba(58, 81, 153, 0.08);
+    letter-spacing: 0.01em;
+    transition: all var(--transition-fast);
+}
+
+/* Create a subtle background pattern for the main content */
+.main-content {
+    position: relative;
+}
+
+.main-content::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(140, 156, 214, 0.03) 0%, transparent 80%),
+        radial-gradient(circle at 80% 60%, rgba(169, 190, 166, 0.03) 0%, transparent 80%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Minimize scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* Add some nice typography refinements */
+h2.section-title {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.feeling-section h4 {
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+}
+
+.feeling-result h3 {
+    letter-spacing: -0.02em;
+}
+
+/* Add subtle animation to the main container */
+.personality-analysis-section {
+    transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+}
+
+.personality-analysis-section:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.03);
+}
+
+.description-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
 }
 </style>

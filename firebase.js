@@ -3,6 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
+// Import the personality analysis configuration
+import { 
+  PERSONALITY_DIMENSIONS, 
+  PERSONALITY_ANALYSIS_SECTIONS,
+  getInitialDimensions,
+  calculatePersonalityTags
+} from "./src/config/personalityAnalysis";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,83 +27,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Define personality dimensions and their characteristics
-export const PERSONALITY_DIMENSIONS = {
-  THINKING_FEELING: {
-    name: "Thinking-Feeling",
-    range: [-2, 2],
-    value: 0,
-    leftLabel: "Thinking",
-    rightLabel: "Feeling",
-    thresholds: {
-      "-2": "Strong Thinker",
-      "-1": "Moderate Thinker",
-      "1": "Moderate Feeler",
-      "2": "Strong Feeler"
-    }
-  },
-  JUDGING_PERCEIVING: {
-    name: "Judging-Perceiving",
-    range: [-2, 2],
-    value: 0,
-    leftLabel: "Judging",
-    rightLabel: "Perceiving",
-    thresholds: {
-      "-2": "Strong Judger",
-      "-1": "Moderate Judger",
-      "1": "Moderate Perceiver",
-      "2": "Strong Perceiver"
-    }
-  },
-  INTROVERT_EXTROVERT: {
-    name: "Introversion-Extroversion",
-    range: [-2, 2],
-    value: 0,
-    leftLabel: "Introvert",
-    rightLabel: "Extrovert",
-    thresholds: {
-      "-2": "Strong Introvert",
-      "-1": "Moderate Introvert",
-      "1": "Moderate Extrovert",
-      "2": "Strong Extrovert"
-    }
-  },
-  SENSING_INTUITION: {
-    name: "Sensing-Intuition",
-    range: [-2, 2],
-    value: 0,
-    leftLabel: "Sensing",
-    rightLabel: "Intuition",
-    thresholds: {
-      "-2": "Strong Sensing",
-      "-1": "Moderate Sensing",
-      "1": "Moderate Intuitive",
-      "2": "Strong Intuitive"
-    }
-  }
-};
-
-// Helper function to get initial dimensions state
-const getInitialDimensions = () => {
-  const dimensions = {};
-  Object.keys(PERSONALITY_DIMENSIONS).forEach(key => {
-    dimensions[key] = PERSONALITY_DIMENSIONS[key].value;
-  });
-  return dimensions;
-};
-
 // Calculate tags based on dimension values
 const calculateTags = (dimensions) => {
-  const tags = [];
-  Object.entries(dimensions).forEach(([dimension, value]) => {
-    const dimensionConfig = PERSONALITY_DIMENSIONS[dimension];
-    const roundedValue = Math.round(value); // Round to nearest integer
-    const threshold = dimensionConfig.thresholds[roundedValue];
-    if (threshold) {
-      tags.push(threshold);
-    }
-  });
-  return tags;
+  return calculatePersonalityTags(dimensions);
 };
 
 // User document initialization
@@ -106,10 +39,17 @@ export const initializeUserDocument = async (userId, userData = {}) => {
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
+      // Create an initial personalityAnalysis object with all sections
+      const personalityAnalysis = {};
+      Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
+        personalityAnalysis[sectionKey] = null;
+      });
+      
       await setDoc(userRef, {
         ...userData,
         dimensions: getInitialDimensions(),
         tags: [],
+        personalityAnalysis,
         createdAt: new Date(),
         updatedAt: new Date()
       });
@@ -125,6 +65,19 @@ export const initializeUserDocument = async (userId, userData = {}) => {
       if (Object.keys(currentDimensions).length !== Object.keys(PERSONALITY_DIMENSIONS).length) {
         await updateDoc(userRef, {
           dimensions: updatedDimensions,
+          updatedAt: new Date()
+        });
+      }
+      
+      // Ensure personalityAnalysis field exists with all sections
+      if (!userDoc.data().personalityAnalysis) {
+        const personalityAnalysis = {};
+        Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
+          personalityAnalysis[sectionKey] = null;
+        });
+        
+        await updateDoc(userRef, {
+          personalityAnalysis,
           updatedAt: new Date()
         });
       }
@@ -220,6 +173,80 @@ export const incrementDimensionValue = async (userId, dimension, increment) => {
   } catch (error) {
     console.error('Error incrementing dimension value:', error);
     return false;
+  }
+};
+
+// Update user's personality analysis data
+export const updateUserPersonalityAnalysis = async (userId, analysisData) => {
+  try {
+    // Ensure user document exists
+    await initializeUserDocument(userId);
+    
+    const userRef = doc(db, 'users', userId);
+    
+    // Prepare the data to update using the configuration
+    const analysisToSave = {};
+    
+    // Process each section from our configuration
+    Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
+      analysisToSave[sectionKey] = analysisData[sectionKey] || null;
+    });
+    
+    // Add timestamp
+    analysisToSave.updatedAt = new Date();
+    
+    // Update the user document with personality analysis data
+    await updateDoc(userRef, {
+      personalityAnalysis: analysisToSave
+    });
+    
+    console.log('Updated personality analysis in Firebase:', analysisToSave);
+    return true;
+  } catch (error) {
+    console.error('Error updating personality analysis:', error);
+    return false;
+  }
+};
+
+// Get user's personality analysis data
+export const getUserPersonalityAnalysis = async (userId) => {
+  try {
+    // Ensure user document exists
+    await initializeUserDocument(userId);
+    
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      
+      // If personalityAnalysis doesn't exist, initialize it
+      if (!data.personalityAnalysis) {
+        const personalityAnalysis = {};
+        Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
+          personalityAnalysis[sectionKey] = null;
+        });
+        return { personalityAnalysis };
+      }
+      
+      return {
+        personalityAnalysis: data.personalityAnalysis
+      };
+    }
+    
+    // Return empty structure if no data exists
+    const personalityAnalysis = {};
+    Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
+      personalityAnalysis[sectionKey] = null;
+    });
+    return { personalityAnalysis };
+  } catch (error) {
+    console.error('Error getting user personality analysis:', error);
+    // Return empty structure on error
+    const personalityAnalysis = {};
+    Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
+      personalityAnalysis[sectionKey] = null;
+    });
+    return { personalityAnalysis };
   }
 };
 
