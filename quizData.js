@@ -128,6 +128,118 @@ const quizzes = [
       },
     ],
   },
+  {
+    id: "personal-preferences",
+    title: "Personal Preferences",
+    questions: [
+      {
+        id: 1,
+        text: "When choosing a seat in a coffee shop, you prefer:",
+        options: ["By the window", "In a quiet corner", "Near other people", "Close to an outlet"],
+      },
+      {
+        id: 2,
+        text: "You're planning your day off. You're most drawn to:",
+        options: ["Something active outdoors", "Relaxing at home", "Meeting with friends", "Working on a personal project"],
+      },
+      {
+        id: 3,
+        text: "When you browse through photos, you're most drawn to images of:",
+        options: ["Natural landscapes", "Urban environments", "People and faces", "Abstract patterns"],
+      },
+      {
+        id: 4,
+        text: "Your ideal workspace is:",
+        options: ["Clean and minimalist", "Comfortable with personal touches", "Bustling with activity", "Variable depending on the task"],
+      },
+      {
+        id: 5,
+        text: "When selecting a movie to watch, you often choose based on:",
+        options: ["The storyline", "Who's in the cast", "Recommendations from others", "Visual style or genre"],
+      },
+      {
+        id: 6,
+        text: "If you could improve one thing about your living space, it would be:",
+        options: ["More natural light", "Better organization", "More comfortable furniture", "Different color scheme"],
+      },
+      {
+        id: 7,
+        text: "When giving a gift, you tend to choose something:",
+        options: ["Practical they'll use daily", "Unique and unexpected", "Related to their interests", "With emotional significance"],
+      },
+      {
+        id: 8,
+        text: "You have a free afternoon. You're most likely to:",
+        options: ["Read a book or watch a show", "Go for a walk or exercise", "Connect with friends", "Work on a hobby"],
+      },
+      {
+        id: 9,
+        text: "When choosing what to wear, you prioritize:",
+        options: ["Comfort above all", "How it looks on you", "Appropriateness for the occasion", "Your personal style"],
+      },
+      {
+        id: 10,
+        text: "During a group meal, you prefer to sit:",
+        options: ["Where you can see everyone", "Next to someone you know well", "Where conversation flows easily", "At the end of the table"],
+      },
+    ],
+  },
+  {
+    id: "hidden-patterns",
+    title: "Subtle Instincts",
+    questions: [
+      {
+        id: 1,
+        text: "You glance at a clock. Which do you notice first?",
+        options: ["The exact time", "Whether you're early or late", "The clock's appearance", "The sound it makes"],
+      },
+      {
+        id: 2,
+        text: "When you doodle absent-mindedly, you tend to draw:",
+        options: ["Geometric shapes", "Natural elements", "Letters or words", "Abstract patterns"],
+      },
+      {
+        id: 3,
+        text: "Walking past a mirror unexpectedly, your first reaction is to:",
+        options: ["Check your appearance", "Barely notice", "Make brief eye contact with yourself", "Look at your surroundings in the reflection"],
+      },
+      {
+        id: 4,
+        text: "When you're alone and hear your favorite song, you instinctively:",
+        options: ["Sing or hum along", "Move or dance slightly", "Turn up the volume", "Listen more attentively"],
+      },
+      {
+        id: 5,
+        text: "In a dream where you can fly, you would most likely:",
+        options: ["Soar as high as possible", "Explore familiar places", "Fly toward something specific", "Enjoy the sensation of freedom"],
+      },
+      {
+        id: 6,
+        text: "When given a wrapped gift, you first:",
+        options: ["Open it carefully preserving the paper", "Tear into it immediately", "Shake or weigh it first", "Thank the giver before opening"],
+      },
+      {
+        id: 7,
+        text: "You see a ladder against a wall. Your immediate thought is:",
+        options: ["Where it leads", "Whether it's safe", "If you should use it", "Who left it there"],
+      },
+      {
+        id: 8,
+        text: "If you found yourself in complete silence, you would feel:",
+        options: ["Peaceful", "Uncomfortable", "Alert and aware", "Like breaking the silence"],
+      },
+      {
+        id: 9,
+        text: "You're handed a menu in a new restaurant. Your eyes first go to:",
+        options: ["The prices", "Dishes you recognize", "The descriptions", "Pictures or highlights"],
+      },
+      {
+        id: 10,
+        text: "When you wake up naturally (no alarm), your first instinct is to:",
+        options: ["Check the time", "Lie still with your thoughts", "Stretch or move immediately", "Reach for your phone or device"],
+      },
+    ],
+  },
 ];
 
 export default quizzes;
