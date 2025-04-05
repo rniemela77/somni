@@ -17,7 +17,20 @@
             
             <div v-if="coreFeeling" class="feeling-result">
                 <h3>Your Core Feeling Analysis</h3>
-                <p class="feeling-content">{{ coreFeeling }}</p>
+                <div class="feeling-content">
+                    <div v-if="parsedFeeling.core" class="feeling-section core-personality">
+                        <h4>Core Personality:</h4>
+                        <p>{{ parsedFeeling.core }}</p>
+                    </div>
+                    <div v-if="parsedFeeling.archetype" class="feeling-section archetype">
+                        <h4>Archetype:</h4>
+                        <p>{{ parsedFeeling.archetype }}</p>
+                    </div>
+                    <div v-if="parsedFeeling.keywords" class="feeling-section keywords">
+                        <h4>Keywords:</h4>
+                        <p class="keyword-list">{{ parsedFeeling.keywords }}</p>
+                    </div>
+                </div>
             </div>
             
             <div v-if="feelingError" class="feeling-error">
@@ -148,7 +161,14 @@ export default {
             showConfigDialog: false,
             
             // Prompt templates
-            promptTemplates: { ...openaiService.getPromptTemplates('personalityDescription') }
+            promptTemplates: { ...openaiService.getPromptTemplates('personalityDescription') },
+            
+            // Parsed feeling
+            parsedFeeling: {
+                core: null,
+                archetype: null,
+                keywords: null
+            }
         };
     },
     computed: {
@@ -295,12 +315,85 @@ export default {
                 } else {
                     this.coreFeeling = completion;
                     console.log('Token usage:', usage);
+                    
+                    // Parse the completion into three sections
+                    this.parsedFeeling = this.parsePersonalityAnalysis(completion);
                 }
             } catch (error) {
                 this.feelingError = `Error: ${error.message}`;
             } finally {
                 this.generatingDescription = false;
             }
+        },
+        parsePersonalityAnalysis(text) {
+            const result = {
+                core: null,
+                archetype: null,
+                keywords: null
+            };
+            
+            // Check if there's any text to parse
+            if (!text || typeof text !== 'string') {
+                return result;
+            }
+            
+            // Try to extract sections using regex patterns
+            const coreMatch = text.match(/Core Personality:(.+?)(?=Archetype:|Keywords:|$)/s);
+            const archetypeMatch = text.match(/Archetype:(.+?)(?=Core Personality:|Keywords:|$)/s);
+            const keywordsMatch = text.match(/Keywords:(.+?)(?=Core Personality:|Archetype:|$)/s);
+            
+            if (coreMatch) {
+                result.core = coreMatch[1].trim();
+            }
+            
+            if (archetypeMatch) {
+                result.archetype = archetypeMatch[1].trim();
+            }
+            
+            if (keywordsMatch) {
+                result.keywords = keywordsMatch[1].trim();
+            }
+            
+            // If regex didn't find structured format, fall back to simple line-based parsing
+            if (!result.core && !result.archetype && !result.keywords) {
+                const lines = text.split('\n').filter(line => line.trim());
+                
+                // Assume the first paragraph is core personality
+                let currentSection = 0;
+                let currentText = '';
+                
+                for (const line of lines) {
+                    if (line.trim() === '') {
+                        // Empty line marks section boundary
+                        if (currentText) {
+                            if (currentSection === 0) {
+                                result.core = currentText;
+                            } else if (currentSection === 1) {
+                                result.archetype = currentText;
+                            } else if (currentSection === 2) {
+                                result.keywords = currentText;
+                            }
+                            currentSection++;
+                            currentText = '';
+                        }
+                    } else {
+                        currentText += (currentText ? ' ' : '') + line.trim();
+                    }
+                }
+                
+                // Handle the last section
+                if (currentText) {
+                    if (currentSection === 0) {
+                        result.core = currentText;
+                    } else if (currentSection === 1) {
+                        result.archetype = currentText;
+                    } else if (currentSection === 2) {
+                        result.keywords = currentText;
+                    }
+                }
+            }
+            
+            return result;
         }
     },
     async mounted() {
@@ -544,9 +637,9 @@ strong {
 
 .feeling-result {
     margin-top: 20px;
-    padding: 15px;
+    padding: 20px;
     background-color: #fff;
-    border-radius: 6px;
+    border-radius: 8px;
     border-left: 4px solid #4527a0;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -554,12 +647,54 @@ strong {
 .feeling-result h3 {
     margin-top: 0;
     color: #4527a0;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .feeling-content {
     line-height: 1.6;
     font-size: 1.05rem;
     color: #333;
+}
+
+.feeling-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    background-color: #f9f7fe;
+}
+
+.feeling-section:last-child {
+    margin-bottom: 0;
+}
+
+.core-personality {
+    border-left: 3px solid #5e35b1;
+}
+
+.archetype {
+    border-left: 3px solid #7e57c2;
+}
+
+.keywords {
+    border-left: 3px solid #9575cd;
+}
+
+.feeling-section h4 {
+    color: #4527a0;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.feeling-section p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.keyword-list {
+    font-style: italic;
 }
 
 .feeling-error {

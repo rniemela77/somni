@@ -16,7 +16,11 @@ const defaultPrompts = {
   personalityDescription: {
     prompt1: 'Here are quiz results for someone taking a personality test. Please analyze the personality based on these responses:\n\n',
     prompt2: '{{formattedResults}}',
-    prompt3: '\n\nWrite exactly 3 sentences that describe the core feeling or personality of the person who answered these questions. Focus on emotional patterns, personality traits, and psychological insights that emerge from these answers.'
+    prompt3: "\n\nWrite exactly two sentences that describe the core personality of the individual based on their quiz responses, focusing on uncovering hidden emotional patterns and key psychological traits. Then, write one sentence identifying the archetype they best fit. Finally, provide a series of keywords that represent aspects of their personality, including elements they may not have previously recognized." +
+    "\n\n Example:" +
+    "\n\n Core Personality: The individual is a natural leader who is charismatic and persuasive. They are highly motivated and driven, but can also be quite stubborn and inflexible." +
+    "\n\n Archetype: The Leader" +  
+    "\n\n Keywords: charismatic, persuasive, motivated, driven, stubborn, inflexible"
   }
 };
 
