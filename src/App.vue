@@ -4,13 +4,13 @@
       <div class="container nav-container">
         <router-link to="/" class="nav-brand">
           <h1>
-            <span class="gradient-text">Quiz</span>
-            <span class="gradient-text-alt">App</span>
+            <span class="gradient-text">Somni</span>
+            <div class="subtitle">Personality Analyzer</div>
           </h1>
         </router-link>
         <div class="nav-links">
           <router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
-          <router-link to="/quiz" class="nav-link" active-class="active">Quizzes</router-link>
+          <router-link to="/quiz" class="nav-link" active-class="active">Analyzers</router-link>
           <router-link to="/results" class="nav-link" active-class="active">Results</router-link>
           <div class="nav-divider"></div>
           <template v-if="!authStore.isAuthenticated">
@@ -37,7 +37,7 @@
     <footer class="footer">
       <div class="container">
         <div class="footer-content">
-          <p class="copyright">&copy; {{ new Date().getFullYear() }} Quiz App. Created by Robert Niemela - rvniemela@hotmail.com</p>
+          <p class="copyright">&copy; {{ new Date().getFullYear() }} Somni Personality Analyzer. Created by Robert Niemela - rvniemela@hotmail.com</p>
         </div>
       </div>
     </footer>
@@ -101,6 +101,13 @@ export default {
   color: var(--primary);
   font-size: var(--font-size-xl);
   font-weight: 600;
+}
+
+.subtitle {
+  color: var(--secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-top: -5px;
 }
 
 .gradient-text-alt {

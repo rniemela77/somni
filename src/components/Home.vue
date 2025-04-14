@@ -1,8 +1,9 @@
 <template>
   <div class="home fade-in">
     <div class="hero">
-      <h1>Welcome to <span class="gradient-text">Quiz</span><span class="gradient-text-alt">App</span></h1>
-      <p class="hero-text">Test your knowledge with our interactive quizzes</p>
+      <h1><span class="gradient-text">Somni</span></h1>
+      <div class="hero-subtitle">Personality Analyzer</div>
+      <p class="hero-text">Discover your true personality traits through our interactive analyzers</p>
       
       <div class="cta-buttons">
         <template v-if="!authStore.isAuthenticated">
@@ -10,7 +11,7 @@
           <router-link to="/signup" class="btn btn-outline">Create Account</router-link>
         </template>
         <template v-else>
-          <router-link to="/quiz" class="btn btn-primary">Take a Quiz</router-link>
+          <router-link to="/quiz" class="btn btn-primary">Start an Analysis</router-link>
           <router-link to="/results" class="btn btn-outline">View Results</router-link>
         </template>
       </div>
@@ -42,6 +43,13 @@ export default {
 
 .hero h1 {
   font-size: calc(var(--font-size-xxl) * 1.5);
+  margin-bottom: var(--spacing-md);
+}
+
+.hero-subtitle {
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  color: var(--secondary);
   margin-bottom: var(--spacing-md);
 }
 
