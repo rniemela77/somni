@@ -2,6 +2,17 @@
     <div>
         <h2 class="section-title">Your Quiz Results</h2>
         
+        <!-- Generate Description Button -->
+        <div class="generate-description-section">
+            <div class="description-header">
+                <button @click="generateDescription" 
+                        class="generate-btn"
+                        :disabled="generatingDescription">
+                    {{ generatingDescription ? 'GENERATING...' : (hasSavedAnalysis ? (needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS') : 'GENERATE DESCRIPTION') }}
+                </button>
+            </div>
+        </div>
+        
         <!-- Personality Analysis Section -->
         <div v-if="hasSavedAnalysis" class="personality-analysis-section">
             <div class="feeling-result">
@@ -63,66 +74,56 @@
             </div>
         </div>
         
-        <!-- Generate Description Button -->
-        <div class="generate-description-section">
-            <div class="description-header">
-                <button @click="generateDescription" 
-                        class="generate-btn"
-                        :disabled="generatingDescription">
-                    {{ generatingDescription ? 'GENERATING...' : (hasSavedAnalysis ? (needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS') : 'GENERATE DESCRIPTION') }}
-                </button>
-            </div>
+        <!-- Show the analysis result if we don't have saved analysis but have generated one -->
+        <div v-if="coreFeeling && !hasSavedAnalysis" class="feeling-result">
+            <h3>Your Core Feeling Analysis</h3>
             
-            <div v-if="coreFeeling && !hasSavedAnalysis" class="feeling-result">
-                <h3>Your Core Feeling Analysis</h3>
-                
-                <div class="feeling-content">
-                    <!-- Dynamically generate analysis sections for new analysis -->
-                    <template v-for="section in getSortedAnalysisSections()" :key="section.id">
-                        <div v-if="parsedFeeling[section.id]" 
-                             class="feeling-section" 
-                             :class="section.id">
-                            <h4>{{ section.title }}</h4>
-                            <p v-if="section.id !== 'keywords'">{{ parsedFeeling[section.id] }}</p>
-                            <div v-else class="keyword-list">
-                                <span v-for="(keyword, index) in parsedFeeling[section.id].split(',').map(k => k.trim())" 
-                                      :key="index"
-                                      :style="{ backgroundColor: getKeywordColor(index) }">
-                                    {{ keyword }}
-                                </span>
-                            </div>
+            <div class="feeling-content">
+                <!-- Dynamically generate analysis sections for new analysis -->
+                <template v-for="section in getSortedAnalysisSections()" :key="section.id">
+                    <div v-if="parsedFeeling[section.id]" 
+                         class="feeling-section" 
+                         :class="section.id">
+                        <h4>{{ section.title }}</h4>
+                        <p v-if="section.id !== 'keywords'">{{ parsedFeeling[section.id] }}</p>
+                        <div v-else class="keyword-list">
+                            <span v-for="(keyword, index) in parsedFeeling[section.id].split(',').map(k => k.trim())" 
+                                  :key="index"
+                                  :style="{ backgroundColor: getKeywordColor(index) }">
+                                {{ keyword }}
+                            </span>
                         </div>
-                    </template>
-                    
-                    <!-- Dimensions Section -->
-                    <div class="feeling-section mbti-dimensions">
-                        <h4>Personality Dimensions:</h4>
-                        <div class="dimensions-container">
-                            <!-- Generate dimension sliders dynamically -->
-                            <div v-for="dimension in Object.values(personalityDimensions)" 
-                                 :key="dimension.id"
-                                 class="dimension-item">
-                                <h5>{{ dimension.name }}</h5>
-                                <div class="dimension-scale">
-                                    <span class="scale-label left">{{ dimension.leftLabel }}</span>
-                                    <div class="scale-bar-container">
-                                        <div class="scale-bar">
-                                        <div class="scale-marker"
-                                            :style="{ left: getMarkerPosition(parsedFeeling.dimensions[dimension.id] || 0) + '%' }">
-                                        </div>
-                                        </div>
+                    </div>
+                </template>
+                
+                <!-- Dimensions Section -->
+                <div class="feeling-section mbti-dimensions">
+                    <h4>Personality Dimensions:</h4>
+                    <div class="dimensions-container">
+                        <!-- Generate dimension sliders dynamically -->
+                        <div v-for="dimension in Object.values(personalityDimensions)" 
+                             :key="dimension.id"
+                             class="dimension-item">
+                            <h5>{{ dimension.name }}</h5>
+                            <div class="dimension-scale">
+                                <span class="scale-label left">{{ dimension.leftLabel }}</span>
+                                <div class="scale-bar-container">
+                                    <div class="scale-bar">
+                                    <div class="scale-marker"
+                                        :style="{ left: getMarkerPosition(parsedFeeling.dimensions[dimension.id] || 0) + '%' }">
                                     </div>
-                                    <span class="scale-label right">{{ dimension.rightLabel }}</span>
+                                    </div>
                                 </div>
+                                <span class="scale-label right">{{ dimension.rightLabel }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div v-if="feelingError" class="feeling-error">
-                {{ feelingError }}
-            </div>
+        </div>
+        
+        <div v-if="feelingError" class="feeling-error">
+            {{ feelingError }}
         </div>
         
         <!-- Quiz Filter -->
@@ -137,7 +138,7 @@
                 </option>
             </select>
         </div>
-
+        
         <p v-if="loading">Loading...</p>
         <p v-else-if="!filteredResults.length">No results found.</p>
         
@@ -1115,22 +1116,21 @@ strong {
 
 .generate-description-section {
     margin: 32px auto;
-    padding: 30px;
-    background-color: rgba(247, 249, 252, 0.7);
-    border-radius: var(--radius-sm);
+    padding: 20px 0;
+    background-color: transparent;
+    border-radius: 0;
     border: none;
     position: relative;
     max-width: 950px;
+    text-align: center;
 }
 
 .generate-description-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 1px;
-    background-color: var(--primary);
+    display: none;
+}
+
+.description-header {
+    margin-bottom: 10px;
 }
 
 .analysis-source {
@@ -1433,8 +1433,6 @@ h2.section-title::after {
     font-weight: 400;
     color: var(--text-secondary);
     border: 1px solid rgba(58, 81, 153, 0.08);
-    letter-spacing: 0.01em;
-    transition: all var(--transition-fast);
 }
 
 /* Create a subtle background pattern for the main content */
@@ -1478,11 +1476,5 @@ h2.section-title {
 
 .personality-analysis-section:hover {
     box-shadow: var(--shadow-md);
-}
-
-.description-header {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 16px;
 }
 </style>
