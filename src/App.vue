@@ -37,12 +37,7 @@
     <footer class="footer">
       <div class="container">
         <div class="footer-content">
-          <p class="copyright">&copy; 2024 Quiz App. All rights reserved.</p>
-          <div class="footer-links">
-            <a href="#" class="footer-link">Privacy Policy</a>
-            <a href="#" class="footer-link">Terms of Service</a>
-            <a href="#" class="footer-link">Contact</a>
-          </div>
+          <p class="copyright">&copy; {{ new Date().getFullYear() }} Quiz App. Created by Robert Niemela - rvniemela@hotmail.com</p>
         </div>
       </div>
     </footer>
@@ -185,30 +180,14 @@ export default {
 
 .footer-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
+  text-align: center;
 }
 
 .copyright {
   color: var(--text-muted);
   margin: 0;
-}
-
-.footer-links {
-  display: flex;
-  gap: var(--spacing-lg);
-}
-
-.footer-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color var(--transition);
-}
-
-.footer-link:hover {
-  color: var(--primary);
 }
 
 /* Transitions */
@@ -246,10 +225,6 @@ export default {
   .footer-content {
     flex-direction: column;
     text-align: center;
-  }
-
-  .footer-links {
-    justify-content: center;
   }
 
   .user-info {
