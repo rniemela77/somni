@@ -1115,8 +1115,6 @@ strong {
 }
 
 .generate-description-section {
-    margin: 32px auto;
-    padding: 20px 0;
     background-color: transparent;
     border-radius: 0;
     border: none;
@@ -1249,11 +1247,11 @@ h2.section-title::after {
     background-color: transparent;
     color: var(--primary);
     border: 1px solid var(--primary);
-    padding: 8px 24px;
+    padding: 1rem 2rem;
     border-radius: var(--radius-sm);
     cursor: pointer;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     transition: all var(--transition-fast);
     letter-spacing: 0.02em;
     margin-bottom: 8px;
