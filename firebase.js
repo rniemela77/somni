@@ -35,25 +35,34 @@ const calculateTags = (dimensions) => {
 // User document initialization
 export const initializeUserDocument = async (userId, userData = {}) => {
   try {
+    console.log(`Initializing user document for ${userId}`);
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
+      console.log('User document does not exist, creating new one');
       // Create an initial personalityAnalysis object with all sections
       const personalityAnalysis = {};
       Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
         personalityAnalysis[sectionKey] = null;
       });
       
-      await setDoc(userRef, {
+      // Create new user document
+      const newUserData = {
         ...userData,
         dimensions: getInitialDimensions(),
         tags: [],
         personalityAnalysis,
+        isPaid: false, // Explicitly initialize isPaid to false
         createdAt: new Date(),
         updatedAt: new Date()
-      });
+      };
+      
+      console.log('Creating user document with data:', newUserData);
+      await setDoc(userRef, newUserData);
+      console.log('User document created successfully');
     } else {
+      console.log('User document already exists');
       // Ensure all dimensions exist in existing documents
       const currentDimensions = userDoc.data().dimensions || {};
       const updatedDimensions = {
@@ -61,12 +70,19 @@ export const initializeUserDocument = async (userId, userData = {}) => {
         ...currentDimensions
       };
       
+      // Log current paid status if it exists
+      if (userDoc.data().hasOwnProperty('isPaid')) {
+        console.log('Current isPaid status:', userDoc.data().isPaid);
+      } else {
+        console.log('isPaid property not found in user document');
+      }
+      
+      // Initialize missing fields if needed
+      const updateData = {};
+      
       // Update document only if dimensions are missing
       if (Object.keys(currentDimensions).length !== Object.keys(PERSONALITY_DIMENSIONS).length) {
-        await updateDoc(userRef, {
-          dimensions: updatedDimensions,
-          updatedAt: new Date()
-        });
+        updateData.dimensions = updatedDimensions;
       }
       
       // Ensure personalityAnalysis field exists with all sections
@@ -76,10 +92,23 @@ export const initializeUserDocument = async (userId, userData = {}) => {
           personalityAnalysis[sectionKey] = null;
         });
         
-        await updateDoc(userRef, {
-          personalityAnalysis,
-          updatedAt: new Date()
-        });
+        updateData.personalityAnalysis = personalityAnalysis;
+      }
+      
+      // Set isPaid to false if it doesn't exist
+      if (!userDoc.data().hasOwnProperty('isPaid')) {
+        console.log('Adding missing isPaid property (false) to user document');
+        updateData.isPaid = false;
+      }
+      
+      // Update only if we have changes
+      if (Object.keys(updateData).length > 0) {
+        updateData.updatedAt = new Date();
+        console.log('Updating user document with:', updateData);
+        await updateDoc(userRef, updateData);
+        console.log('User document updated successfully');
+      } else {
+        console.log('No updates needed for user document');
       }
     }
     return true;
@@ -251,3 +280,83 @@ export const getUserPersonalityAnalysis = async (userId) => {
 };
 
 export { auth, db, firebaseConfig };
+
+// Simple Subscription Functions
+
+// Mark user as paid in Firestore (simplified approach)
+export const markUserAsPaid = async (userId) => {
+  try {
+    console.log(`Starting to mark user ${userId} as paid`);
+    
+    // Ensure user document exists
+    await initializeUserDocument(userId);
+    console.log('User document initialized');
+    
+    const userRef = doc(db, 'users', userId);
+    
+    // Get current document to verify
+    const beforeDoc = await getDoc(userRef);
+    console.log('User document before update:', 
+      beforeDoc.exists() ? 'exists' : 'does not exist',
+      beforeDoc.exists() ? beforeDoc.data() : '');
+    
+    // Set the paid flag to true with timestamp
+    const paidAt = new Date();
+    
+    // Simply set isPaid flag to true
+    await updateDoc(userRef, {
+      isPaid: true,
+      paidAt: paidAt
+    });
+    
+    // Verify the update
+    const afterDoc = await getDoc(userRef);
+    console.log('User document after update:', 
+      afterDoc.exists() ? afterDoc.data() : 'document does not exist');
+    
+    console.log(`User ${userId} marked as paid in Firestore at ${paidAt}`);
+    return true;
+  } catch (error) {
+    console.error('Error marking user as paid:', error);
+    return false;
+  }
+};
+
+// Check if user is paid
+export const checkUserPaidStatus = async (userId) => {
+  try {
+    console.log(`Checking paid status for user: ${userId}`);
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    
+    console.log('User document exists:', userDoc.exists());
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      console.log('User data:', userData);
+      console.log('isPaid value:', userData.isPaid);
+      
+      if (userData.isPaid === true) {
+        console.log('User is paid, returning true');
+        return {
+          isPaid: true,
+          paidAt: userData.paidAt || null
+        };
+      } else {
+        console.log('User document exists but isPaid is not true');
+      }
+    } else {
+      console.log('User document does not exist');
+    }
+    
+    console.log('Returning not paid status');
+    return {
+      isPaid: false
+    };
+  } catch (error) {
+    console.error('Error checking paid status:', error);
+    return {
+      isPaid: false,
+      error: error.message
+    };
+  }
+};

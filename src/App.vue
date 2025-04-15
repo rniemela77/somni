@@ -17,6 +17,7 @@
             <router-link to="/signin" class="nav-link btn btn-primary">Sign In</router-link>
           </template>
           <template v-else>
+            <router-link to="/profile" class="nav-link" active-class="active">Profile</router-link>
             <span class="user-info">{{ authStore.user.email }}</span>
             <button @click="handleSignOut" class="nav-link btn btn-outline">Sign Out</button>
           </template>

@@ -7,6 +7,7 @@ import Payment from "./components/Payment.vue";
 import Success from "./components/Success.vue";
 import Cancel from "./components/Cancel.vue";
 import Home from "./components/Home.vue";
+import Profile from "./components/Profile.vue";
 import { auth } from "../firebase";
 
 const routes = [
@@ -40,6 +41,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   { 
+    path: "/profile", 
+    component: Profile,
+    name: 'profile',
+    meta: { requiresAuth: true }
+  },
+  { 
     path: "/payment", 
     component: Payment,
     name: 'payment',
@@ -69,8 +76,35 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const requiresGuest = to.matched.some(record => record.meta.requiresGuest);
   const isAuthenticated = auth.currentUser;
+  
+  console.log('Router guard: Auth state =', isAuthenticated ? 'authenticated' : 'not authenticated');
+  
+  // Check if this is a return from payment
+  const isPaymentReturn = to.query.payment_success === 'true';
+  const hasSessionId = !!to.query.session_id;
+  
+  // Handle post-payment navigation specially
+  if (isPaymentReturn && hasSessionId && to.path === '/profile') {
+    console.log('Detected return from successful payment, allowing access to profile');
+    
+    // Store session ID in localStorage for verification if needed
+    localStorage.setItem('stripe_session_id', to.query.session_id);
+    
+    // IMPORTANT: When returning from payment, we'll bypass auth check completely
+    // This ensures the user can access the profile page even if Firebase hasn't
+    // restored their auth state yet
+    console.log('Bypassing auth check for post-payment return');
+    next();
+    return; // Important: exit the guard here
+  }
+
+  // Log authentication check
+  if (requiresAuth) {
+    console.log('Route requires auth, current auth state:', !!isAuthenticated);
+  }
 
   if (requiresAuth && !isAuthenticated) {
+    console.log('Redirecting to sign in page due to missing authentication');
     next('/signin');
   } else if (requiresGuest && isAuthenticated) {
     next('/');
