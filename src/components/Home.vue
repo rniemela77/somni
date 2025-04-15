@@ -3,24 +3,29 @@
     
     <!-- Personality Analysis Section for authenticated users -->
     <div v-if="authStore.isAuthenticated" class="personality-section">
-      <!-- Personality Analysis Section -->
-      <div v-if="hasSavedAnalysis" class="personality-analysis-section">
+      <!-- Loading state -->
+      <div v-if="dashboardLoading" class="dashboard-loading">
+        <div class="spinner"></div>
+        <p>Loading your Personality Dashboard...</p>
+      </div>
+      
+      <!-- Personality Dashboard Section -->
+      <div v-else-if="hasSavedAnalysis" class="personality-analysis-section">
         <div class="feeling-result">
           <div>
             <h3>
-              Your Personal Analysis
-
-
-            <!-- Generate Description Button -->
-            <div class="generate-description-section">
-              <div class="description-header">
-                <button @click="generateDescription" 
-                        class="generate-btn"
-                        :disabled="generatingDescription">
-                    {{ generatingDescription ? 'GENERATING...' : (hasSavedAnalysis ? (needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS') : 'GENERATE DESCRIPTION') }}
-                </button>
+              Your Personality Dashboard
+              
+              <!-- Generate Description Button -->
+              <div class="generate-description-section">
+                <div class="description-header">
+                  <button @click="generateDescription" 
+                          class="generate-btn"
+                          :disabled="generatingDescription">
+                      {{ generatingDescription ? 'GENERATING...' : (hasSavedAnalysis ? (needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS') : 'GENERATE DESCRIPTION') }}
+                  </button>
+                </div>
               </div>
-            </div>
             </h3>
           </div>
           
@@ -159,6 +164,7 @@ export default {
     return {
       results: [],
       loading: false,
+      dashboardLoading: false,
       
       // Core feeling description
       generatingDescription: false,
@@ -231,9 +237,13 @@ export default {
     async loadUserPersonality() {
       const user = authService.getCurrentUser();
       if (user) {
-        const userData = await getUserPersonality(user.uid);
-        this.userDimensions = userData.dimensions || {};
-        this.userTags = userData.tags || [];
+        try {
+          const userData = await getUserPersonality(user.uid);
+          this.userDimensions = userData.dimensions || {};
+          this.userTags = userData.tags || [];
+        } catch (error) {
+          console.error("Error loading user personality:", error);
+        }
       }
     },
     
@@ -591,9 +601,18 @@ export default {
     // Check if we have authentication already
     if (this.authStore.isAuthenticated) {
       console.log('Auth state is ready, loading data immediately');
-      await this.loadUserPersonality();
-      await this.loadResults();
-      await this.loadSavedPersonalityAnalysis();
+      this.dashboardLoading = true;
+      try {
+        await Promise.all([
+          this.loadUserPersonality(),
+          this.loadResults(),
+          this.loadSavedPersonalityAnalysis()
+        ]);
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+      } finally {
+        this.dashboardLoading = false;
+      }
     } else {
       console.log('Auth state not ready, waiting for Firebase auth state');
       
@@ -602,9 +621,14 @@ export default {
         console.log('Auth state changed:', user ? 'authenticated' : 'not authenticated');
         if (user) {
           console.log('User authenticated, loading personality data');
-          this.loadUserPersonality();
-          this.loadResults();
-          this.loadSavedPersonalityAnalysis();
+          this.dashboardLoading = true;
+          Promise.all([
+            this.loadUserPersonality(),
+            this.loadResults(),
+            this.loadSavedPersonalityAnalysis()
+          ]).finally(() => {
+            this.dashboardLoading = false;
+          });
         }
       });
     }
@@ -999,6 +1023,41 @@ export default {
 
   .dimensions-container {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Loading spinner styles */
+.dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-sm);
+  margin: 20px auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+}
+
+.dashboard-loading p {
+  margin-top: 20px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(58, 81, 153, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 </style> 
