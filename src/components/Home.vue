@@ -3,23 +3,25 @@
     
     <!-- Personality Analysis Section for authenticated users -->
     <div v-if="authStore.isAuthenticated" class="personality-section">
-      <!-- Generate Description Button -->
-      <div class="generate-description-section">
-        <div class="description-header">
-          <button @click="generateDescription" 
-                  class="generate-btn"
-                  :disabled="generatingDescription">
-              {{ generatingDescription ? 'GENERATING...' : (hasSavedAnalysis ? (needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS') : 'GENERATE DESCRIPTION') }}
-          </button>
-        </div>
-      </div>
-      
       <!-- Personality Analysis Section -->
       <div v-if="hasSavedAnalysis" class="personality-analysis-section">
         <div class="feeling-result">
-          <h3>Your Personal Analysis</h3>
-          <div class="analysis-source">
-            <span class="saved-analysis-badge">Loaded from your saved profile</span>
+          <div>
+            <h3>
+              Your Personal Analysis
+
+
+            <!-- Generate Description Button -->
+            <div class="generate-description-section">
+              <div class="description-header">
+                <button @click="generateDescription" 
+                        class="generate-btn"
+                        :disabled="generatingDescription">
+                    {{ generatingDescription ? 'GENERATING...' : (hasSavedAnalysis ? (needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS') : 'GENERATE DESCRIPTION') }}
+                </button>
+              </div>
+            </div>
+            </h3>
           </div>
           
           <div class="feeling-content">
@@ -144,6 +146,8 @@ import {
   PERSONALITY_DIMENSIONS, 
   PERSONALITY_ANALYSIS_SECTIONS 
 } from '../config/personalityAnalysis';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../firebase';
 
 export default {
   name: 'Home',
@@ -578,21 +582,37 @@ export default {
     }
   },
   async mounted() {
-    console.log('Loading personality data...');
+    console.log('Home component mounted');
+    
+    // Get the current authenticated user
+    const currentUser = auth.currentUser;
+    console.log('Current user on mount:', currentUser?.uid || 'No user');
+    
+    // Check if we have authentication already
     if (this.authStore.isAuthenticated) {
+      console.log('Auth state is ready, loading data immediately');
       await this.loadUserPersonality();
       await this.loadResults();
       await this.loadSavedPersonalityAnalysis();
+    } else {
+      console.log('Auth state not ready, waiting for Firebase auth state');
+      
+      // Set up auth state changed listener
+      onAuthStateChanged(auth, (user) => {
+        console.log('Auth state changed:', user ? 'authenticated' : 'not authenticated');
+        if (user) {
+          console.log('User authenticated, loading personality data');
+          this.loadUserPersonality();
+          this.loadResults();
+          this.loadSavedPersonalityAnalysis();
+        }
+      });
     }
   }
 };
 </script>
 
 <style scoped>
-.home {
-  padding: var(--spacing-xl) 0;
-}
-
 .hero {
   text-align: center;
   margin-bottom: var(--spacing-xxl);
@@ -624,7 +644,6 @@ export default {
 
 /* Personality Analysis Section */
 .personality-section {
-  margin-top: var(--spacing-xl);
   max-width: 950px;
   margin-left: auto;
   margin-right: auto;
@@ -682,30 +701,7 @@ export default {
   margin-bottom: var(--spacing-md);
 }
 
-.saved-analysis-badge {
-  background-color: transparent;
-  color: var(--success);
-  padding: 0;
-  font-size: 0.8rem;
-  font-weight: 400;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: none;
-  box-shadow: none;
-}
-
-.saved-analysis-badge::before {
-  content: '';
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background-color: var(--success);
-  display: inline-block;
-}
-
 .personality-analysis-section {
-  margin: var(--spacing-xl) 0;
   background-color: rgba(255, 255, 255, 0.9);
   padding: 40px;
   border-radius: var(--radius-sm);
