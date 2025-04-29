@@ -9,9 +9,7 @@
         <p>Loading your Personality Dashboard...</p>
       </div>
       
-      <!-- Personality Dashboard Section -->
-      <div v-else-if="hasSavedAnalysis" class="personality-analysis-section">
-        <div class="feeling-result">
+      <div class="feeling-result">
           <div>
             <h3>
               Your Personality Dashboard
@@ -29,6 +27,8 @@
             </h3>
           </div>
           
+      <!-- Personality Dashboard Section -->
+      <div v-if="hasSavedAnalysis" class="personality-analysis-section">
           <div class="feeling-content">
             <!-- Show message when dimensions exist but no analysis sections -->
             <div v-if="needsFullAnalysis" 
@@ -75,54 +75,6 @@
                     </div>
                     <span class="scale-label right">{{ dimension.rightLabel }}</span>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Show the analysis result if we don't have saved analysis but have generated one -->
-      <div v-if="coreFeeling && !hasSavedAnalysis" class="feeling-result">
-        <h3>Your Core Feeling Analysis</h3>
-        
-        <div class="feeling-content">
-          <!-- Dynamically generate analysis sections for new analysis -->
-          <template v-for="section in getSortedAnalysisSections()" :key="section.id">
-            <div v-if="parsedFeeling[section.id]" 
-                 class="feeling-section" 
-                 :class="section.id">
-              <h4>{{ section.title }}</h4>
-              <p v-if="section.id !== 'keywords'">{{ parsedFeeling[section.id] }}</p>
-              <div v-else class="keyword-list">
-                <span v-for="(keyword, index) in parsedFeeling[section.id].split(',').map(k => k.trim())" 
-                      :key="index"
-                      :style="{ backgroundColor: getKeywordColor(index) }">
-                    {{ keyword }}
-                </span>
-              </div>
-            </div>
-          </template>
-          
-          <!-- Dimensions Section -->
-          <div class="feeling-section mbti-dimensions">
-            <h4>Personality Dimensions:</h4>
-            <div class="dimensions-container">
-              <!-- Generate dimension sliders dynamically -->
-              <div v-for="dimension in Object.values(personalityDimensions)" 
-                   :key="dimension.id"
-                   class="dimension-item">
-                <h5>{{ dimension.name }}</h5>
-                <div class="dimension-scale">
-                  <span class="scale-label left">{{ dimension.leftLabel }}</span>
-                  <div class="scale-bar-container">
-                    <div class="scale-bar">
-                      <div class="scale-marker"
-                        :style="{ left: getMarkerPosition(parsedFeeling.dimensions[dimension.id] || 0) + '%' }">
-                      </div>
-                    </div>
-                  </div>
-                  <span class="scale-label right">{{ dimension.rightLabel }}</span>
                 </div>
               </div>
             </div>
