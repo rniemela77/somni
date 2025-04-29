@@ -20,7 +20,7 @@
                   <button @click="generateDescription" 
                           class="generate-btn"
                           :disabled="generatingDescription">
-                      {{ generatingDescription ? 'GENERATING...' : (hasSavedAnalysis ? (needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS') : 'GENERATE DESCRIPTION') }}
+                      {{ generateButtonText }}
                   </button>
                 </div>
               </div>
@@ -171,6 +171,16 @@ export default {
       }
       // Otherwise use the user's stored dimensions
       return this.userDimensions;
+    },
+    // Computed property for generate button text
+    generateButtonText() {
+      if (this.generatingDescription) {
+        return 'GENERATING...';
+      } else if (this.hasSavedAnalysis) {
+        return this.needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS';
+      } else {
+        return 'GENERATE DESCRIPTION';
+      }
     }
   },
   methods: {
