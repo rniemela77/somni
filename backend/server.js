@@ -8,7 +8,18 @@ import fs from 'fs/promises';
 import path from 'path';
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import serviceAccount from './serviceAccountKey.json' assert { type: 'json' };
+import { readFile } from 'fs/promises';
+
+// Load the service account key JSON file
+const serviceAccountPath = new URL('./serviceAccountKey.json', import.meta.url);
+const serviceAccount = JSON.parse(await readFile(serviceAccountPath, 'utf8'));
+
+// Check if the STRIPE_SECRET_KEY is available
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.error("ERROR: STRIPE_SECRET_KEY is not defined in environment variables!");
+  console.log("Make sure you have a .env file in the backend directory with STRIPE_SECRET_KEY defined.");
+  process.exit(1);
+}
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -144,12 +155,7 @@ app.post("/create-checkout-session", async (req, res) => {
     // After creating the session, also store a temporary record
     // This will be properly updated when payment is completed via webhook
     if (userId) {
-      await saveSubscription(userId, {
-        active: false, // Will be set to true when payment completes
-        stripeSessionId: session.id,
-        createdAt: new Date().toISOString(),
-        status: 'pending'
-      });
+      await updateSessionInFirebase(userId, session.id);
     }
 
     res.json({ sessionId: session.id });
@@ -168,40 +174,58 @@ app.get("/subscription-status/:userId", async (req, res) => {
       return res.status(400).json({ error: "User ID is required" });
     }
     
-    // Get subscription data from our simple file-based database
-    const subscriptions = await getSubscriptions();
-    const userSubscription = subscriptions[userId];
+    // Query Firebase for the user's subscription status
+    const userRef = adminDb.collection('users').doc(userId);
+    const userDoc = await userRef.get();
     
-    // If we have subscription data for this user
-    if (userSubscription && userSubscription.active) {
+    if (!userDoc.exists) {
+      return res.json({
+        hasActiveSubscription: false,
+        subscriptionData: null
+      });
+    }
+    
+    const userData = userDoc.data();
+    
+    // Check if user has a subscription object
+    if (userData.subscription && userData.subscription.active) {
       console.log(`Found active subscription for user ${userId}`);
       
       // Check if the subscription has expired
-      const endDate = new Date(userSubscription.endDate);
+      const endDate = userData.subscription.endDate?.toDate() || new Date(0);
       const now = new Date();
       
       if (endDate > now) {
         // Return subscription status
         return res.json({
           hasActiveSubscription: true,
-          subscriptionData: userSubscription
+          subscriptionData: userData.subscription
         });
       } else {
         console.log(`Subscription expired for user ${userId}`);
         return res.json({
           hasActiveSubscription: false,
           subscriptionData: {
-            ...userSubscription,
+            ...userData.subscription,
             status: 'expired'
           }
         });
       }
     }
     
-    // No active subscription found
+    // Check if the user is marked as paid (simple payment)
+    if (userData.isPaid === true) {
+      return res.json({
+        hasActiveSubscription: true,
+        isPaid: true,
+        paidAt: userData.paidAt
+      });
+    }
+    
+    // No active subscription or payment found
     res.json({
       hasActiveSubscription: false,
-      subscriptionData: userSubscription || null
+      subscriptionData: userData.subscription || null
     });
   } catch (error) {
     console.error("Error checking subscription status:", error);
@@ -335,6 +359,41 @@ async function findUserBySubscriptionId(subscriptionId) {
   }
 }
 
+// Function to store Stripe session data in Firebase
+async function updateSessionInFirebase(userId, sessionId, status = 'pending') {
+  try {
+    console.log(`Storing session ${sessionId} for user ${userId} in Firebase`);
+    
+    // Update user document with session info
+    const userRef = adminDb.collection('users').doc(userId);
+    
+    // Get existing document to ensure it exists
+    const userDoc = await userRef.get();
+    if (!userDoc.exists) {
+      // Create user document if it doesn't exist
+      await userRef.set({
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    
+    // Update with session data
+    await userRef.update({
+      stripeSession: {
+        sessionId: sessionId,
+        status: status,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      }
+    });
+    
+    console.log(`Session data stored in Firebase for user ${userId}`);
+    return true;
+  } catch (error) {
+    console.error('Error storing session in Firebase:', error);
+    return false;
+  }
+}
+
 // Function to mark user as paid in Firebase
 async function markUserAsPaidInFirebase(userId) {
   try {
@@ -402,9 +461,26 @@ app.post('/webhook', async (req, res) => {
         if (userId && userId !== 'anonymous') {
           console.log(`Processing successful payment for user ${userId}`);
           
-          // Mark the user as paid in Firebase (simplified approach)
-          await markUserAsPaidInFirebase(userId);
-          console.log(`User ${userId} marked as paid`);
+          // Determine if this was a subscription or one-time payment
+          if (session.metadata.product === 'premium_subscription') {
+            // This was a subscription payment
+            // Get subscription details if available
+            const subscriptionId = session.subscription;
+            
+            // Activate the subscription in Firebase
+            await activateSubscriptionInFirebase(
+              userId, 
+              session.id, 
+              subscriptionId,
+              session.customer
+            );
+            
+            console.log(`Subscription activated for user ${userId}`);
+          } else {
+            // This was a one-time payment for quiz results
+            await markUserAsPaidInFirebase(userId);
+            console.log(`User ${userId} marked as paid`);
+          }
         }
         break;
         
