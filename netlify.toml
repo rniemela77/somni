@@ -13,6 +13,10 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# Set environment variables for the build
+[build.environment]
+  VITE_BACKEND_URL = "/.netlify/functions"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

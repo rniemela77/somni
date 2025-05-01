@@ -8,7 +8,8 @@
 
 <script>
 import { loadStripe } from "@stripe/stripe-js";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+// Use a default value for Netlify functions if environment variable is not set
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "/.netlify/functions";
 
 export default {
     data() {
@@ -19,17 +20,29 @@ export default {
     methods: {
         async startCheckout() {
             try {
-                // Use the backend URL
+                console.log("Sending request to backend URL:", BACKEND_URL);
+                
+                // Use the backend URL with the correct path
                 const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        // Add these headers if your API is on a different domain
+                        "Accept": "application/json",
+                    },
+                    // Add credentials if needed for cookies (not typically needed for Netlify Functions)
+                    // credentials: "include",
+                    body: JSON.stringify({}), // Send an empty object if no data is needed
                 });
 
                 if (!response.ok) {
-                    throw new Error("Failed to create checkout session");
+                    const errorText = await response.text();
+                    console.error(`Server returned ${response.status}: ${errorText}`);
+                    throw new Error(`Failed to create checkout session (${response.status})`);
                 }
 
                 const { sessionId, url } = await response.json();
+                console.log("Received checkout data:", { sessionId, hasUrl: !!url });
 
                 // Open Stripe Checkout in a new window
                 if (url) {
