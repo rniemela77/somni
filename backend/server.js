@@ -11,7 +11,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { readFile } from 'fs/promises';
 
 // Load the service account key JSON file
-const serviceAccountPath = new URL('./serviceAccountKey.json', import.meta.url);
+const serviceAccountPath = new URL('../serviceAccountKey.json', import.meta.url);
 const serviceAccount = JSON.parse(await readFile(serviceAccountPath, 'utf8'));
 
 // Check if the STRIPE_SECRET_KEY is available
