@@ -11,5 +11,20 @@ service cloud.firestore {
     match /quizzes/{quizId} {
       allow read: if request.auth != null;
     }
+    
+    // Add permissions for users collection
+    match /users/{userId} {
+      // Allow users to read and write their own data
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow server-side admin access (for backend operations)
+      allow read, write: if request.auth == null;
+    }
+
+    // Add permissions for subscriptions collection if needed
+    match /subscriptions/{subscriptionId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow write: if request.auth == null; // Allow server-side admin access
+    }
   }
 }
