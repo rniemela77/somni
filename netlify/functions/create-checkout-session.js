@@ -41,9 +41,8 @@ export const handler = async (event, context) => {
       },
       quantity: 1,
     }];
-    
-    // Create the checkout session with appropriate parameters
-    const session = await stripe.checkout.sessions.create({
+
+    const data = {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: isSubscription ? "subscription" : "payment",
@@ -65,7 +64,11 @@ export const handler = async (event, context) => {
           },
         }
       }),
-    });
+    };
+    
+    console.log("Data:", data);
+    // Create the checkout session with appropriate parameters
+    const session = await stripe.checkout.sessions.create(data);
 
     // After creating the session, also store a temporary record
     // This will be properly updated when payment is completed via webhook
