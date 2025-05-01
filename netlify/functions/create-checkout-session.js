@@ -73,7 +73,11 @@ export const handler = async (event, context) => {
       await updateSessionInFirebase(userId, session.id);
     }
 
-    return success({ sessionId: session.id });
+    // Return both the sessionId and the checkout URL
+    return success({ 
+      sessionId: session.id,
+      url: session.url  // Stripe's session object includes a URL property
+    });
   } catch (err) {
     console.error("Error creating checkout session:", err);
     return error("Failed to create checkout session", 500);
