@@ -1,5 +1,5 @@
 // OpenAI API service for interacting with GPT models
-// This service handles API calls to OpenAI GPT models
+// This service handles API calls to OpenAI GPT models via Netlify Functions
 import { generateAnalysisPrompt } from '../config/personalityAnalysis';
 
 // Configuration options
@@ -84,35 +84,22 @@ export const openaiService = {
     return this.promptTemplates[template];
   },
   
-  // Send a prompt to OpenAI and get a completion
+  // Send a prompt to OpenAI via Netlify function
   async getCompletion(prompt, customOptions = {}) {
     try {
-      // Try to get the API key from environment variables
-      let apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-      
-      // If API key is not configured, inform the user
-      if (!apiKey) {
-        console.warn('OpenAI API key is not configured. Please add your API key to the .env.development file.');
-        return { 
-          completion: null, 
-          error: "OpenAI API key is not configured. Please add your API key to continue.", 
-          usage: null 
-        };
-      }
-      
       const options = { ...this.config, ...customOptions };
       
-      console.log('Sending prompt to OpenAI:', prompt.substring(0, 100) + '...');
+      console.log('Sending prompt to OpenAI via Netlify function:', prompt.substring(0, 100) + '...');
       
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      // Call the Netlify function instead of OpenAI directly
+      const response = await fetch('/.netlify/functions/openai', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          prompt: prompt,
           model: options.model,
-          messages: [{ role: 'user', content: prompt }],
           temperature: options.temperature,
           max_tokens: options.max_tokens,
           stream: options.stream
@@ -121,19 +108,19 @@ export const openaiService = {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Failed to get completion from OpenAI');
+        throw new Error(errorData.error || 'Failed to get completion from OpenAI');
       }
       
       const data = await response.json();
-      console.log('Received response from OpenAI');
+      console.log('Received response from Netlify function');
       
       return { 
-        completion: data.choices[0].message.content, 
+        completion: data.completion, 
         error: null,
         usage: data.usage
       };
     } catch (error) {
-      console.error('Error calling OpenAI API:', error);
+      console.error('Error calling OpenAI API via Netlify function:', error);
       return { completion: null, error: error.message, usage: null };
     }
   },
@@ -162,7 +149,7 @@ export const openaiService = {
       
       console.log('Analyzing personality based on', quizResults.length, 'quiz answers');
       
-      // Get completion from OpenAI
+      // Get completion from OpenAI via Netlify function
       return this.getCompletion(promptText);
     } catch (error) {
       console.error('Error analyzing personality:', error);

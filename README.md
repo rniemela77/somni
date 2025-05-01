@@ -1,13 +1,13 @@
 # somni
 Subconscious Impressions
 
-## Frontend/App URL
-*to be updated*
+# Website URL
+https://somni.netlify.app/
 
-## App local development
-`npm run dev`
+# Local development
+`npm run dev:netlify` (for netlify functions)
 
-## Backend local development (for testing stripe)
+# Backend local development
 `cd backend && npm run server`
 
 ## Quiz questions
