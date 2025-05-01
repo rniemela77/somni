@@ -30,14 +30,32 @@ let adminApp;
 export const initializeFirebase = async () => {
   if (admin.apps.length === 0) {
     try {
-        const serviceAccount = JSON.parse(await readFile(serviceAccountPath, 'utf8'));
+      // First try to use environment variables (preferred for production/Netlify)
+      if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        // Parse the JSON string from environment variable
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
         adminApp = admin.initializeApp({
           credential: admin.credential.cert(serviceAccount)
         });
-      console.log('Firebase Admin initialized successfully');
+        console.log('Firebase Admin initialized successfully using environment variable');
+      } else {
+        // Fall back to file-based approach (for local development)
+        try {
+          const serviceAccount = JSON.parse(await readFile(serviceAccountPath, 'utf8'));
+          adminApp = admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+          });
+          console.log('Firebase Admin initialized successfully using service account file');
+        } catch (fileError) {
+          console.error('Error reading service account file:', fileError);
+          console.error('Service account path tried:', serviceAccountPath);
+          
+          // If both approaches fail, throw a clear error
+          throw new Error('Firebase initialization failed: No valid service account credentials available');
+        }
+      }
     } catch (error) {
       console.error('Error initializing Firebase Admin:', error);
-      console.error('Service account path tried:', serviceAccountPath);
       throw error;
     }
   }
