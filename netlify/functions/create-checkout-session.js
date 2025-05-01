@@ -66,7 +66,6 @@ export const handler = async (event, context) => {
       }),
     };
     
-    console.log("Data:", data);
     // Create the checkout session with appropriate parameters
     const session = await stripe.checkout.sessions.create(data);
 
