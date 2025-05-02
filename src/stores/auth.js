@@ -14,6 +14,7 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: (state) => !!state.user,
     userId: (state) => state.user?.uid,
     userEmail: (state) => state.user?.email,
+    isAuthReady: (state) => !state.loading && state.authInitialized,
   },
 
   actions: {
@@ -24,13 +25,26 @@ export const useAuthStore = defineStore('auth', {
       
       console.log('Initializing auth state listener in auth store');
       
+      // Ensure loading state is true until auth state is determined
+      this.loading = true;
+      
       // Use the authService for the listener
       this.unsubscribeAuth = authService.onAuthStateChanged((user) => {
         console.log('Auth state changed:', user ? 'authenticated' : 'not authenticated');
         this.setUser(user);
+        
+        // Auth is now initialized
+        this.authInitialized = true;
       });
       
-      this.authInitialized = true;
+      // Set a timeout to prevent indefinite loading if Firebase is slow
+      setTimeout(() => {
+        if (this.loading) {
+          console.log('Auth state determination timed out, setting as not authenticated');
+          this.setUser(null);
+          this.authInitialized = true;
+        }
+      }, 5000); // 5 second timeout
     },
     
     // Clean up auth listener when no longer needed
@@ -45,6 +59,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = user;
       this.loading = false;
       this.error = null;
+      console.log('Auth state set, loading:', this.loading, 'authenticated:', !!user);
     },
 
     // Get the current user synchronously

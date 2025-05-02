@@ -1,10 +1,6 @@
 <template>
   <div class="personality-dashboard">
-    <!-- Loading state -->
-    <div v-if="dashboardLoading" class="dashboard-loading">
-      <div class="spinner"></div>
-      <p>Loading your Personality Dashboard...</p>
-    </div>
+    
     
     <div class="feeling-result">
       <div>
@@ -23,64 +19,47 @@
           </div>
         </h3>
       </div>
+
+      <!-- Loading state -->
+    <div v-if="dashboardLoading" class="dashboard-loading">
+      <div class="spinner"></div>
+      <p>Loading your Personality Dashboard...</p>
+    </div>
       
     <!-- Personality Dashboard Section -->
-    <div v-if="hasSavedAnalysis" class="personality-analysis-section">
+    <div v-else class="personality-analysis-section">
         <div class="feeling-content">
-          <!-- Show message when dimensions exist but no analysis sections -->
-          <div v-if="needsFullAnalysis" 
-               class="feeling-section missing-analysis">
-            <h4>Complete Your Analysis</h4>
-            <p>We found your personality dimensions, but you haven't generated a full analysis yet. 
-               Click the "GENERATE FULL ANALYSIS" button below to get detailed insights about your personality.</p>
-          </div>
-        
+                 
           <!-- Dynamically generate analysis sections based on config -->
           <template v-for="section in getSortedAnalysisSections()" :key="section.id">
-            <div v-if="parsedFeeling[section.id]" 
-                 class="feeling-section" 
-                 :class="section.id">
+            <div class="feeling-section" :class="section.id">
               <h4>{{ section.title }}</h4>
-              <p v-if="section.id !== 'keywords'">{{ parsedFeeling[section.id] }}</p>
-              <div v-else class="keyword-list">
-                <span v-for="(keyword, index) in parsedFeeling[section.id].split(',').map(k => k.trim())" 
-                      :key="index"
-                      :style="{ backgroundColor: getKeywordColor(index) }">
+              <template v-if="parsedFeeling[section.id]">
+                <p v-if="section.id !== 'keywords'">{{ parsedFeeling[section.id] }}</p>
+                <div v-else class="keyword-list">
+                  <span v-for="(keyword, index) in parsedFeeling[section.id].split(',').map(k => k.trim())" 
+                        :key="index"
+                        :style="{ backgroundColor: getKeywordColor(index) }">
                     {{ keyword }}
-                </span>
-              </div>
+                  </span>
+                </div>
+              </template>
+              <p v-else class="no-data">N/A</p>
             </div>
           </template>
           
           <!-- Dimensions Section -->
-          <div class="feeling-section mbti-dimensions">
-            <h4>Personality Dimensions:</h4>
-            <div class="dimensions-container">
-              <!-- Generate dimension sliders dynamically -->
-              <div v-for="dimension in Object.values(personalityDimensions)" 
-                   :key="dimension.id"
-                   class="dimension-item">
-                <h5>{{ dimension.name }}</h5>
-                <div class="dimension-scale">
-                  <span class="scale-label left">{{ dimension.leftLabel }}</span>
-                  <div class="scale-bar-container">
-                    <div class="scale-bar">
-                      <div class="scale-marker"
-                        :style="{ left: getMarkerPosition(displayDimensions[dimension.id] || 0) + '%' }">
-                      </div>
-                    </div>
-                  </div>
-                  <span class="scale-label right">{{ dimension.rightLabel }}</span>
-                </div>
-              </div>
+          <template v-for="dimension in Object.values(personalityDimensions)" :key="dimension.id">
+            <div class="feeling-section" :class="'dimension-' + dimension.id">
+              <h4>{{ dimension.name }}</h4>
+              <p v-if="hasDimensionValues" class="dimension-value">
+                {{ formatDimensionValue(displayDimensions[dimension.id] || 0, dimension) }}
+              </p>
+              <p v-else class="no-data">N/A</p>
             </div>
-          </div>
+          </template>
         </div>
       </div>
-    </div>
-    
-    <div v-if="feelingError" class="feeling-error">
-      {{ feelingError }}
     </div>
   </div>
 </template>
@@ -98,9 +77,14 @@ import {
   PERSONALITY_DIMENSIONS, 
   PERSONALITY_ANALYSIS_SECTIONS 
 } from '../config/personalityAnalysis';
+import { useAuthStore } from '../stores/auth';
 
 export default {
   name: 'PersonalityDashboard',
+  setup() {
+    const authStore = useAuthStore();
+    return { authStore };
+  },
   data() {
     return {
       results: [],
@@ -109,7 +93,6 @@ export default {
       // Core feeling description
       generatingDescription: false,
       coreFeeling: null,
-      feelingError: null,
       
       // Parsed feeling (using configuration)
       parsedFeeling: {
@@ -169,6 +152,9 @@ export default {
       } else {
         return 'GENERATE DESCRIPTION';
       }
+    },
+    hasDimensionValues() {
+      return Object.values(this.displayDimensions).some(value => value !== null && !isNaN(value));
     }
   },
   methods: {
@@ -185,6 +171,12 @@ export default {
     
     // Load user's personality data
     async loadUserPersonality() {
+      // If auth is not ready, don't try to load
+      if (this.authStore.loading) {
+        console.log('Auth still loading, delaying loadUserPersonality');
+        return;
+      }
+      
       const user = authService.getCurrentUser();
       if (user) {
         try {
@@ -198,10 +190,15 @@ export default {
     },
     
     async loadResults() {
+      // If auth is not ready, don't try to load
+      if (this.authStore.loading) {
+        console.log('Auth still loading, delaying loadResults');
+        return;
+      }
+      
       const user = authService.getCurrentUser();
       if (!user) {
         console.error("User not logged in");
-        this.feelingError = "You must be logged in to view results";
         return;
       }
       
@@ -209,20 +206,18 @@ export default {
         const { results, error } = await resultsService.getUserResults(user.uid);
         if (error) {
           console.error("Error fetching results:", error);
-          this.feelingError = `Error loading results: ${error}`;
           return;
         }
 
         console.log("Loaded results:", results);
         this.results = results;
         
-        // If no results were loaded, show message
+        // If no results were loaded, log a message
         if (results.length === 0) {
-          this.feelingError = "No quiz results found. Please take some quizzes first.";
+          console.log("No quiz results found. Please take some quizzes first.");
         }
       } catch (err) {
         console.error("Exception in loadResults:", err);
-        this.feelingError = `Error: ${err.message}`;
       }
     },
     
@@ -234,25 +229,24 @@ export default {
       
       // Make sure results are loaded before proceeding
       if (this.results.length === 0) {
-        this.feelingError = "Loading quiz results...";
+        console.log("Loading quiz results...");
         await this.loadResults();
         
         // Check again after loading
         if (this.results.length === 0) {
-          this.feelingError = "No quiz results available to analyze. Please take some quizzes first.";
+          console.log("No quiz results available to analyze. Please take some quizzes first.");
           return;
         }
       }
       
       // Verify we have answers to analyze
       if (this.allAnswers.length === 0) {
-        this.feelingError = "No quiz answers found. Please make sure you have completed quizzes with answers.";
+        console.log("No quiz answers found. Please make sure you have completed quizzes with answers.");
         return;
       }
       
       this.generatingDescription = true;
       this.coreFeeling = null;
-      this.feelingError = null;
       this.dimensionsUpdated = false; // Reset dimensions updated flag
       this.hasSavedAnalysis = false;  // Reset the saved analysis flag
       this.needsFullAnalysis = false; // Reset the needs full analysis flag
@@ -266,7 +260,7 @@ export default {
         const { completion, error, usage } = await openaiService.analyzePersonality(this.allAnswers);
         
         if (error) {
-          this.feelingError = `Error: ${error}`;
+          console.error(`Error: ${error}`);
         } else {
           this.coreFeeling = completion;
           console.log('Token usage:', usage);
@@ -275,7 +269,7 @@ export default {
           this.parsedFeeling = this.parsePersonalityAnalysis(completion);
         }
       } catch (error) {
-        this.feelingError = `Error: ${error.message}`;
+        console.error(`Error generating description: ${error.message}`);
       } finally {
         this.generatingDescription = false;
       }
@@ -447,6 +441,8 @@ export default {
         const user = authService.getCurrentUser();
         if (!user) {
           console.log('No user logged in, cannot load personality analysis');
+          // Always show sections even if no user is logged in
+          this.hasSavedAnalysis = true;
           return;
         }
         
@@ -496,19 +492,18 @@ export default {
         // Check if we have any dimensions with non-zero values
         const hasDimensionData = Object.values(this.parsedFeeling.dimensions).some(value => value !== 0);
         
-        if (hasAnalysisData || hasDimensionData) {
-          this.coreFeeling = "Loaded from previous analysis";
-          this.hasSavedAnalysis = true;
-          console.log('Setting hasSavedAnalysis to true');
-          
-          // Set needsFullAnalysis flag if we have dimensions but no analysis text
-          this.needsFullAnalysis = hasDimensionData && !hasAnalysisData;
-          console.log('Needs full analysis:', this.needsFullAnalysis);
-        } else {
-          console.log('No saved analysis data found');
-        }
+        // Always set hasSavedAnalysis to true after loading, even if no data was found
+        this.coreFeeling = hasDimensionData || hasAnalysisData ? "Loaded from previous analysis" : "No previous analysis";
+        this.hasSavedAnalysis = true;
+        console.log('Setting hasSavedAnalysis to true');
+        
+        // Set needsFullAnalysis flag if we have dimensions but no analysis text
+        this.needsFullAnalysis = hasDimensionData && !hasAnalysisData;
+        console.log('Needs full analysis:', this.needsFullAnalysis);
       } catch (error) {
         console.error('Error loading saved personality analysis:', error);
+        // Even if there's an error, show the sections with N/A
+        this.hasSavedAnalysis = true;
       }
     },
     // Add method to access analysis sections in order
@@ -531,6 +526,29 @@ export default {
     },
     // Init method to load all data when component is created
     async initDashboard() {
+      // Check if auth is still loading
+      if (this.authStore.loading) {
+        console.log('Auth state still loading, delaying dashboard initialization');
+        // Set up a watcher to initialize once auth is ready
+        const unwatch = this.$watch(
+          () => this.authStore.loading,
+          (isLoading) => {
+            if (!isLoading) {
+              console.log('Auth loading completed, initializing dashboard');
+              unwatch(); // Stop watching
+              this.initDashboardAfterAuth();
+            }
+          }
+        );
+        return;
+      }
+      
+      // Auth is ready, proceed with initialization
+      this.initDashboardAfterAuth();
+    },
+    
+    // Initialize dashboard after auth is ready
+    async initDashboardAfterAuth() {
       this.dashboardLoading = true;
       try {
         await Promise.all([
@@ -540,10 +558,26 @@ export default {
         ]);
       } catch (error) {
         console.error("Error loading dashboard data:", error);
-        this.feelingError = `Error: ${error.message}`;
       } finally {
         this.dashboardLoading = false;
       }
+    },
+    formatDimensionValue(value, dimension) {
+      // Convert numeric value to a descriptive text based on the value and dimension properties
+      const normalizedValue = Math.max(-2, Math.min(2, value)); // Ensure value is between -2 and 2
+      
+      // Create a scale of descriptors
+      const descriptors = {
+        '-2': `Strong ${dimension.leftLabel}`,
+        '-1': `Moderate ${dimension.leftLabel}`,
+        '0': `Balanced`,
+        '1': `Moderate ${dimension.rightLabel}`,
+        '2': `Strong ${dimension.rightLabel}`
+      };
+      
+      // Round to the nearest descriptor
+      const roundedValue = Math.round(normalizedValue);
+      return descriptors[roundedValue.toString()];
     }
   },
   mounted() {
@@ -715,167 +749,21 @@ export default {
   border: 1px solid rgba(58, 81, 153, 0.08);
 }
 
-.feeling-error {
-  margin-top: 15px;
-  padding: 12px 16px;
-  background-color: rgba(209, 71, 71, 0.05);
-  color: var(--error);
-  border-radius: var(--radius-sm);
-  border-left: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.feeling-error::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 2px;
-  background-color: var(--error);
-}
-
-.missing-analysis {
-  margin-bottom: 20px;
-  padding: 16px;
-  background-color: var(--bg-secondary);
-  border-radius: var(--radius-sm);
-  border-left: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.missing-analysis::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 2px;
+/* Add specific color borders for each dimension type */
+.dimension-IE::before {
   background-color: var(--primary);
 }
 
-.missing-analysis h4 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: var(--primary);
-  font-weight: 500;
+.dimension-SI::before {
+  background-color: var(--secondary);
 }
 
-.missing-analysis p {
-  margin: 0;
-  line-height: 1.5;
+.dimension-TF::before {
+  background-color: var(--primary-light);
 }
 
-/* Dimensions Section */
-.mbti-dimensions {
-  border-left: none !important;
-  background-color: var(--bg-primary);
-  padding: 25px;
-  margin-top: 10px;
-  border-top: 1px solid var(--bg-muted);
-}
-
-.dimensions-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
-  margin: 0;
-}
-
-.dimension-item {
-  margin-bottom: 0;
-  background-color: transparent;
-  padding: 0;
-  border-radius: 0;
-  transition: all var(--transition-fast);
-}
-
-.dimension-item:hover {
-  background-color: transparent;
-  box-shadow: none;
-}
-
-.dimension-item h5 {
-  margin-bottom: 10px;
-  color: var(--text-primary);
-  font-weight: 500;
-  font-size: 0.9rem;
-  letter-spacing: 0;
-  text-align: center;
-}
-
-.scale-bar {
-  height: 2px;
-  background: linear-gradient(to right, var(--primary), var(--secondary));
-  border-radius: 0;
-  position: relative;
-  opacity: 0.7;
-}
-
-.scale-bar:before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  height: 5px;
-  width: 1px;
-  background-color: var(--text-muted);
-  transform: translateX(-50%);
-  top: -2px;
-  opacity: 0.2;
-}
-
-.scale-marker {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 8px;
-  height: 8px;
-  background: white;
-  border: 1px solid var(--primary);
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px rgba(58, 81, 153, 0.03);
-  transition: all var(--transition-fast);
-}
-
-.scale-bar-container:hover .scale-marker {
-  box-shadow: 0 0 0 3px rgba(58, 81, 153, 0.06);
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.dimension-scale {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 32px;
-}
-
-.scale-bar-container {
-  flex-grow: 1;
-  padding: 6px 0;
-  position: relative;
-}
-
-.scale-label {
-  min-width: 75px;
-  font-weight: 400;
-  font-size: 0.8rem;
-  letter-spacing: 0;
-  line-height: 1.4;
-  opacity: 0.8;
-}
-
-.scale-label.left {
-  text-align: right;
-  color: var(--primary);
-  padding-right: 4px;
-}
-
-.scale-label.right {
-  text-align: left;
-  color: var(--secondary);
-  padding-left: 4px;
+.dimension-JP::before {
+  background-color: var(--secondary-light);
 }
 
 .core::before {
@@ -894,15 +782,6 @@ export default {
   .feeling-content {
     grid-template-columns: repeat(2, 1fr);
     gap: 30px 40px;
-  }
-  
-  .feeling-section.mbti-dimensions {
-    grid-column: span 2;
-    margin-top: 10px;
-  }
-
-  .dimensions-container {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -939,5 +818,12 @@ export default {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Add this style for N/A text */
+.no-data {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.9rem;
 }
 </style> 

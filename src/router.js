@@ -79,8 +79,27 @@ router.beforeEach((to, from, next) => {
   // Use the auth store for authentication check
   const authStore = useAuthStore();
   const isAuthenticated = authStore.isAuthenticated;
+  const isAuthLoading = authStore.loading;
   
-  console.log('Router guard: Auth state =', isAuthenticated ? 'authenticated' : 'not authenticated');
+  console.log('Router guard: Auth state =', isAuthenticated ? 'authenticated' : 'not authenticated', 'loading =', isAuthLoading);
+  
+  // If auth is still loading, prevent navigation by waiting until auth is ready
+  // Exception: allow initial navigation to home page even while loading
+  if (isAuthLoading && to.path !== '/' && to.path !== '/signin' && to.path !== '/signup') {
+    console.log('Auth state is still loading, delaying navigation until ready');
+    
+    // Check if this is a navigation triggered during app startup
+    if (from.name === undefined || from.name === null) {
+      console.log('Initial navigation, allowing to proceed to home page');
+      next('/'); // Redirect to home where loading screen will be shown
+      return;
+    }
+    
+    // For non-initial navigation, stay on current page until auth is ready
+    console.log('Non-initial navigation while auth loading, staying on current page');
+    next(false);
+    return;
+  }
   
   // Check if this is a return from payment
   const isPaymentReturn = to.query.payment_success === 'true';
@@ -106,6 +125,7 @@ router.beforeEach((to, from, next) => {
     console.log('Route requires auth, current auth state:', isAuthenticated);
   }
 
+  // Normal auth flow once loading is complete
   if (requiresAuth && !isAuthenticated) {
     console.log('Redirecting to sign in page due to missing authentication');
     next('/signin');
