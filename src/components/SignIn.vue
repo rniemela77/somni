@@ -56,32 +56,36 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { auth } from "../../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useAuthStore } from '../stores/auth';
 
 export default {
   name: 'SignIn',
   setup() {
     const router = useRouter();
+    const authStore = useAuthStore();
     const email = ref("");
     const password = ref("");
     const message = ref("");
-    const isLoading = ref(false);
+    
+    // Use the loading state from the auth store
+    const isLoading = computed(() => authStore.loading);
 
     const signIn = async () => {
-      isLoading.value = true;
       message.value = "";
       
       try {
-        await signInWithEmailAndPassword(auth, email.value, password.value);
-        message.value = "Login successful!";
-        router.push('/quiz');
+        const { error } = await authStore.signIn(email.value, password.value);
+        
+        if (error) {
+          message.value = error;
+        } else {
+          message.value = "Login successful!";
+          router.push('/quiz');
+        }
       } catch (error) {
         message.value = error.message;
-      } finally {
-        isLoading.value = false;
       }
     };
 

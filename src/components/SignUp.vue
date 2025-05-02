@@ -76,18 +76,20 @@
 <script>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { auth } from "../../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useAuthStore } from '../stores/auth';
 
 export default {
   name: 'SignUp',
   setup() {
     const router = useRouter();
+    const authStore = useAuthStore();
     const email = ref("");
     const password = ref("");
     const confirmPassword = ref("");
     const message = ref("");
-    const isLoading = ref(false);
+    
+    // Use the loading state from the auth store
+    const isLoading = computed(() => authStore.loading);
 
     const isPasswordMatch = computed(() => {
       return password.value === confirmPassword.value;
@@ -99,17 +101,19 @@ export default {
         return;
       }
 
-      isLoading.value = true;
       message.value = "";
       
       try {
-        await createUserWithEmailAndPassword(auth, email.value, password.value);
-        message.value = "Account created successfully!";
-        router.push('/quiz');
+        const { error } = await authStore.signUp(email.value, password.value);
+        
+        if (error) {
+          message.value = error;
+        } else {
+          message.value = "Account created successfully!";
+          router.push('/quiz');
+        }
       } catch (error) {
         message.value = error.message;
-      } finally {
-        isLoading.value = false;
       }
     };
 

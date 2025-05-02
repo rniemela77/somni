@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
-import { authService } from '../services/firebase';
-import { auth } from '../services/firebase-config';  // Import auth directly
+import { authService } from '../services/firebase-auth';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -8,11 +7,13 @@ export const useAuthStore = defineStore('auth', {
     loading: true,
     error: null,
     authInitialized: false, // Track if auth has been initialized
+    unsubscribeAuth: null,
   }),
 
   getters: {
     isAuthenticated: (state) => !!state.user,
     userId: (state) => state.user?.uid,
+    userEmail: (state) => state.user?.email,
   },
 
   actions: {
@@ -23,12 +24,21 @@ export const useAuthStore = defineStore('auth', {
       
       console.log('Initializing auth state listener in auth store');
       
-      auth.onAuthStateChanged((user) => {
+      // Use the authService for the listener
+      this.unsubscribeAuth = authService.onAuthStateChanged((user) => {
         console.log('Auth state changed:', user ? 'authenticated' : 'not authenticated');
         this.setUser(user);
       });
       
       this.authInitialized = true;
+    },
+    
+    // Clean up auth listener when no longer needed
+    cleanupAuthListener() {
+      if (this.unsubscribeAuth) {
+        this.unsubscribeAuth();
+        this.unsubscribeAuth = null;
+      }
     },
     
     setUser(user) {
@@ -39,7 +49,7 @@ export const useAuthStore = defineStore('auth', {
 
     // Get the current user synchronously
     getCurrentUser() {
-      return auth.currentUser;
+      return authService.getCurrentUser();
     },
 
     async signIn(email, password) {
@@ -84,6 +94,20 @@ export const useAuthStore = defineStore('auth', {
       
       this.loading = false;
       return { error };
+    },
+    
+    async resetPassword(email) {
+      this.loading = true;
+      this.error = null;
+      
+      const { success, error } = await authService.resetPassword(email);
+      
+      if (error) {
+        this.error = error;
+      }
+      
+      this.loading = false;
+      return { success, error };
     },
 
     clearError() {

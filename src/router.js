@@ -8,7 +8,7 @@ import Success from "./components/Success.vue";
 import Cancel from "./components/Cancel.vue";
 import Home from "./components/Home.vue";
 import Profile from "./components/Profile.vue";
-import { auth } from "../firebase";
+import { useAuthStore } from "./stores/auth";
 
 const routes = [
   { 
@@ -75,7 +75,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const requiresGuest = to.matched.some(record => record.meta.requiresGuest);
-  const isAuthenticated = auth.currentUser;
+  
+  // Use the auth store for authentication check
+  const authStore = useAuthStore();
+  const isAuthenticated = authStore.isAuthenticated;
   
   console.log('Router guard: Auth state =', isAuthenticated ? 'authenticated' : 'not authenticated');
   
@@ -100,7 +103,7 @@ router.beforeEach((to, from, next) => {
 
   // Log authentication check
   if (requiresAuth) {
-    console.log('Route requires auth, current auth state:', !!isAuthenticated);
+    console.log('Route requires auth, current auth state:', isAuthenticated);
   }
 
   if (requiresAuth && !isAuthenticated) {
