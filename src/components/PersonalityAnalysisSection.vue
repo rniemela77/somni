@@ -217,4 +217,4 @@ export default {
   font-style: italic;
   font-size: 0.9rem;
 }
-</style> 
+</style>

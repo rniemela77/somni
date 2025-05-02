@@ -12,9 +12,15 @@
             <div class="description-header">
               <button @click="generateDescription" 
                       class="generate-btn"
-                      :disabled="generatingDescription">
+                      :disabled="buttonDisabled">
                   {{ generateButtonText }}
               </button>
+              <!-- No quizzes message -->
+              <div v-if="noQuizzesCompleted" class="no-quizzes-message">
+              No quizzes completed yet.
+                <br>
+                <router-link to="/quiz">Take a quiz now</router-link>
+              </div>
             </div>
           </div>
         </h3>
@@ -126,11 +132,17 @@ export default {
     generateButtonText() {
       if (this.generatingDescription) {
         return 'GENERATING...';
-      } else if (this.hasSavedAnalysis) {
-        return this.needsFullAnalysis ? 'GENERATE FULL ANALYSIS' : 'REGENERATE ANALYSIS';
       } else {
-        return 'GENERATE DESCRIPTION';
+        return 'GENERATE NEW ANALYSIS';
       }
+    },
+    // Check if there are no quizzes completed
+    noQuizzesCompleted() {
+      return this.results.length === 0;
+    },
+    // Determine if the button should be disabled
+    buttonDisabled() {
+      return this.generatingDescription || this.noQuizzesCompleted;
     },
     hasDimensionValues() {
       return Object.values(this.displayDimensions).some(value => value !== null && !isNaN(value));
@@ -584,6 +596,13 @@ export default {
   border-color: var(--text-muted);
   cursor: not-allowed;
   transform: none;
+}
+
+.no-quizzes-message {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-style: italic;
 }
 
 .analysis-source {
