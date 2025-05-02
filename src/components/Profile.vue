@@ -98,10 +98,8 @@
 
 <script>
 import { loadStripe } from "@stripe/stripe-js";
-import { auth } from "../../firebase";
 import { useAuthStore } from '../stores/auth';
 import { useRoute } from 'vue-router';
-import { onAuthStateChanged } from "firebase/auth";
 import { markUserAsPaid, checkUserPaidStatus } from "../../firebase";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -130,8 +128,8 @@ export default {
     // First, check for payment success parameter
     this.checkPaymentSuccess();
     
-    // Get the current authenticated user
-    const currentUser = auth.currentUser;
+    // Get the current authenticated user from the store
+    const currentUser = this.authStore.getCurrentUser();
     console.log('Current user on mount:', currentUser?.uid || 'No user');
     
     // Detect if we need to wait for authentication
@@ -139,19 +137,25 @@ export default {
       console.log('Detected post-payment return but auth state not ready, waiting for auth state...');
       this.waitingForAuth = true;
       
-      // Set up auth state changed listener
-      onAuthStateChanged(auth, (user) => {
-        console.log('Auth state changed:', user ? 'authenticated' : 'not authenticated');
-        if (user) {
-          this.waitingForAuth = false;
-          this.loadUserInfo();
-          this.checkPaidStatus();
-          
-          // Re-trigger payment success handling now that we have authentication
-          console.log('Re-triggering payment success handling after authentication');
-          this.checkPaymentSuccess();
+      // Watch the auth store for changes instead of setting up a separate listener
+      const unwatch = this.$watch(
+        () => this.authStore.user,
+        (newUser) => {
+          if (newUser) {
+            console.log('Auth state changed via store: user is now authenticated');
+            this.waitingForAuth = false;
+            this.loadUserInfo();
+            this.checkPaidStatus();
+            
+            // Re-trigger payment success handling now that we have authentication
+            console.log('Re-triggering payment success handling after authentication');
+            this.checkPaymentSuccess();
+            
+            // Stop watching once we've handled the authentication
+            unwatch();
+          }
         }
-      });
+      );
     } else {
       // Normal flow
       await this.loadUserInfo();
@@ -160,7 +164,7 @@ export default {
   },
   methods: {
     async loadUserInfo() {
-      const currentUser = auth.currentUser;
+      const currentUser = this.authStore.getCurrentUser();
       
       if (currentUser) {
         console.log('Loading user info for:', currentUser.email);
@@ -174,7 +178,7 @@ export default {
       }
     },
     async checkPaidStatus() {
-      const currentUser = auth.currentUser;
+      const currentUser = this.authStore.getCurrentUser();
       if (!currentUser) {
         console.log('Cannot check paid status: no user logged in');
         this.isPremiumMember = false;
@@ -240,13 +244,18 @@ export default {
       try {
         console.log('Attempting to connect to backend at:', BACKEND_URL);
         
+        const currentUser = this.authStore.getCurrentUser();
+        if (!currentUser) {
+          throw new Error('You must be logged in to make a purchase');
+        }
+        
         // Pass the current user ID and email to associate with the payment
         const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            userId: auth.currentUser?.uid,
-            userEmail: auth.currentUser?.email,
+            userId: currentUser.uid,
+            userEmail: currentUser.email,
             isSubscription: true
           })
         });
@@ -293,8 +302,8 @@ export default {
         localStorage.setItem('payment_success', 'true');
         localStorage.setItem('stripe_session_id', sessionId);
         
-        // Get the current user
-        const currentUser = auth.currentUser;
+        // Get the current user from the auth store
+        const currentUser = this.authStore.getCurrentUser();
         if (currentUser) {
           try {
             console.log(`Marking user as paid: ${currentUser.uid}`);
