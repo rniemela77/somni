@@ -37,8 +37,8 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { authService } from '../services/firebase';
-import { getUserPersonality, PERSONALITY_DIMENSIONS } from '../../firebase';
+import { authService, getUserPersonality } from '../services/firebase-index';
+import { PERSONALITY_DIMENSIONS } from '../config/personalityAnalysis';
 
 export default {
   name: 'PersonalityProfile',
