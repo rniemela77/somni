@@ -329,6 +329,7 @@ export default {
 }
 
 .quiz-status {
+    margin: 0;
     color: var(--text-muted);
     font-size: var(--font-size-xs);
     font-style: italic;
