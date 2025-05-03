@@ -403,6 +403,112 @@ const quizzes = [
       },
     ],
   },
+  {
+    "id": "inner-signals",
+    "title": "Inner Signals",
+    "questions": [
+      {
+        "id": 1,
+        "text": "You're handed a blank canvas. You:",
+        "options": [
+          "Start painting right away",
+          "Plan each stroke first",
+          "Doodle loosely",
+          "Leave it untouched"
+        ]
+      },
+      {
+        "id": 2,
+        "text": "On a calm lake in a small boat, you:",
+        "options": [
+          "Paddle toward the middle",
+          "Drift with the current",
+          "Stay close to shore",
+          "Call someone to join"
+        ]
+      },
+      {
+        "id": 3,
+        "text": "You wake at dawn without an alarm. You:",
+        "options": [
+          "Jump out of bed",
+          "Lie still and think",
+          "Check your phone",
+          "Stretch slowly"
+        ]
+      },
+      {
+        "id": 4,
+        "text": "A catchy tune plays in a store. You:",
+        "options": [
+          "Hum along out loud",
+          "Tap your foot quietly",
+          "Keep browsing",
+          "Walk away"
+        ]
+      },
+      {
+        "id": 5,
+        "text": "A stranger smiles at you. You:",
+        "options": [
+          "Smile back immediately",
+          "Nod politely",
+          "Ignore and move on",
+          "Study their expression"
+        ]
+      },
+      {
+        "id": 6,
+        "text": "Your favorite chair breaks. You:",
+        "options": [
+          "Fix it yourself",
+          "Buy a new one",
+          "Sit somewhere else",
+          "Ask someone to repair it"
+        ]
+      },
+      {
+        "id": 7,
+        "text": "You find a puzzle with missing pieces. You:",
+        "options": [
+          "Make up your own endings",
+          "Search for the missing parts",
+          "Switch to another puzzle",
+          "Give up for now"
+        ]
+      },
+      {
+        "id": 8,
+        "text": "In a group chat someone asks for advice. You:",
+        "options": [
+          "Share your own view",
+          "Ask for more details",
+          "Stay silent",
+          "Suggest someone else"
+        ]
+      },
+      {
+        "id": 9,
+        "text": "It starts raining while you walk. You:",
+        "options": [
+          "Enjoy the rain",
+          "Seek cover fast",
+          "Keep walking",
+          "Look for a raincoat"
+        ]
+      },
+      {
+        "id": 10,
+        "text": "You spot a glowing orb in a field. You:",
+        "options": [
+          "Investigate up close",
+          "Watch from a distance",
+          "Ignore it and keep going",
+          "Take a photo"
+        ]
+      }
+    ]
+  }  
 ];
 
 export default quizzes;
