@@ -53,6 +53,21 @@
         </button>
       </form>
 
+      <div class="divider">
+        <span>or</span>
+      </div>
+
+      <button 
+        @click="signInWithGoogle" 
+        class="btn btn-google" 
+        :disabled="isLoading"
+      >
+        <svg class="google-icon" width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+          <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
+        </svg>
+        Continue with Google
+      </button>
+
       <p v-if="!isPasswordMatch && password && confirmPassword" 
          class="message error mt-3">
         Passwords do not match
@@ -117,6 +132,23 @@ export default {
       }
     };
 
+    const signInWithGoogle = async () => {
+      message.value = "";
+      
+      try {
+        const { error } = await authStore.signInWithGoogle();
+        
+        if (error) {
+          message.value = error;
+        } else {
+          message.value = "Account created successfully!";
+          router.push('/quiz');
+        }
+      } catch (error) {
+        message.value = error.message;
+      }
+    };
+
     return {
       email,
       password,
@@ -124,7 +156,8 @@ export default {
       message,
       isLoading,
       isPasswordMatch,
-      signUp
+      signUp,
+      signInWithGoogle
     };
   }
 };
@@ -153,7 +186,7 @@ export default {
 }
 
 .auth-form {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .submit-btn {
@@ -165,6 +198,56 @@ export default {
   background: var(--bg-muted);
   cursor: not-allowed;
   transform: none;
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+  margin: var(--spacing-lg) 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: var(--bg-muted);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.divider span {
+  background-color: var(--bg-card);
+  padding: 0 var(--spacing-sm);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: white;
+  color: var(--text-primary);
+  border: 1px solid var(--bg-muted);
+  gap: var(--spacing-sm);
+}
+
+.btn-google:hover {
+  background-color: #f8f9fa;
+}
+
+.google-icon {
+  fill: currentColor;
 }
 
 .auth-footer {

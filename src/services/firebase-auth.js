@@ -5,7 +5,9 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
-  onAuthStateChanged
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup
 } from "firebase/auth";
 
 // Auth Service
@@ -22,6 +24,21 @@ export const authService = {
       return { user: userCredential.user, error: null };
     } catch (error) {
       console.error("Sign in error:", error);
+      return { user: null, error: error.message };
+    }
+  },
+
+  /**
+   * Sign in with Google using popup
+   * @returns {Promise<{user: object|null, error: string|null}>}
+   */
+  async signInWithGoogle() {
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      return { user: userCredential.user, error: null };
+    } catch (error) {
+      console.error("Google sign in error:", error);
       return { user: null, error: error.message };
     }
   },

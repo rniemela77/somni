@@ -81,6 +81,20 @@ export const useAuthStore = defineStore('auth', {
       return { user, error };
     },
 
+    async signInWithGoogle() {
+      this.loading = true;
+      this.error = null;
+      
+      const { user, error } = await authService.signInWithGoogle();
+      
+      if (error) {
+        this.error = error;
+      }
+      
+      this.loading = false;
+      return { user, error };
+    },
+
     async signUp(email, password) {
       this.loading = true;
       this.error = null;
