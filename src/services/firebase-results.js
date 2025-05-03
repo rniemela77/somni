@@ -8,6 +8,8 @@ import {
   where,
   orderBy,
   getDocs,
+  deleteDoc,
+  setDoc,
 } from "firebase/firestore";
 import { quizService } from "./firebase-quiz";
 
@@ -15,12 +17,32 @@ import { quizService } from "./firebase-quiz";
 export const resultsService = {
   async submitQuizResult(userId, quizId, answers) {
     try {
+      // First, check if there's an existing result for this user and quiz
+      const existingResultsQuery = query(
+        collection(db, "results"),
+        where("userId", "==", userId),
+        where("quizId", "==", quizId)
+      );
+      
+      const existingResultsSnapshot = await getDocs(existingResultsQuery);
+      
+      // If there are existing results, delete them
+      if (!existingResultsSnapshot.empty) {
+        // Since we want one result per quiz, we'll delete all previous results
+        const deletePromises = existingResultsSnapshot.docs.map(doc => 
+          deleteDoc(doc.ref)
+        );
+        await Promise.all(deletePromises);
+      }
+      
+      // Now add the new result
       const resultDoc = await addDoc(collection(db, "results"), {
         userId,
         quizId,
         answers,
         timestamp: new Date(),
       });
+      
       return { resultId: resultDoc.id, error: null };
     } catch (error) {
       console.error("Error submitting quiz:", error);

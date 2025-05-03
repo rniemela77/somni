@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import SignUp from "./components/SignUp.vue";
 import SignIn from "./components/SignIn.vue";
 import Quiz from "./components/Quiz.vue";
-import Results from "./components/Results.vue";
 import Payment from "./components/Payment.vue";
 import Success from "./components/Success.vue";
 import Cancel from "./components/Cancel.vue";
@@ -32,12 +31,6 @@ const routes = [
     path: "/quiz", 
     component: Quiz,
     name: 'quiz',
-    meta: { requiresAuth: true }
-  },
-  { 
-    path: "/results", 
-    component: Results,
-    name: 'results',
     meta: { requiresAuth: true }
   },
   { 

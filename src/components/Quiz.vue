@@ -9,10 +9,36 @@
             <div v-else class="quiz-grid">
                 <div v-for="quiz in availableQuizzes" 
                      :key="quiz.id" 
-                     class="card card-interactive quiz-card"
-                     @click="selectQuiz(quiz.id)">
-                    <h3>{{ quiz.title }}</h3>
-                    <p class="quiz-description">Click to start this quiz</p>
+                     class="card quiz-card">
+                    <div class="quiz-card-content">
+                        <h3>{{ quiz.title }}</h3>
+                        <div v-if="getQuizResult(quiz.id)" class="quiz-history">
+                            <p class="quiz-status">
+                                Last completed on {{ formatDate(getQuizResult(quiz.id).timestamp) }}
+                            </p>
+                        </div>
+                        <p class="quiz-description">{{ getQuizResult(quiz.id) ? 'Retaking this quiz will replace your previous answers.' : 'Start this assessment to discover more about yourself' }}</p>
+                    </div>
+                    <div class="quiz-card-action">
+                        <div v-if="getQuizResult(quiz.id)" class="button-group">
+                            <button 
+                                class="btn btn-outline" 
+                                @click="selectQuiz(quiz.id)">
+                                Retake Quiz
+                            </button>
+                            <button 
+                                class="btn btn-text" 
+                                @click="showAnswers(quiz.id)">
+                                See Answers
+                            </button>
+                        </div>
+                        <button 
+                            v-else
+                            class="btn btn-primary" 
+                            @click="selectQuiz(quiz.id)">
+                            Begin Assessment
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -68,86 +94,190 @@
                 </button>
             </div>
         </div>
+
+        <!-- Answers Modal -->
+        <div v-if="showAnswersModal" class="modal-overlay" @click="closeAnswersModal">
+            <div class="answers-modal" @click.stop>
+                <div class="modal-header">
+                    <h3>{{ currentAnswersQuizTitle }}</h3>
+                    <span class="close-button" @click="closeAnswersModal">&times;</span>
+                </div>
+                <div class="modal-content">
+                    <p class="timestamp">Completed on {{ formatDate(currentAnswersResult.timestamp) }}</p>
+                    <div v-if="currentAnswersResult && currentAnswersResult.answers" class="answers-list">
+                        <div v-for="(answer, index) in currentAnswersResult.answers" 
+                             :key="index"
+                             class="answer-item">
+                            <p class="question-text">{{ answer.questionText }}</p>
+                            <p class="answer-text">Your Answer: <span class="highlighted">{{ answer.userAnswer }}</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" @click="closeAnswersModal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
 import { quizService, resultsService, authService } from '../services/firebase';
+import { useQuizStore } from '../stores/quiz';
+import { ref, computed, onMounted } from 'vue';
 
 export default {
-    data() {
-        return {
-            availableQuizzes: [],
-            selectedQuiz: null,
-            quizTitle: "",
-            questions: [],
-            answers: {},
-            message: "",
-            isSubmitting: false,
-            submissionSuccess: false,
+    setup() {
+        const quizStore = useQuizStore();
+        const selectedQuiz = ref(null);
+        const quizTitle = ref("");
+        const questions = ref([]);
+        const answers = ref({});
+        const message = ref("");
+        const isSubmitting = ref(false);
+        const submissionSuccess = ref(false);
+        
+        // Answers modal state
+        const showAnswersModal = ref(false);
+        const currentAnswersQuizTitle = ref("");
+        const currentAnswersResult = ref(null);
+
+        const availableQuizzes = computed(() => quizStore.availableQuizzes);
+        const userResults = computed(() => quizStore.userResults);
+
+        const getQuizResult = (quizId) => {
+            // Since we only keep one result per quiz, we can just find the first match
+            return userResults.value.find(result => result.quizId === quizId);
         };
-    },
-    async mounted() {
-        await this.loadQuizzes();
-    },
-    methods: {
-        async loadQuizzes() {
-            const { quizzes, error } = await quizService.getAllQuizzes();
-            if (error) {
-                this.message = "Error loading quizzes.";
-                return;
+
+        const formatDate = (timestamp) => {
+            if (!timestamp) return 'N/A';
+            
+            // Convert Firestore timestamp to Date object if necessary
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            
+            return new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
+        };
+
+        const loadQuizzes = async () => {
+            await quizStore.loadQuizzes();
+            
+            // If user is logged in, also load their results
+            const user = authService.getCurrentUser();
+            if (user) {
+                await quizStore.loadUserResults();
             }
-            this.availableQuizzes = quizzes;
-        },
-        async selectQuiz(quizId) {
-            const { quiz, error } = await quizService.getQuizById(quizId);
+        };
+
+        const selectQuiz = async (quizId) => {
+            const { error } = await quizStore.selectQuiz(quizId);
             if (error) {
-                this.message = "Error loading quiz.";
+                message.value = "Error loading quiz.";
                 return;
             }
             
-            this.quizTitle = quiz.title;
-            this.questions = quiz.questions;
-            this.selectedQuiz = quizId;
-            this.answers = {};
-            this.message = "";
-        },
-        backToSelection() {
-            this.selectedQuiz = null;
-            this.quizTitle = "";
-            this.questions = [];
-            this.answers = {};
-            this.message = "";
-            this.submissionSuccess = false;
-        },
-        async submitQuiz() {
-            this.isSubmitting = true;
-            this.message = "";
+            quizTitle.value = quizStore.currentQuiz.title;
+            questions.value = quizStore.currentQuiz.questions;
+            selectedQuiz.value = quizId;
+            answers.value = {};
+            message.value = "";
+        };
+
+        const backToSelection = () => {
+            selectedQuiz.value = null;
+            quizTitle.value = "";
+            questions.value = [];
+            answers.value = {};
+            message.value = "";
+            submissionSuccess.value = false;
+            quizStore.clearSelectedQuiz();
+        };
+
+        const submitQuiz = async () => {
+            isSubmitting.value = true;
+            message.value = "";
             
             const user = authService.getCurrentUser();
             if (!user) {
-                this.message = "You must be logged in to submit the quiz.";
-                this.isSubmitting = false;
+                message.value = "You must be logged in to submit the quiz.";
+                isSubmitting.value = false;
                 return;
             }
 
-            const { resultId, error } = await resultsService.submitQuizResult(
-                user.uid,
-                this.selectedQuiz,
-                this.answers
-            );
+            const { resultId, error } = await quizStore.submitQuiz(answers.value);
 
             if (error) {
-                this.message = "Error submitting quiz. Please try again.";
-                this.submissionSuccess = false;
+                message.value = "Error submitting quiz. Please try again.";
+                submissionSuccess.value = false;
             } else {
-                this.message = "Quiz submitted successfully!";
-                this.submissionSuccess = true;
+                message.value = "Quiz submitted successfully!";
+                submissionSuccess.value = true;
+                // Reload user results to update UI with the new submission
+                await quizStore.loadUserResults();
             }
             
-            this.isSubmitting = false;
-        },
-    },
+            isSubmitting.value = false;
+        };
+        
+        const showAnswers = (quizId) => {
+            const result = getQuizResult(quizId);
+            if (!result) {
+                console.warn("No results found for quiz", quizId);
+                return;
+            }
+            
+            const quiz = availableQuizzes.value.find(q => q.id === quizId);
+            if (!quiz) {
+                console.warn("Quiz not found:", quizId);
+                return;
+            }
+            
+            currentAnswersQuizTitle.value = quiz.title;
+            currentAnswersResult.value = result;
+            showAnswersModal.value = true;
+            
+            // Prevent scrolling of the background
+            document.body.style.overflow = 'hidden';
+        };
+        
+        const closeAnswersModal = () => {
+            showAnswersModal.value = false;
+            currentAnswersQuizTitle.value = "";
+            currentAnswersResult.value = null;
+            
+            // Re-enable scrolling
+            document.body.style.overflow = 'auto';
+        };
+
+        onMounted(loadQuizzes);
+
+        return {
+            availableQuizzes,
+            selectedQuiz,
+            quizTitle,
+            questions,
+            answers,
+            message,
+            isSubmitting,
+            submissionSuccess,
+            showAnswersModal,
+            currentAnswersQuizTitle,
+            currentAnswersResult,
+            selectQuiz,
+            backToSelection,
+            submitQuiz,
+            getQuizResult,
+            formatDate,
+            showAnswers,
+            closeAnswersModal
+        };
+    }
 };
 </script>
 
@@ -171,8 +301,12 @@ export default {
 .quiz-card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     min-height: 200px;
+}
+
+.quiz-card-content {
+    flex: 1;
+    padding: var(--spacing-md);
 }
 
 .quiz-card h3 {
@@ -184,7 +318,45 @@ export default {
 .quiz-description {
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
-    margin: 0;
+    margin: var(--spacing-sm) 0;
+}
+
+.quiz-history {
+    margin: var(--spacing-sm) 0;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--bg-muted);
+    border-radius: var(--radius-sm);
+}
+
+.quiz-status {
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    font-style: italic;
+}
+
+.quiz-card-action {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--bg-muted);
+    display: flex;
+    justify-content: center;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    width: 100%;
+    justify-content: center;
+}
+
+.button-group .btn-outline {
+    width: 100%;
+}
+
+.button-group .btn-text {
+    margin-top: -5px; /* Pull the text button closer to the button above it */
+    font-size: var(--font-size-sm);
 }
 
 .active-quiz {
@@ -302,8 +474,112 @@ export default {
     color: white;
 }
 
+.message.info {
+    background: var(--bg-muted);
+    color: var(--text-secondary);
+}
+
 .take-another-section {
     text-align: center;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-md);
+}
+
+.answers-modal {
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--bg-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.close-button {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color var(--transition);
+}
+
+.close-button:hover {
+    color: var(--text-primary);
+}
+
+.modal-content {
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.timestamp {
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.answers-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.answer-item {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--bg-muted);
+    background-color: var(--bg-secondary);
+}
+
+.answer-item .question-text {
+    font-size: var(--font-size-md);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+}
+
+.answer-item .answer-text {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.answer-item .highlighted {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.modal-footer {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--bg-muted);
+    display: flex;
+    justify-content: flex-end;
 }
 
 @media (max-width: 768px) {
@@ -324,5 +600,38 @@ export default {
     .option-label {
         padding: var(--spacing-sm) var(--spacing-md);
     }
+
+    .quiz-card-action {
+        padding: var(--spacing-sm);
+    }
+    
+    .answers-modal {
+        max-height: calc(100vh - var(--spacing-md) * 2);
+    }
+    
+    .modal-content {
+        padding: var(--spacing-md);
+    }
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: var(--primary);
+    box-shadow: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--transition), transform var(--transition);
+}
+
+.btn-text:hover {
+    color: var(--primary-dark);
+    background: none;
+    transform: translateY(-1px);
+}
+
+.btn-text:active {
+    transform: translateY(0);
 }
 </style>

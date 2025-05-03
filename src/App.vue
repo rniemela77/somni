@@ -22,7 +22,6 @@
             <!-- Show these links only for authenticated users -->
             <template v-if="authStore.isAuthenticated">
               <router-link to="/quiz" class="nav-link" active-class="active">Analyzers</router-link>
-              <router-link to="/results" class="nav-link" active-class="active">Results</router-link>
             </template>
             
             <div class="nav-divider"></div>
