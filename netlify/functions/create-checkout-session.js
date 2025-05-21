@@ -23,21 +23,15 @@ export const handler = async (event, context) => {
     // Get user ID from request body, if provided
     const { userId } = body || {};
     
-    // Determine if this is a one-time payment or subscription
-    const isSubscription = body.isSubscription !== false; // Default to subscription
-    
     // Create different line items based on payment type
     const lineItems = [{
       price_data: {
         currency: "usd",
         product_data: {
-          name: isSubscription ? "Quiz Analyzer Pro Subscription" : "Quiz Results",
-          description: isSubscription ? 
-            "Monthly subscription to premium personality insights" : 
-            "Purchase access to your quiz results",
+          name: "Somni AI Personality Quiz",
+          description: "Purchase access to quiz results",
         },
         unit_amount: 1000, // Price in cents ($10.00)
-        ...(isSubscription && { recurring: { interval: "month" } }),
       },
       quantity: 1,
     }];
@@ -45,13 +39,13 @@ export const handler = async (event, context) => {
     const data = {
       payment_method_types: ["card"],
       line_items: lineItems,
-      mode: isSubscription ? "subscription" : "payment",
+      mode: "payment",
       success_url: `${process.env.CLIENT_URL}/profile?payment_success=true&session_id={CHECKOUT_SESSION_ID}`, 
       cancel_url: `${process.env.CLIENT_URL}/cancel`,
       // Store user ID as metadata for reference
       metadata: { 
         userId: userId || "anonymous",
-        product: isSubscription ? "premium_subscription" : "quiz_results"
+        product: "quiz_results"
       },
       // Add customer email if provided
       ...(body.userEmail && { customer_email: body.userEmail }),
