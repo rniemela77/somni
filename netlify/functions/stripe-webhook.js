@@ -1,3 +1,5 @@
+export const config = { bodyParser: false };
+
 import stripe from './utils/stripe.js';
 import { initializeFirebase } from './utils/firebase.js';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
@@ -17,7 +19,6 @@ export async function handler(event, context) {
     };
   }
   
-
   try {
     // Initialize Firebase
     await initializeFirebase();
@@ -26,26 +27,15 @@ export async function handler(event, context) {
 
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     let stripeEvent;
-    
-    // For local development without a webhook secret
+
+    // Signature verification
+    const signature = event.headers['stripe-signature'];
     if (!webhookSecret) {
       console.log('⚠️ DEVELOPMENT MODE: No webhook secret found, skipping signature verification');
-      try {
-        stripeEvent = JSON.parse(event.body);
-        console.log('📝 Parsed webhook payload directly, event type:', stripeEvent.type);
-      } catch (error) {
-        console.error('❌ Failed to parse webhook payload:', error.message);
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ message: `Failed to parse webhook payload: ${error.message}` })
-        };
-      }
+      stripeEvent = JSON.parse(event.body);
+      console.log('📝 Parsed webhook payload directly, event type:', stripeEvent.type);
     } else {
-      // Production mode with signature verification
-      const signature = event.headers['stripe-signature'];
       console.log('🔑 Webhook secret available:', !!webhookSecret);
-      console.log('📝 Stripe signature received:', signature ? 'Yes' : 'No');
-      
       if (!signature) {
         console.error('❌ Missing stripe-signature header');
         return {
@@ -53,18 +43,11 @@ export async function handler(event, context) {
           body: JSON.stringify({ message: 'Webhook Error: Missing stripe-signature header' })
         };
       }
-      
-      // Log request body type for debugging
-      console.log('📦 Request body type:', typeof event.body);
-      console.log('📦 Request body length:', event.body?.length || 0);
-      
+
+      // Raw body is needed for signature verification
+      const buf = Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'utf8');
       try {
-        // Raw body is needed for signature verification
-        stripeEvent = stripe.webhooks.constructEvent(
-          event.body,
-          signature,
-          webhookSecret
-        );
+        stripeEvent = stripe.webhooks.constructEvent(buf, signature, webhookSecret);
         console.log('✅ Webhook signature verified, event type:', stripeEvent.type);
       } catch (error) {
         console.error('❌ Webhook signature verification failed:', error.message);
@@ -84,10 +67,7 @@ export async function handler(event, context) {
       const userId = session.client_reference_id;
       console.log('👤 User ID from session:', userId);
       
-      if (!userId) {
-        console.error('❌ No userId found in session metadata');
-        throw new Error('No userId found in session metadata');
-      }
+      if (!userId) throw new Error('No userId found in session metadata');
       
       // Update the user's subscription status in Firestore
       const userRef = db.collection('users').doc(userId);
@@ -95,10 +75,8 @@ export async function handler(event, context) {
       
       // Check if the user document exists
       const userDoc = await userRef.get();
-      
       if (!userDoc.exists) {
         console.log(`✨ Creating new user document for userId: ${userId}`);
-        // Create the user document if it doesn't exist
         await userRef.set({
           email: session.customer_email,
           isPremium: true,
@@ -108,7 +86,6 @@ export async function handler(event, context) {
         });
         console.log(`✅ New user document created with isPaid=true for ${userId}`);
       } else {
-        // Update the existing user document
         await userRef.update({
           isPremium: true,
           isPaid: true,
@@ -116,12 +93,11 @@ export async function handler(event, context) {
         });
         console.log(`✅ Existing user updated with isPaid=true for ${userId}`);
       }
-      
       console.log(`User ${userId} subscription updated successfully`);
     } else {
       console.log(`📌 Received non-checkout webhook event: ${stripeEvent.type}`);
     }
-    
+
     // Return a success response
     console.log('✅ Webhook processed successfully');
     return {
@@ -135,4 +111,4 @@ export async function handler(event, context) {
       body: JSON.stringify({ message: `Error processing webhook: ${error.message}` })
     };
   }
-} 
+}
