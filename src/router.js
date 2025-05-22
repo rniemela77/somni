@@ -40,12 +40,6 @@ const routes = [
     meta: { requiresAuth: true }
   },
   { 
-    path: "/payment", 
-    component: Payment,
-    name: 'payment',
-    meta: { requiresAuth: true }
-  },
-  { 
     path: "/success", 
     component: Success,
     name: 'success',
@@ -94,25 +88,6 @@ router.beforeEach((to, from, next) => {
     return;
   }
   
-  // Check if this is a return from payment
-  const isPaymentReturn = to.query.payment_success === 'true';
-  const hasSessionId = !!to.query.session_id;
-  
-  // Handle post-payment navigation specially
-  if (isPaymentReturn && hasSessionId && to.path === '/profile') {
-    console.log('Detected return from successful payment, allowing access to profile');
-    
-    // Store session ID in localStorage for verification if needed
-    localStorage.setItem('stripe_session_id', to.query.session_id);
-    
-    // IMPORTANT: When returning from payment, we'll bypass auth check completely
-    // This ensures the user can access the profile page even if Firebase hasn't
-    // restored their auth state yet
-    console.log('Bypassing auth check for post-payment return');
-    next();
-    return; // Important: exit the guard here
-  }
-
   // Log authentication check
   if (requiresAuth) {
     console.log('Route requires auth, current auth state:', isAuthenticated);
