@@ -21,50 +21,41 @@ CLIENT_URL=http://localhost:8888
 ## Local Development
 
 1. Install dependencies:
+
    ```
    npm install
    ```
 
-2. Run the development server with Netlify functions:
+2. (Optional) Run the development server with Stripe locally:
+
+   This sets up a listener for Stripe webhooks on your local machine. 
+   Without it, you can't test the payment process locally.
+
+
+   i. Run this command in the root of the project:
+   ```
+   stripe listen \
+   --api-key sk_test_... \
+   --forward-to http://localhost:8888/.netlify/functions/stripe-webhook
+   ```
+   ii. It will provide you with a webhook secret, `whsec_...`
+   Put that key in the .env file as `STRIPE_WEBHOOK_SECRET`
+   
+
+3. Run the development server with Netlify functions:
+
    ```
    npm run dev:netlify
    ```
 
-This will start both the frontend and the Netlify functions together.
-
-## Deployment
-
-To deploy to Netlify:
-
-1. Push your code to GitHub
-2. Connect your repository to Netlify
-3. Set up the environment variables in the Netlify dashboard
-4. Deploy!
-
-## API Endpoints
-
-The following API endpoints are available:
-
-- `/.netlify/functions/create-checkout-session` - Create a Stripe checkout session
-- `/.netlify/functions/subscription-status/:userId` - Check subscription status
-- `/.netlify/functions/activate-subscription/:userId` - Activate subscription manually
-- `/.netlify/functions/webhook` - Handle Stripe webhooks
-- `/.netlify/functions/paid-status/:userId` - Check if a user has paid
-
-See the `/netlify/functions/README.md` file for more details on the functions.
-
 # Website URL
+
 https://somni.netlify.app/
 
-# Backend local development
-`cd backend && npm run server`
-
 ## Quiz questions
+
 - Questions are located in /quizData.js
 - Seed the database with questions with `npm run seed`
 
 ## Database
 Firebase.google.com
-
-## Payment
-Stripe
