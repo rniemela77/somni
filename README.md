@@ -1,22 +1,13 @@
 # Somni - Personality Quiz App
 
-This project has been migrated from an Express server to Netlify serverless functions for payment processing and user management.
+## Website URL
+
+https://somni.netlify.app/
 
 ## Structure
 
 - `/netlify/functions/` - Contains serverless functions for payment processing and user management
-- `/backend/` - Contains the legacy Express server (now replaced by Netlify functions)
 - `/src/` - Contains the Vue.js frontend application
-
-## Environment Variables
-
-Create a `.env` file in the project root with the following variables:
-
-```
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
-CLIENT_URL=http://localhost:8888
-```
 
 ## Local Development
 
@@ -48,9 +39,6 @@ CLIENT_URL=http://localhost:8888
    npm run dev:netlify
    ```
 
-# Website URL
-
-https://somni.netlify.app/
 
 ## Quiz questions
 
@@ -75,3 +63,13 @@ Firebase:
 - allows you to connect your frontend to a database
 - is an alternative to a traditional database
 - offers authentication, realtime database, storage, and more
+
+## How the app works
+- quiz questions are stored in /quizData.js, and seeded into the firebase database using `npm run seed`
+- user authentication is handled by firebase
+- frontend fetches quiz questions from the firebase database
+- user quiz answers are stored in the firebase database
+- home/dashboard has a button to generate a personality report
+- the personality report instructions are in `config/personalityAnalysis.js`
+- the personality report api call is in `netlify/functions/openai.js`
+- the personality report is displayed on the dashboard
