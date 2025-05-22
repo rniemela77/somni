@@ -53,7 +53,7 @@ export const initializeUserDocument = async (userId, userData = {}) => {
         dimensions: getInitialDimensions(),
         tags: [],
         personalityAnalysis,
-        isPaid: false, // Explicitly initialize isPaid to false
+        isPaid: false,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -69,13 +69,6 @@ export const initializeUserDocument = async (userId, userData = {}) => {
         ...getInitialDimensions(),
         ...currentDimensions
       };
-      
-      // Log current paid status if it exists
-      if (userDoc.data().hasOwnProperty('isPaid')) {
-        console.log('Current isPaid status:', userDoc.data().isPaid);
-      } else {
-        console.log('isPaid property not found in user document');
-      }
       
       // Initialize missing fields if needed
       const updateData = {};
@@ -93,12 +86,6 @@ export const initializeUserDocument = async (userId, userData = {}) => {
         });
         
         updateData.personalityAnalysis = personalityAnalysis;
-      }
-      
-      // Set isPaid to false if it doesn't exist
-      if (!userDoc.data().hasOwnProperty('isPaid')) {
-        console.log('Adding missing isPaid property (false) to user document');
-        updateData.isPaid = false;
       }
       
       // Update only if we have changes
@@ -279,77 +266,10 @@ export const getUserPersonalityAnalysis = async (userId) => {
   }
 };
 
-export { auth, db, firebaseConfig };
-
-// Simple Subscription Functions
-
-// Mark user as paid in Firestore (using backend API)
-export const markUserAsPaid = async (userId) => {
-  try {
-    console.log(`Starting to mark user ${userId} as paid via API`);
-    
-    // Use the backend endpoint instead of direct Firestore access
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-    const response = await fetch(`${BACKEND_URL}/mark-user-paid/${userId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Failed to mark user as paid: ${response.status}`);
-    }
-    
-    const result = await response.json();
-    console.log('Mark user as paid response:', result);
-    
-    if (result.success) {
-      console.log(`User ${userId} successfully marked as paid`);
-      return true;
-    } else {
-      console.log(`Failed to mark user ${userId} as paid`);
-      return false;
-    }
-  } catch (error) {
-    console.error('Error marking user as paid:', error);
-    return false;
-  }
-};
-
-// Check if user is paid
 export const checkUserPaidStatus = async (userId) => {
-  try {
-    console.log(`Checking paid status for user: ${userId}`);
-    
-    // Use the backend endpoint instead of direct Firestore access
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-    const response = await fetch(`${BACKEND_URL}/premium-status/${userId}`);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to check premium status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    console.log('Premium status response:', data);
-    
-    if (data.hasPremiumAccess) {
-      console.log('User has premium access, returning true');
-      return {
-        isPaid: true,
-        paidAt: data.paidAt || null
-      };
-    } else {
-      console.log('User does not have premium access');
-      return {
-        isPaid: false
-      };
-    }
-  } catch (error) {
-    console.error('Error checking paid status:', error);
-    return {
-      isPaid: false,
-      error: error.message
-    };
-  }
+  const userRef = doc(db, 'users', userId);
+  const userDoc = await getDoc(userRef);
+  return userDoc.exists() && userDoc.data().isPaid;
 };
+
+export { auth, db, firebaseConfig };

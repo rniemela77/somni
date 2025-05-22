@@ -18,12 +18,6 @@ export {
   getUserPersonalityAnalysis
 } from './firebase-personality';
 
-// Export subscription-related services
-export {
-  markUserAsPaid,
-  checkUserPaidStatus
-} from './firebase-subscription';
-
 // Export authentication services
 export { authService } from './firebase-auth';
 

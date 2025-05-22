@@ -100,7 +100,7 @@
 import { loadStripe } from "@stripe/stripe-js";
 import { useAuthStore } from '../stores/auth';
 import { useRoute } from 'vue-router';
-import { markUserAsPaid, checkUserPaidStatus } from "../../firebase";
+
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -124,9 +124,6 @@ export default {
   },
   async mounted() {
     console.log('Profile component mounted');
-    
-    // First, check for payment success parameter
-    this.checkPaymentSuccess();
     
     // Get the current authenticated user from the store
     const currentUser = this.authStore.getCurrentUser();
@@ -159,7 +156,6 @@ export default {
     } else {
       // Normal flow
       await this.loadUserInfo();
-      await this.checkPaidStatus();
     }
   },
   methods: {
@@ -175,53 +171,6 @@ export default {
         };
       } else {
         console.log('No current user found when loading user info');
-      }
-    },
-    async checkPaidStatus() {
-      const currentUser = this.authStore.getCurrentUser();
-      if (!currentUser) {
-        console.log('Cannot check paid status: no user logged in');
-        this.isPremiumMember = false;
-        return;
-      }
-
-      // Check if we have a post-payment flag set
-      const hasJustPaid = localStorage.getItem('payment_success') === 'true';
-      
-      // If we just paid, assume we're premium until we can verify with the database
-      if (hasJustPaid) {
-        console.log('Post-payment flag detected, provisionally setting premium status to active');
-        this.isPremiumMember = true;
-      }
-
-      try {
-        console.log('Checking paid status for user:', currentUser.uid);
-        
-        // Use Firebase function to check paid status
-        const result = await checkUserPaidStatus(currentUser.uid);
-        console.log('Paid status response from Firebase:', result);
-        
-        if (result.isPaid === true) {
-          console.log('User is confirmed as a premium member');
-          this.isPremiumMember = true;
-        } else if (!hasJustPaid) {
-          // Only update to non-premium if we didn't just pay
-          // This prevents flickering of the premium status right after payment
-          console.log('User is not a premium member according to Firebase');
-          this.isPremiumMember = false;
-        }
-        
-        // Clear the post-payment flag after checking
-        if (hasJustPaid) {
-          console.log('Clearing post-payment flag');
-          localStorage.removeItem('payment_success');
-        }
-      } catch (error) {
-        console.error('Error checking paid status:', error);
-        // Don't change premium status if we just paid and there's an error
-        if (!hasJustPaid) {
-          this.isPremiumMember = false;
-        }
       }
     },
     formatDate(dateString) {
@@ -286,57 +235,6 @@ export default {
         this.paymentError = true;
       } finally {
         this.processingPayment = false;
-      }
-    },
-    async checkPaymentSuccess() {
-      // Check if the user is returning from a successful payment
-      if (this.route.query.payment_success === 'true' && this.route.query.session_id) {
-        const sessionId = this.route.query.session_id;
-        console.log('Payment success detected!', sessionId);
-        
-        // Set visual feedback immediately
-        this.showPaymentSuccess = true;
-        
-        // Set a flag in localStorage to track successful payment
-        localStorage.setItem('payment_success', 'true');
-        localStorage.setItem('stripe_session_id', sessionId);
-        
-        // Get the current user from the auth store
-        const currentUser = this.authStore.getCurrentUser();
-        if (currentUser) {
-          try {
-            console.log(`Marking user as paid: ${currentUser.uid}`);
-            
-            // Use Firebase function to mark user as paid
-            const success = await markUserAsPaid(currentUser.uid);
-            
-            if (success) {
-              console.log('User successfully marked as paid in Firebase');
-              
-              // Set premium status to true since payment was successful
-              this.isPremiumMember = true;
-              
-              // Re-fetch paid status
-              setTimeout(() => this.checkPaidStatus(), 1000);
-            } else {
-              throw new Error('Failed to mark user as paid in Firebase');
-            }
-          } catch (error) {
-            console.error('Error marking user as paid:', error);
-            
-            // Still show as premium member in the UI
-            this.isPremiumMember = true;
-          }
-        } else {
-          console.warn('No user found when marking user as paid');
-          
-          // For UI purposes, still show premium status
-          this.isPremiumMember = true;
-        }
-        
-        // Remove the query parameters from the URL without reloading the page
-        const newURL = window.location.pathname;
-        window.history.replaceState({}, document.title, newURL);
       }
     },
     dismissSuccessMessage() {
