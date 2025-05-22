@@ -255,8 +255,7 @@ export default {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             userId: currentUser.uid,
-            userEmail: currentUser.email,
-            isSubscription: true
+            userEmail: currentUser.email
           })
         });
 

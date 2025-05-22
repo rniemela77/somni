@@ -1,7 +1,6 @@
 import stripe from './utils/stripe.js';
 import { 
   initializeFirebase, 
-  activateSubscriptionInFirebase, 
   markUserAsPaidInFirebase 
 } from './utils/firebase.js';
 import { success, error } from './utils/response.js';
@@ -47,27 +46,8 @@ export const handler = async (event, context) => {
         
         if (userId && userId !== 'anonymous') {
           console.log(`Processing successful payment for user ${userId}`);
-          
-          // Determine if this was a subscription or one-time payment
-          if (session.metadata.product === 'premium_subscription') {
-            // This was a subscription payment
-            // Get subscription details if available
-            const subscriptionId = session.subscription;
-            
-            // Activate the subscription in Firebase
-            await activateSubscriptionInFirebase(
-              userId, 
-              session.id, 
-              subscriptionId,
-              session.customer
-            );
-            
-            console.log(`Subscription activated for user ${userId}`);
-          } else {
-            // This was a one-time payment for quiz results
-            await markUserAsPaidInFirebase(userId);
-            console.log(`User ${userId} marked as paid`);
-          }
+          await markUserAsPaidInFirebase(userId);
+          console.log(`User ${userId} marked as paid`);
         }
         break;
         

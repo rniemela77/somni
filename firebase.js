@@ -283,39 +283,34 @@ export { auth, db, firebaseConfig };
 
 // Simple Subscription Functions
 
-// Mark user as paid in Firestore (simplified approach)
+// Mark user as paid in Firestore (using backend API)
 export const markUserAsPaid = async (userId) => {
   try {
-    console.log(`Starting to mark user ${userId} as paid`);
+    console.log(`Starting to mark user ${userId} as paid via API`);
     
-    // Ensure user document exists
-    await initializeUserDocument(userId);
-    console.log('User document initialized');
-    
-    const userRef = doc(db, 'users', userId);
-    
-    // Get current document to verify
-    const beforeDoc = await getDoc(userRef);
-    console.log('User document before update:', 
-      beforeDoc.exists() ? 'exists' : 'does not exist',
-      beforeDoc.exists() ? beforeDoc.data() : '');
-    
-    // Set the paid flag to true with timestamp
-    const paidAt = new Date();
-    
-    // Simply set isPaid flag to true
-    await updateDoc(userRef, {
-      isPaid: true,
-      paidAt: paidAt
+    // Use the backend endpoint instead of direct Firestore access
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const response = await fetch(`${BACKEND_URL}/mark-user-paid/${userId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     
-    // Verify the update
-    const afterDoc = await getDoc(userRef);
-    console.log('User document after update:', 
-      afterDoc.exists() ? afterDoc.data() : 'document does not exist');
+    if (!response.ok) {
+      throw new Error(`Failed to mark user as paid: ${response.status}`);
+    }
     
-    console.log(`User ${userId} marked as paid in Firestore at ${paidAt}`);
-    return true;
+    const result = await response.json();
+    console.log('Mark user as paid response:', result);
+    
+    if (result.success) {
+      console.log(`User ${userId} successfully marked as paid`);
+      return true;
+    } else {
+      console.log(`Failed to mark user ${userId} as paid`);
+      return false;
+    }
   } catch (error) {
     console.error('Error marking user as paid:', error);
     return false;
@@ -326,32 +321,30 @@ export const markUserAsPaid = async (userId) => {
 export const checkUserPaidStatus = async (userId) => {
   try {
     console.log(`Checking paid status for user: ${userId}`);
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
     
-    console.log('User document exists:', userDoc.exists());
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      console.log('User data:', userData);
-      console.log('isPaid value:', userData.isPaid);
-      
-      if (userData.isPaid === true) {
-        console.log('User is paid, returning true');
-        return {
-          isPaid: true,
-          paidAt: userData.paidAt || null
-        };
-      } else {
-        console.log('User document exists but isPaid is not true');
-      }
-    } else {
-      console.log('User document does not exist');
+    // Use the backend endpoint instead of direct Firestore access
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const response = await fetch(`${BACKEND_URL}/premium-status/${userId}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to check premium status: ${response.status}`);
     }
     
-    console.log('Returning not paid status');
-    return {
-      isPaid: false
-    };
+    const data = await response.json();
+    console.log('Premium status response:', data);
+    
+    if (data.hasPremiumAccess) {
+      console.log('User has premium access, returning true');
+      return {
+        isPaid: true,
+        paidAt: data.paidAt || null
+      };
+    } else {
+      console.log('User does not have premium access');
+      return {
+        isPaid: false
+      };
+    }
   } catch (error) {
     console.error('Error checking paid status:', error);
     return {

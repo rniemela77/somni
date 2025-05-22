@@ -49,15 +49,13 @@ export const handler = async (event, context) => {
       },
       // Add customer email if provided
       ...(body.userEmail && { customer_email: body.userEmail }),
-      // Payment intent data only applies to non-subscription payments
-      ...(isSubscription ? {} : {
-        payment_intent_data: {
-          metadata: {
-            userId: userId || "anonymous",
-            product: "quiz_results"
-          },
+      // Add payment intent metadata
+      payment_intent_data: {
+        metadata: {
+          userId: userId || "anonymous",
+          product: "quiz_results"
         }
-      }),
+      }
     };
     
     // Create the checkout session with appropriate parameters
