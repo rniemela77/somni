@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import SignUp from "./components/SignUp.vue";
 import SignIn from "./components/SignIn.vue";
 import Quiz from "./components/Quiz.vue";
-import Payment from "./components/Payment.vue";
 import Success from "./components/Success.vue";
 import Cancel from "./components/Cancel.vue";
 import Home from "./components/Home.vue";

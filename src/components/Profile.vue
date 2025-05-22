@@ -1,7 +1,7 @@
 <template>
   <div class="profile-container">
     <h2 class="section-title">Your Profile</h2>
-    
+
     <!-- Auth Status Message (temporary for debugging) -->
     <div v-if="waitingForAuth" class="auth-waiting-banner">
       <div class="warning-icon">!</div>
@@ -10,17 +10,7 @@
         <p>Please wait while we restore your session.</p>
       </div>
     </div>
-    
-    <!-- Payment Success Message -->
-    <div v-if="showPaymentSuccess" class="payment-success-banner">
-      <div class="success-icon">✓</div>
-      <div class="success-message">
-        <h3>Payment Successful!</h3>
-        <p>Thank you for your purchase. Your premium membership is now active.</p>
-      </div>
-      <button @click="dismissSuccessMessage" class="dismiss-btn">&times;</button>
-    </div>
-    
+
     <div class="profile-content">
       <!-- User Information Section -->
       <div class="profile-section user-info-section">
@@ -39,57 +29,35 @@
           Loading account information...
         </div>
       </div>
-      
+
       <!-- Subscription Section -->
       <div class="profile-section subscription-section">
-        <h3>Premium Membership Status</h3>
-        <div class="subscription-details">
-          <div class="subscription-status" :class="{ 'has-subscription': isPremiumMember }">
-            <div class="status-indicator"></div>
-            <div class="status-text">
-              <strong>{{ isPremiumMember ? 'Active' : 'Not Subscribed' }}</strong>
-              <span v-if="isPremiumMember">Your premium membership is active</span>
-              <span v-else>Upgrade to access premium features</span>
+        <div class="subscription-benefits">
+          <h4>Premium Benefits:</h4>
+          <ul class="benefits-list">
+            <li>
+              <span class="benefit-icon">✓</span>
+              <span>Deeper personality insights and analytics</span>
+            </li>
+            <li>
+              <span class="benefit-icon">✓</span>
+              <span>Unlimited quiz attempts and result storage</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="payment-section">
+          <div class="price-display">
+            <div class="price-amount">
+              <span class="currency">$</span>
+              <span class="amount">10</span>
             </div>
+            <div class="price-details">One-time payment • Instant access</div>
           </div>
-          
-          <div class="subscription-benefits">
-            <h4>Premium Benefits:</h4>
-            <ul class="benefits-list">
-              <li>
-                <span class="benefit-icon">✓</span>
-                <span>Deeper personality insights and analytics</span>
-              </li>
-              <li>
-                <span class="benefit-icon">✓</span>
-                <span>Unlimited quiz attempts and result storage</span>
-              </li>
-            </ul>
-          </div>
-          
-          <div class="payment-section">
-            <div class="price-display">
-              <div class="price-amount">
-                <span class="currency">$</span>
-                <span class="amount">10</span>
-              </div>
-              <div class="price-details">One-time payment • Instant access</div>
-            </div>
-            
-            <button v-if="!isPremiumMember" 
-                    @click="startCheckout" 
-                    :disabled="processingPayment" 
-                    class="payment-button">
-              {{ processingPayment ? 'Processing...' : 'Buy Now' }}
-            </button>
-            <div v-else class="premium-badge">
-              Premium Member
-            </div>
-          </div>
-          
-          <div v-if="paymentMessage" class="payment-message" :class="{ error: paymentError }">
-            {{ paymentMessage }}
-          </div>
+
+          <button @click="startCheckout" class="payment-button">
+            Buy Now
+          </button>
         </div>
       </div>
     </div>
@@ -114,54 +82,22 @@ export default {
   data() {
     return {
       userInfo: null,
-      isPremiumMember: false,
-      processingPayment: false,
-      paymentMessage: '',
-      paymentError: false,
-      showPaymentSuccess: false,
       waitingForAuth: false
     };
   },
   async mounted() {
     console.log('Profile component mounted');
-    
+
     // Get the current authenticated user from the store
     const currentUser = this.authStore.getCurrentUser();
     console.log('Current user on mount:', currentUser?.uid || 'No user');
-    
-    // Detect if we need to wait for authentication
-    if (this.route.query.payment_success === 'true' && !currentUser) {
-      console.log('Detected post-payment return but auth state not ready, waiting for auth state...');
-      this.waitingForAuth = true;
-      
-      // Watch the auth store for changes instead of setting up a separate listener
-      const unwatch = this.$watch(
-        () => this.authStore.user,
-        (newUser) => {
-          if (newUser) {
-            console.log('Auth state changed via store: user is now authenticated');
-            this.waitingForAuth = false;
-            this.loadUserInfo();
-            this.checkPaidStatus();
-            
-            // Re-trigger payment success handling now that we have authentication
-            console.log('Re-triggering payment success handling after authentication');
-            this.checkPaymentSuccess();
-            
-            // Stop watching once we've handled the authentication
-            unwatch();
-          }
-        }
-      );
-    } else {
-      // Normal flow
-      await this.loadUserInfo();
-    }
+
+    await this.loadUserInfo();
   },
   methods: {
     async loadUserInfo() {
       const currentUser = this.authStore.getCurrentUser();
-      
+
       if (currentUser) {
         console.log('Loading user info for:', currentUser.email);
         this.userInfo = {
@@ -175,7 +111,7 @@ export default {
     },
     formatDate(dateString) {
       if (!dateString) return 'N/A';
-      
+
       const date = new Date(dateString);
       return new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
@@ -184,62 +120,8 @@ export default {
       }).format(date);
     },
     async startCheckout() {
-      if (this.processingPayment) return;
-      
-      this.processingPayment = true;
-      this.paymentMessage = '';
-      this.paymentError = false;
-      
-      try {
-        console.log('Attempting to connect to backend at:', BACKEND_URL);
-        
-        const currentUser = this.authStore.getCurrentUser();
-        if (!currentUser) {
-          throw new Error('You must be logged in to make a purchase');
-        }
-        
-        // Pass the current user ID and email to associate with the payment
-        const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: currentUser.uid,
-            userEmail: currentUser.email
-          })
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Server returned ${response.status}: ${errorText}`);
-        }
-
-        const { sessionId } = await response.json();
-        console.log('Received session ID:', sessionId);
-
-        // Redirect to Stripe Checkout
-        const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-        console.log('Using Stripe key:', stripeKey ? 'Key exists (not showing for security)' : 'Missing key');
-        
-        const stripe = await loadStripe(stripeKey);
-        if (!stripe) {
-          throw new Error('Failed to initialize Stripe');
-        }
-        
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) {
-          throw new Error(error.message);
-        }
-      } catch (error) {
-        console.error("Error creating checkout session:", error);
-        this.paymentMessage = `Payment error: ${error.message}. Please check console for details.`;
-        this.paymentError = true;
-      } finally {
-        this.processingPayment = false;
-      }
+      console.log('Starting checkout');
     },
-    dismissSuccessMessage() {
-      this.showPaymentSuccess = false;
-    }
   }
 };
 </script>
@@ -442,7 +324,8 @@ export default {
   margin-top: 4px;
 }
 
-.payment-button, .manage-button {
+.payment-button,
+.manage-button {
   padding: 10px 24px;
   border-radius: var(--radius-sm);
   font-weight: 500;
