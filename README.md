@@ -59,3 +59,19 @@ https://somni.netlify.app/
 
 ## Database
 Firebase.google.com
+
+## Notes
+Netlify Functions:
+- is a simple alternative to traditional backend servers
+- are HTTP endpoints that run on-demand
+- are located in /netlify/functions/
+- can be tested locally using `netlify dev` command
+
+Stripe:
+- is a payment processing platform
+- offers a webhook that can be used to trigger actions in your application
+
+Firebase:
+- allows you to connect your frontend to a database
+- is an alternative to a traditional database
+- offers authentication, realtime database, storage, and more
