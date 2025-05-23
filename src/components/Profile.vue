@@ -61,7 +61,7 @@
             <div class="price-display">
               <div class="price-amount">
                 <span class="currency">$</span>
-                <span class="amount">10</span>
+                <span class="amount">1.99</span>
               </div>
               <div class="price-details">One-time payment • Instant access</div>
             </div>
@@ -228,7 +228,7 @@ export default {
           body: JSON.stringify({
             userId: this.userInfo.uid,
             userEmail: this.userInfo.email,
-            price: 1000, // $10.00 in cents
+            price: 199,
             productName: 'Premium Subscription'
           })
         });
