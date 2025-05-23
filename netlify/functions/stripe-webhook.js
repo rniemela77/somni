@@ -76,7 +76,6 @@ export async function handler(event, context) {
       // Check if the user document exists
       const userDoc = await userRef.get();
       if (!userDoc.exists) {
-        console.log(`✨ Creating new user document for userId: ${userId}`);
         await userRef.set({
           email: session.customer_email,
           isPremium: true,
@@ -84,16 +83,13 @@ export async function handler(event, context) {
           premiumPurchaseDate: FieldValue.serverTimestamp(),
           createdAt: FieldValue.serverTimestamp()
         });
-        console.log(`✅ New user document created with isPaid=true for ${userId}`);
       } else {
         await userRef.update({
           isPremium: true,
           isPaid: true,
           premiumPurchaseDate: FieldValue.serverTimestamp()
         });
-        console.log(`✅ Existing user updated with isPaid=true for ${userId}`);
       }
-      console.log(`User ${userId} subscription updated successfully`);
     } else {
       console.log(`📌 Received non-checkout webhook event: ${stripeEvent.type}`);
     }

@@ -313,7 +313,6 @@ export default {
             if (data.isPaid) {
               console.log('✅ Payment confirmed in Firestore! isPaid=true');
               clearInterval(pollInterval);
-              // Optional: Show a more prominent success message or UI update
             } else {
               console.log('⏳ Payment not yet reflected in Firestore (isPaid=false or missing)');
             }

@@ -32,24 +32,15 @@ export const initializeUserDocument = async (userId, userData = {}) => {
         updatedAt: new Date()
       };
       
-      console.log('Creating user document with data:', newUserData);
+      // Create user document
       await setDoc(userRef, newUserData);
-      console.log('User document created successfully');
     } else {
-      console.log('User document already exists');
       // Ensure all dimensions exist in existing documents
       const currentDimensions = userDoc.data().dimensions || {};
       const updatedDimensions = {
         ...getInitialDimensions(),
         ...currentDimensions
       };
-      
-      // Log current paid status if it exists
-      if (userDoc.data().hasOwnProperty('isPaid')) {
-        console.log('Current isPaid status:', userDoc.data().isPaid);
-      } else {
-        console.log('isPaid property not found in user document');
-      }
       
       // Initialize missing fields if needed
       const updateData = {};
@@ -69,18 +60,10 @@ export const initializeUserDocument = async (userId, userData = {}) => {
         updateData.personalityAnalysis = personalityAnalysis;
       }
       
-      // Set isPaid to false if it doesn't exist
-      if (!userDoc.data().hasOwnProperty('isPaid')) {
-        console.log('Adding missing isPaid property (false) to user document');
-        updateData.isPaid = false;
-      }
-      
       // Update only if we have changes
       if (Object.keys(updateData).length > 0) {
         updateData.updatedAt = new Date();
-        console.log('Updating user document with:', updateData);
         await updateDoc(userRef, updateData);
-        console.log('User document updated successfully');
       } else {
         console.log('No updates needed for user document');
       }
