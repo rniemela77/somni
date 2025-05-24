@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div>
     <div class="row">
       <template v-for="section in getSortedAnalysisSections()" :key="section.id">
         <div class="col-md-6 mb-4">

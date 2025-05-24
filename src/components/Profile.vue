@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div>
     <h2 class="mb-4 fw-bold position-relative">Your Profile</h2>
 
     <!-- Auth Status Message (temporary for debugging) -->

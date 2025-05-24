@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div>
     
     <!-- Personality Analysis Section for authenticated users -->
     <div v-if="authStore.isAuthenticated" class="mb-4">
@@ -7,7 +7,7 @@
     </div>
     
     <!-- Landing Page for non-authenticated users -->
-    <div>
+    <div v-else>
       <section class="text-center mb-5">
         <h1 class="display-4">Insight through <span class="text-primary">self-discovery</span></h1>
         <p class="lead">

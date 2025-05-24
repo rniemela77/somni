@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div>
     <h2 class="text-center mb-4">Select a Quiz</h2>
     <div v-if="availableQuizzes.length === 0" class="alert alert-info text-center">
       <p>Loading quizzes...</p>

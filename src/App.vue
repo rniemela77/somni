@@ -18,7 +18,10 @@
               <small class="text-muted d-block">Personality Analyzer</small>
             </h1>
           </router-link>
-          <div class="collapse navbar-collapse">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               <li class="nav-item">
                 <router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
@@ -47,7 +50,7 @@
         </div>
       </nav>
 
-      <main class="container my-5">
+      <main class="container my-5 mt-5">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />

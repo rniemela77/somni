@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div>
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>{{ quizTitle }}</h2>
       <button class="btn btn-outline-secondary" @click="$emit('back-to-selection')">

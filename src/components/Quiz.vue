@@ -1,5 +1,5 @@
 <template>
-    <div class="container mt-5">
+    <div>
         <QuizList v-if="!selectedQuiz" @select-quiz="selectQuiz" @show-answers="showAnswers" />
         <QuizDetail v-else :quizId="selectedQuiz" @back-to-selection="backToSelection" />
 

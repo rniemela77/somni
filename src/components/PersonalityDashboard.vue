@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div>
     <div class="alert alert-info" v-if="dashboardLoading">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>

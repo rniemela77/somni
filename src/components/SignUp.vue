@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div>
     <div class="card mx-auto" style="max-width: 400px;">
       <div class="card-body">
         <h2 class="card-title text-center">Create Account</h2>
