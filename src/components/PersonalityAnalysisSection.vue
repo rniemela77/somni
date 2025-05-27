@@ -21,27 +21,12 @@
           </div>
         </div>
       </template>
-
-      <template v-for="dimension in Object.values(personalityDimensions)" :key="dimension.id">
-        <div class="col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h4 class="card-title">{{ dimension.name }}</h4>
-              <p v-if="hasDimensionValues" class="dimension-value">
-                {{ formatDimensionValue(displayDimensions[dimension.id] || 0, dimension) }}
-              </p>
-              <p v-else class="text-muted fst-italic">N/A</p>
-            </div>
-          </div>
-        </div>
-      </template>
     </div>
   </div>
 </template>
 
 <script>
 import { 
-  PERSONALITY_DIMENSIONS, 
   PERSONALITY_ANALYSIS_SECTIONS 
 } from '../config/personalityAnalysis';
 
@@ -51,19 +36,10 @@ export default {
     parsedFeeling: {
       type: Object,
       required: true
-    },
-    displayDimensions: {
-      type: Object,
-      required: true
-    },
-    hasDimensionValues: {
-      type: Boolean,
-      required: true
     }
   },
   data() {
     return {
-      personalityDimensions: PERSONALITY_DIMENSIONS,
       personalityAnalysisSections: PERSONALITY_ANALYSIS_SECTIONS
     };
   },
@@ -81,18 +57,6 @@ export default {
         'rgba(78, 136, 199, 0.08)',
       ];
       return colors[index % colors.length];
-    },
-    formatDimensionValue(value, dimension) {
-      const normalizedValue = Math.max(-2, Math.min(2, value));
-      const descriptors = {
-        '-2': `Strong ${dimension.leftLabel}`,
-        '-1': `Moderate ${dimension.leftLabel}`,
-        '0': `Balanced`,
-        '1': `Moderate ${dimension.rightLabel}`,
-        '2': `Strong ${dimension.rightLabel}`
-      };
-      const roundedValue = Math.round(normalizedValue);
-      return descriptors[roundedValue.toString()];
     }
   }
 };

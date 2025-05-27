@@ -3,7 +3,6 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebase-config";
 import { 
   PERSONALITY_ANALYSIS_SECTIONS,
-  getInitialDimensions
 } from "../config/personalityAnalysis";
 
 // User document initialization
@@ -24,7 +23,6 @@ export const initializeUserDocument = async (userId, userData = {}) => {
       // Create new user document
       const newUserData = {
         ...userData,
-        dimensions: getInitialDimensions(),
         tags: [],
         personalityAnalysis,
         isPaid: false, // Explicitly initialize isPaid to false
@@ -35,20 +33,8 @@ export const initializeUserDocument = async (userId, userData = {}) => {
       // Create user document
       await setDoc(userRef, newUserData);
     } else {
-      // Ensure all dimensions exist in existing documents
-      const currentDimensions = userDoc.data().dimensions || {};
-      const updatedDimensions = {
-        ...getInitialDimensions(),
-        ...currentDimensions
-      };
-      
       // Initialize missing fields if needed
       const updateData = {};
-      
-      // Update document only if dimensions are missing
-      if (Object.keys(currentDimensions).length !== Object.keys(getInitialDimensions()).length) {
-        updateData.dimensions = updatedDimensions;
-      }
       
       // Ensure personalityAnalysis field exists with all sections
       if (!userDoc.data().personalityAnalysis) {

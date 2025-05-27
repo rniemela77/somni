@@ -22,8 +22,6 @@
 
       <PersonalityAnalysisSection 
         :parsedFeeling="parsedFeeling"
-        :displayDimensions="displayDimensions"
-        :hasDimensionValues="hasDimensionValues"
       />
     </div>
   </div>
@@ -33,13 +31,10 @@
 import { quizService, resultsService, authService } from '../services/firebase';
 import { openaiService } from '../services/openai';
 import { 
-  updateDimensionValue, 
-  getUserPersonality, 
   updateUserPersonalityAnalysis, 
   getUserPersonalityAnalysis 
 } from '../../firebase';
 import { 
-  PERSONALITY_DIMENSIONS, 
   PERSONALITY_ANALYSIS_SECTIONS 
 } from '../config/personalityAnalysis';
 import { useAuthStore } from '../stores/auth';
@@ -60,15 +55,10 @@ export default {
       dashboardLoading: false,
       generatingDescription: false,
       coreFeeling: null,
-      parsedFeeling: {
-        dimensions: {},
-      },
-      userDimensions: {},
+      parsedFeeling: {},
       userTags: [],
-      dimensionsUpdated: false,
       hasSavedAnalysis: false,
       needsFullAnalysis: false,
-      personalityDimensions: PERSONALITY_DIMENSIONS,
       personalityAnalysisSections: PERSONALITY_ANALYSIS_SECTIONS
     };
   },
@@ -86,12 +76,6 @@ export default {
       });
       return answers;
     },
-    displayDimensions() {
-      if (this.coreFeeling && this.parsedFeeling.dimensions) {
-        return this.parsedFeeling.dimensions;
-      }
-      return this.userDimensions;
-    },
     generateButtonText() {
       return this.generatingDescription ? 'GENERATING...' : 'GENERATE NEW ANALYSIS';
     },
@@ -100,18 +84,9 @@ export default {
     },
     buttonDisabled() {
       return this.generatingDescription || this.noQuizzesCompleted;
-    },
-    hasDimensionValues() {
-      return Object.values(this.displayDimensions).some(value => value !== null && !isNaN(value));
     }
   },
   methods: {
-    getDimensionValue(key) {
-      return this.userDimensions[key] ?? 0;
-    },
-    getMarkerPosition(value) {
-      return ((value + 2) / 4) * 100;
-    },
     async loadUserPersonality() {
       if (this.authStore.loading) {
         console.log('Auth still loading, delaying loadUserPersonality');
@@ -121,7 +96,6 @@ export default {
       if (user) {
         try {
           const userData = await getUserPersonality(user.uid);
-          this.userDimensions = userData.dimensions || {};
           this.userTags = userData.tags || [];
         } catch (error) {
           console.error("Error loading user personality:", error);
@@ -170,7 +144,6 @@ export default {
       }
       this.generatingDescription = true;
       this.coreFeeling = null;
-      this.dimensionsUpdated = false;
       this.hasSavedAnalysis = false;
       this.needsFullAnalysis = false;
       try {
@@ -191,12 +164,7 @@ export default {
       }
     },
     parsePersonalityAnalysis(text) {
-      const result = {
-        dimensions: {}
-      };
-      Object.keys(this.personalityDimensions).forEach(key => {
-        result.dimensions[key] = 0;
-      });
+      const result = {};
       Object.keys(this.personalityAnalysisSections).forEach(key => {
         result[key] = null;
       });
@@ -206,22 +174,6 @@ export default {
       }
       console.log('Parsing personality analysis text, length:', text.length);
       console.log('Text sample:', text.substring(0, 200) + '...');
-      const dimensionsSection = text.match(/DIMENSIONS:([\s\S]*?)(?=Core Personality:|$)/i);
-      if (dimensionsSection) {
-        console.log('Found dimensions section');
-        const dimensionsText = dimensionsSection[1];
-        Object.keys(this.personalityDimensions).forEach(dimensionKey => {
-          const dimension = this.personalityDimensions[dimensionKey];
-          const regex = new RegExp(`${dimensionKey}:\s*([-+]?\d+(\.\d+)?)`, 'i');
-          const match = dimensionsText.match(regex);
-          if (match) {
-            result.dimensions[dimensionKey] = parseFloat(match[1]);
-            console.log(`Parsed ${dimensionKey}:`, result.dimensions[dimensionKey]);
-          }
-        });
-      } else {
-        console.warn('No dimensions section found in the text');
-      }
       Object.keys(this.personalityAnalysisSections).forEach(sectionKey => {
         const section = this.personalityAnalysisSections[sectionKey];
         const regex = new RegExp(`${section.title}:(.+?)(?=${Object.values(this.personalityAnalysisSections).map(s => s.title).join('|')}:|$)`, 'is');
@@ -258,7 +210,6 @@ export default {
         }
       }
       console.log('Final parsed data:', {
-        dimensions: result.dimensions,
         sections: Object.keys(this.personalityAnalysisSections).map(key => 
           `${key}: ${result[key] ? 'Present' : 'Missing'}`)
       });
@@ -272,17 +223,7 @@ export default {
           console.error('Cannot update profile: no user logged in');
           return;
         }
-        console.log('Updating user profile with parsed results');
-        for (const [dimension, value] of Object.entries(parsedResult.dimensions)) {
-          if (value !== null && !isNaN(value)) {
-            const dimensionConfig = this.personalityDimensions[dimension];
-            const [min, max] = dimensionConfig.range;
-            const clampedValue = Math.max(min, Math.min(max, value));
-            await updateDimensionValue(user.uid, dimension, clampedValue);
-            this.userDimensions[dimension] = clampedValue;
-            this.parsedFeeling.dimensions[dimension] = clampedValue;
-          }
-        }
+        
         const analysisDataToSave = {};
         Object.keys(this.personalityAnalysisSections).forEach(sectionKey => {
           analysisDataToSave[sectionKey] = parsedResult[sectionKey] || null;
@@ -291,7 +232,6 @@ export default {
         console.log('Saving personality analysis data:', analysisDataToSave);
         await updateUserPersonalityAnalysis(user.uid, analysisDataToSave);
         console.log('Successfully updated user personality analysis in Firebase');
-        this.dimensionsUpdated = true;
         this.hasSavedAnalysis = true;
         this.needsFullAnalysis = false;
         await this.loadSavedPersonalityAnalysis();
@@ -311,20 +251,7 @@ export default {
         const analysisData = await getUserPersonalityAnalysis(user.uid);
         console.log('Loaded user personality:', userPersonality);
         console.log('Loaded personality analysis:', analysisData);
-        this.parsedFeeling = {
-          dimensions: {}
-        };
-        Object.keys(this.personalityDimensions).forEach(key => {
-          this.parsedFeeling.dimensions[key] = 0;
-        });
-        Object.keys(this.personalityAnalysisSections).forEach(key => {
-          this.parsedFeeling[key] = null;
-        });
-        if (userPersonality && userPersonality.dimensions) {
-          Object.entries(userPersonality.dimensions).forEach(([key, value]) => {
-            this.parsedFeeling.dimensions[key] = value;
-          });
-        }
+        this.parsedFeeling = {};
         let hasAnalysisData = false;
         if (analysisData && analysisData.personalityAnalysis) {
           Object.keys(this.personalityAnalysisSections).forEach(sectionKey => {
@@ -334,11 +261,10 @@ export default {
             }
           });
         }
-        const hasDimensionData = Object.values(this.parsedFeeling.dimensions).some(value => value !== 0);
-        this.coreFeeling = hasDimensionData || hasAnalysisData ? "Loaded from previous analysis" : "No previous analysis";
+        this.coreFeeling = hasAnalysisData ? "Loaded from previous analysis" : "No previous analysis";
         this.hasSavedAnalysis = true;
         console.log('Setting hasSavedAnalysis to true');
-        this.needsFullAnalysis = hasDimensionData && !hasAnalysisData;
+        this.needsFullAnalysis = !hasAnalysisData;
         console.log('Needs full analysis:', this.needsFullAnalysis);
       } catch (error) {
         console.error('Error loading saved personality analysis:', error);

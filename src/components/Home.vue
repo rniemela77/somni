@@ -46,7 +46,7 @@
                   </svg>
                 </div>
                 <h3 class="h5">Analysis</h3>
-                <p>Visualize personality dimensions based on your responses.</p>
+                <p>Visualize personality insights based on your responses.</p>
               </div>
             </div>
           </div>

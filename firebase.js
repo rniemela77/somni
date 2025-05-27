@@ -5,10 +5,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, updateDoc } from "fireba
 
 // Import the personality analysis configuration
 import { 
-  PERSONALITY_DIMENSIONS, 
   PERSONALITY_ANALYSIS_SECTIONS,
-  getInitialDimensions,
-  calculatePersonalityTags
 } from "./src/config/personalityAnalysis";
 
 // Your web app's Firebase configuration
@@ -26,11 +23,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-// Calculate tags based on dimension values
-const calculateTags = (dimensions) => {
-  return calculatePersonalityTags(dimensions);
-};
 
 // User document initialization
 export const initializeUserDocument = async (userId, userData = {}) => {
@@ -50,7 +42,6 @@ export const initializeUserDocument = async (userId, userData = {}) => {
       // Create new user document
       const newUserData = {
         ...userData,
-        dimensions: getInitialDimensions(),
         tags: [],
         personalityAnalysis,
         isPaid: false,
@@ -63,20 +54,9 @@ export const initializeUserDocument = async (userId, userData = {}) => {
       console.log('User document created successfully');
     } else {
       console.log('User document already exists');
-      // Ensure all dimensions exist in existing documents
-      const currentDimensions = userDoc.data().dimensions || {};
-      const updatedDimensions = {
-        ...getInitialDimensions(),
-        ...currentDimensions
-      };
       
       // Initialize missing fields if needed
       const updateData = {};
-      
-      // Update document only if dimensions are missing
-      if (Object.keys(currentDimensions).length !== Object.keys(PERSONALITY_DIMENSIONS).length) {
-        updateData.dimensions = updatedDimensions;
-      }
       
       // Ensure personalityAnalysis field exists with all sections
       if (!userDoc.data().personalityAnalysis) {
@@ -113,26 +93,9 @@ export const updateDimensionValue = async (userId, dimension, value) => {
     
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
-    const currentDimensions = userDoc.exists() ? userDoc.data().dimensions || {} : {};
     
-    // Clamp value to dimension range
-    const dimensionConfig = PERSONALITY_DIMENSIONS[dimension];
-    const [min, max] = dimensionConfig.range;
-    const clampedValue = Math.max(min, Math.min(max, value));
-    
-    // Update the specific dimension while preserving others
-    const updatedDimensions = {
-      ...getInitialDimensions(),
-      ...currentDimensions,
-      [dimension]: clampedValue
-    };
-    
-    // Calculate new tags based on updated dimensions
-    const newTags = calculateTags(updatedDimensions);
-    
-    // Update both dimensions and tags
+    // Update tags
     await updateDoc(userRef, {
-      dimensions: updatedDimensions,
       tags: newTags,
       updatedAt: new Date()
     });
@@ -144,7 +107,7 @@ export const updateDimensionValue = async (userId, dimension, value) => {
   }
 };
 
-// Get user's dimensions and tags
+// Get user's tags
 export const getUserPersonality = async (userId) => {
   try {
     // Ensure user document exists
@@ -155,42 +118,20 @@ export const getUserPersonality = async (userId) => {
     if (userDoc.exists()) {
       const data = userDoc.data();
       return {
-        dimensions: {
-          ...getInitialDimensions(),
-          ...data.dimensions
-        },
         tags: data.tags || []
       };
     }
     return {
-      dimensions: getInitialDimensions(),
       tags: []
     };
   } catch (error) {
     console.error('Error getting user personality:', error);
     return {
-      dimensions: getInitialDimensions(),
       tags: []
     };
   }
 };
 
-// Increment a dimension value by a certain amount
-export const incrementDimensionValue = async (userId, dimension, increment) => {
-  try {
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
-    const currentDimensions = userDoc.exists() ? userDoc.data().dimensions || {} : {};
-    
-    const currentValue = currentDimensions[dimension] || 0;
-    const newValue = currentValue + increment;
-    
-    return await updateDimensionValue(userId, dimension, newValue);
-  } catch (error) {
-    console.error('Error incrementing dimension value:', error);
-    return false;
-  }
-};
 
 // Update user's personality analysis data
 export const updateUserPersonalityAnalysis = async (userId, analysisData) => {
