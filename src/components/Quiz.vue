@@ -16,9 +16,20 @@
                         <div v-if="currentAnswersResult && currentAnswersResult.answers">
                             <div v-for="(answer, index) in currentAnswersResult.answers" 
                                  :key="index"
-                                 class="mb-3">
+                                 class="mb-4">
                                 <p class="fw-bold">{{ answer.questionText }}</p>
-                                <p>Your Answer: <span class="text-primary">{{ answer.userAnswer }}</span></p>
+                                <div class="answer-slider-container p-3 bg-light rounded">
+                                    <div class="slider-bar position-relative">
+                                        <div class="slider-fill" :style="{ width: answer.userAnswer + '%' }"></div>
+                                        <div class="slider-marker" :style="{ left: answer.userAnswer + '%' }">
+                                            {{ answer.userAnswer }}%
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <small class="text-muted">Almost Never</small>
+                                        <small class="text-muted">Almost Always</small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -130,6 +141,39 @@ export default {
 </script>
 
 <style scoped>
+.modal {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.slider-bar {
+    height: 8px;
+    background-color: #dee2e6;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
+
+.slider-fill {
+    height: 100%;
+    background-color: #0d6efd;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.slider-marker {
+    position: absolute;
+    top: -25px;
+    transform: translateX(-50%);
+    background-color: #0d6efd;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+}
+
+.answer-slider-container {
+    border: 1px solid #dee2e6;
+}
+
 .fade-in {
     animation: fadeIn 0.5s ease-in-out;
 }

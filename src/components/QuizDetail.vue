@@ -7,25 +7,29 @@
       </button>
     </div>
 
+    <p class="text-muted mb-4">{{ quizStore.currentQuiz.description }}</p>
+
     <form @submit.prevent="submitQuiz" class="mb-4">
       <div v-for="(question, index) in questions" 
            :key="question.id"
            class="card mb-3">
         <div class="card-body">
           <p class="fw-bold">Question {{ index + 1 }}</p>
-          <p class="mb-3">{{ question.text }}</p>
-          <div class="quiz-options">
-            <label v-for="(option, i) in question.options" 
-                   :key="i"
-                   class="quiz-option">
-              <input type="radio"
-                     :name="'question-' + index"
-                     :value="option"
-                     v-model="answers[question.id]"
-                     :disabled="isSubmitting || submissionSuccess"
-                     required />
-              <span class="option-text">{{ option }}</span>
-            </label>
+          <p class="mb-4">{{ question.text }}</p>
+          
+          <div class="slider-container">
+            <div class="slider-labels d-flex justify-content-between mb-2">
+              <span>Almost Never</span>
+              <span>Almost Always</span>
+            </div>
+            
+            <input type="range"
+                   class="form-range"
+                   v-model="answers[question.id]"
+                   min="-100"
+                   max="100"
+                   :disabled="isSubmitting || submissionSuccess"
+                   required />
           </div>
         </div>
       </div>
@@ -78,7 +82,11 @@ export default {
 
       quizTitle.value = quizStore.currentQuiz.title;
       questions.value = quizStore.currentQuiz.questions;
-      answers.value = {};
+      // Initialize all answers to 50 (middle of the slider)
+      answers.value = questions.value.reduce((acc, q) => {
+        acc[q.id] = "50";
+        return acc;
+      }, {});
       message.value = "";
     };
 
@@ -103,6 +111,7 @@ export default {
     loadQuiz();
 
     return {
+      quizStore,
       quizTitle,
       questions,
       answers,
@@ -116,66 +125,61 @@ export default {
 </script>
 
 <style scoped>
-.quiz-options {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.quiz-option {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin: 0;
-}
-
-.quiz-option:hover {
-  background-color: #e9ecef;
-}
-
-.quiz-option input[type="radio"] {
-  margin: 0;
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 2px solid #6c757d;
-  border-radius: 50%;
-  appearance: none;
+.slider-container {
+  padding: 0.5rem 0;
   position: relative;
 }
 
-.quiz-option input[type="radio"]:checked {
-  border-color: #0d6efd;
-  background-color: #0d6efd;
-}
-
-.quiz-option input[type="radio"]:checked::after {
+.slider-container::after {
   content: '';
   position: absolute;
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: white;
-  border-radius: 50%;
-  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  top: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 24px;
+  background-color: #6c757d;
+  opacity: 0.3;
+  pointer-events: none;
+  border-radius: 1px;
 }
 
-.option-text {
-  margin-left: 1rem;
-  flex: 1;
+.form-range {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0;
+  background-color: transparent;
+  appearance: none;
 }
 
-.quiz-option input[type="radio"]:checked + .option-text {
-  color: #0d6efd;
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: #0d6efd;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: -0.5rem;
+  box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
 }
 
-.quiz-option:has(input[type="radio"]:checked) {
-  background-color: #e7f1ff;
-  border-color: #0d6efd;
+.form-range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(13, 110, 253, 0.3);
+}
+
+.form-range::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 0.5rem;
+  background: #e9ecef;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.slider-labels {
+  color: #6c757d;
+  font-size: 0.85rem;
+  opacity: 0.8;
 }
 </style> 
