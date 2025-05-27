@@ -14,15 +14,17 @@
         <div class="card-body">
           <p class="fw-bold">Question {{ index + 1 }}</p>
           <p class="mb-3">{{ question.text }}</p>
-          <div class="form-check" v-for="(option, i) in question.options" :key="i">
-            <input class="form-check-input" type="radio" 
-                   :name="'question-' + index" 
-                   :value="option" 
-                   v-model="answers[question.id]"
-                   :disabled="isSubmitting || submissionSuccess"
-                   required />
-            <label class="form-check-label">
-              {{ option }}
+          <div class="quiz-options">
+            <label v-for="(option, i) in question.options" 
+                   :key="i"
+                   class="quiz-option">
+              <input type="radio"
+                     :name="'question-' + index"
+                     :value="option"
+                     v-model="answers[question.id]"
+                     :disabled="isSubmitting || submissionSuccess"
+                     required />
+              <span class="option-text">{{ option }}</span>
             </label>
           </div>
         </div>
@@ -114,12 +116,66 @@ export default {
 </script>
 
 <style scoped>
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.quiz-option {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0;
+}
+
+.quiz-option:hover {
+  background-color: #e9ecef;
+}
+
+.quiz-option input[type="radio"] {
+  margin: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #6c757d;
+  border-radius: 50%;
+  appearance: none;
+  position: relative;
+}
+
+.quiz-option input[type="radio"]:checked {
+  border-color: #0d6efd;
+  background-color: #0d6efd;
+}
+
+.quiz-option input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.option-text {
+  margin-left: 1rem;
+  flex: 1;
+}
+
+.quiz-option input[type="radio"]:checked + .option-text {
+  color: #0d6efd;
+}
+
+.quiz-option:has(input[type="radio"]:checked) {
+  background-color: #e7f1ff;
+  border-color: #0d6efd;
 }
 </style> 
