@@ -70,20 +70,10 @@ router.beforeEach((to, from, next) => {
   console.log('Router guard: Auth state =', isAuthenticated ? 'authenticated' : 'not authenticated', 'loading =', isAuthLoading);
   
   // If auth is still loading, prevent navigation by waiting until auth is ready
-  // Exception: allow initial navigation to home page even while loading
-  if (isAuthLoading && to.path !== '/' && to.path !== '/signin' && to.path !== '/signup') {
-    console.log('Auth state is still loading, delaying navigation until ready');
-    
-    // Check if this is a navigation triggered during app startup
-    if (from.name === undefined || from.name === null) {
-      console.log('Initial navigation, allowing to proceed to home page');
-      next('/'); // Redirect to home where loading screen will be shown
-      return;
-    }
-    
-    // For non-initial navigation, stay on current page until auth is ready
-    console.log('Non-initial navigation while auth loading, staying on current page');
-    next(false);
+  if (isAuthLoading) {
+    console.log('Auth state is still loading, allowing navigation to proceed');
+    // Allow the navigation to proceed - the loading screen in App.vue will handle the waiting
+    next();
     return;
   }
   
