@@ -1,47 +1,47 @@
-# Project Specification: Inner‑World Mapping and Level‑Based Guidance
+# Quiz Question Development Guidelines
 
-## 1. Objectives
+## Neutral Framing
 
-- Surface user’s underlying emotional state by life domain (work, home, relationships, self).
+- Remove evaluative adjectives/adverbs that imply judgment (e.g., avoid “excellent,” “poor,” “rarely”).
 
-- Map core emotion to David Hawkins’ levels of consciousness.
+- Replace with flat descriptors (e.g., “often,” “occasionally,” “sometimes”).
 
-- Provide actionable advice aimed at next-higher level.
+- Example: Change “How rarely do you fail at tasks?” to “I fail at tasks.”
 
-- Embed micro‑hypnosis or narrative exercises to shift user state.
+## Indirect Scenarios
 
-## 2. Question Design
+- Pose third-person or situational statements with minimal context cues.
 
-- Replace rigid MCQs with vivid vignettes: present two short scenarios, ask which "feels more like you now."
+- Ensure scenarios are unambiguous (e.g., specify setting: “At a team meeting…”).
 
-- Use slider scales on ambiguous prompts: "I see my future as…(vague↔️clear)."
+- Imply behaviors without naming traits.
 
-- Life‑domain prompts: "In my career I feel…(trapped↔️empowered)." Avoid labels; rely on emotional resonance.
+## Statement Polarity
 
-## 3. Classification Framework
+- Use equal numbers of forward-keyed and reverse-keyed items (50/50 split).
 
-- Map each response vector to Hawkins’ levels (20–1000 scale).
+- Identify reverse items by flipping statement valence (e.g., “I speak up often” vs. “I hold back my opinions”).
 
-- Calibrate thresholds: shame<150, guilt<200, fear<250, desire<310, anger<350, pride<400, courage<500, neutrality<540, willingness<600, acceptance<650, reason<700, love>540, joy>600, peace>700, enlightenment>800.
+- Avoid wording that favors one end of the slider.
 
-- Identify predominant level per domain and overall.
+## Clarity and Brevity
 
-## 4. Advice Generation
+- Keep each statement under 15 words; aim for 12 words when possible.
 
-- For each domain: label current level, state benefit of adjacent next level, propose 2–3 focused actions.
+- Eliminate conjunctions and qualifiers.
 
-- Format: “Current: Desire (310). To shift toward Courage (500): practice small daily challenges, affirm past successes, create accountability check.”
+Example transformation:
 
-## 5. Hypnosis/Narrative Module
+- Original: “When I am in a new group of people, I tend to remain silent until someone speaks to me.”
 
-- Micro‑stories (200–300 words) framed as guided imagery: lead user from current level’s mindset to next.
+- Concise: “I remain silent until someone speaks to me.”
 
-- Insert embedded suggestions: “With each breath you feel a deeper sense of courage…”
+## Instinctive Triggers
 
-- Option to choose audio playback with voice‑modulated pacing.
+- Use neutral action verbs and sensory cues (e.g., “I pause,” “I grab”).
 
-- Draft 10 micro‑stories covering transitions: Shame→Guilt, Desire→Anger, Anger→Courage, etc.
+- Avoid startling or stressful language; maintain comfortable tone.
 
-- Build UI flows for quiz→analysis→hypnosis sequence.
+- Frame statements as immediate, first-person reactions.
 
-- Run small user study to validate emotional resonance and perceived usefulness.
+- Frame items as present-tense first-person statements: “I notice…,” “I avoid….”

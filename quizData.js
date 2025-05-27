@@ -6,43 +6,43 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "When faced with a challenge at work, I feel energized to find solutions"
+        "text": "I solve work challenges"
       },
       {
         "id": 2,
-        "text": "In conversations with others, I find myself genuinely interested in their perspectives"
+        "text": "I listen to others' perspectives"
       },
       {
         "id": 3,
-        "text": "When I think about my future, I see clear possibilities ahead"
+        "text": "I hold back from planning my future"
       },
       {
         "id": 4,
-        "text": "During difficult moments, I can access a sense of inner calm"
+        "text": "I remain tense during difficult moments"
       },
       {
         "id": 5,
-        "text": "In my daily activities, I experience moments of spontaneous joy"
+        "text": "I notice moments of joy"
       },
       {
         "id": 6,
-        "text": "When making decisions, I trust my inner guidance"
+        "text": "I doubt my decisions"
       },
       {
         "id": 7,
-        "text": "In relationships, I can maintain my boundaries while staying connected"
+        "text": "I set boundaries in relationships"
       },
       {
         "id": 8,
-        "text": "When things go wrong, I can find meaning in the experience"
+        "text": "I avoid examining difficult experiences"
       },
       {
         "id": 9,
-        "text": "In group situations, I feel comfortable expressing my authentic self"
+        "text": "I express myself in groups"
       },
       {
         "id": 10,
-        "text": "When reflecting on my life path, I feel aligned with my true purpose"
+        "text": "I question my life direction"
       }
     ]
   },
@@ -53,43 +53,43 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "I find myself taking action to help others without expecting anything in return"
+        "text": "I help others without conditions"
       },
       {
         "id": 2,
-        "text": "When encountering obstacles, I view them as opportunities for growth"
+        "text": "I avoid obstacles"
       },
       {
         "id": 3,
-        "text": "In conflicts, I can see and acknowledge both sides of the situation"
+        "text": "I take sides in conflicts"
       },
       {
         "id": 4,
-        "text": "I notice and appreciate small moments of beauty in my daily life"
+        "text": "I notice beauty in daily moments"
       },
       {
         "id": 5,
-        "text": "When others succeed, I feel genuine happiness for them"
+        "text": "I compare myself to others' success"
       },
       {
         "id": 6,
-        "text": "I can maintain inner peace even in challenging circumstances"
+        "text": "I maintain calm"
       },
       {
         "id": 7,
-        "text": "My actions align with my deeper values and beliefs"
+        "text": "I act on my values"
       },
       {
         "id": 8,
-        "text": "I approach new experiences with curiosity rather than judgment"
+        "text": "I judge new experiences"
       },
       {
         "id": 9,
-        "text": "In moments of stress, I can step back and observe my reactions"
+        "text": "I observe my reactions"
       },
       {
         "id": 10,
-        "text": "I feel connected to something larger than myself"
+        "text": "I feel separate from everything"
       }
     ]
   },
@@ -100,43 +100,43 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "My work allows me to express my authentic capabilities"
+        "text": "I express myself at work"
       },
       {
         "id": 2,
-        "text": "In my home environment, I feel a sense of peace and harmony"
+        "text": "I feel tense at home"
       },
       {
         "id": 3,
-        "text": "My relationships provide space for both growth and acceptance"
+        "text": "I withdraw in relationships"
       },
       {
         "id": 4,
-        "text": "I can balance my personal needs with responsibilities to others"
+        "text": "I prioritize others' needs"
       },
       {
         "id": 5,
-        "text": "My daily activities contribute to my longer-term vision"
+        "text": "I focus on immediate tasks"
       },
       {
         "id": 6,
-        "text": "I feel present and engaged in my physical body"
+        "text": "I notice my body"
       },
       {
         "id": 7,
-        "text": "My creative expressions flow naturally and freely"
+        "text": "I hold back creative expression"
       },
       {
         "id": 8,
-        "text": "I experience a sense of purpose in my community connections"
+        "text": "I participate in community"
       },
       {
         "id": 9,
-        "text": "My spiritual or philosophical beliefs integrate with my daily life"
+        "text": "I separate beliefs from actions"
       },
       {
         "id": 10,
-        "text": "I can maintain my center while engaging with the wider world"
+        "text": "I disconnect from the world"
       }
     ]
   },
@@ -147,43 +147,43 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "When encountering new ideas, I can integrate them with my existing worldview"
+        "text": "I resist new ideas"
       },
       {
         "id": 2,
-        "text": "I notice patterns in my behavior before others point them out"
+        "text": "I notice my patterns"
       },
       {
         "id": 3,
-        "text": "After setbacks, I naturally focus on learning and growth"
+        "text": "I dwell on setbacks"
       },
       {
         "id": 4,
-        "text": "I can hold seemingly contradictory truths without needing to resolve them"
+        "text": "I seek simple answers"
       },
       {
         "id": 5,
-        "text": "My perspective on past events evolves as I gain new understanding"
+        "text": "I hold fixed views of past events"
       },
       {
         "id": 6,
-        "text": "I actively seek experiences that challenge my current beliefs"
+        "text": "I explore challenging ideas"
       },
       {
         "id": 7,
-        "text": "When triggered, I can observe my reactions without being consumed by them"
+        "text": "I react automatically"
       },
       {
         "id": 8,
-        "text": "I recognize how my present choices shape my future development"
+        "text": "I consider future impacts"
       },
       {
         "id": 9,
-        "text": "I can release old patterns once I become aware of them"
+        "text": "I maintain familiar patterns"
       },
       {
         "id": 10,
-        "text": "My understanding of myself deepens through life's challenges"
+        "text": "I learn from challenges"
       }
     ]
   },
@@ -194,43 +194,43 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "I can sense the underlying emotional tone of a room or gathering"
+        "text": "I sense room atmospheres"
       },
       {
         "id": 2,
-        "text": "My body gives me clear signals about what is right for me"
+        "text": "I ignore body signals"
       },
       {
         "id": 3,
-        "text": "I experience moments of profound stillness amid activity"
+        "text": "I notice inner stillness"
       },
       {
         "id": 4,
-        "text": "I can distinguish between my own feelings and those of others"
+        "text": "I mix others' feelings with mine"
       },
       {
         "id": 5,
-        "text": "My energy levels respond to how aligned I am with my truth"
+        "text": "I track my energy levels"
       },
       {
         "id": 6,
-        "text": "I notice subtle changes in my state of consciousness throughout the day"
+        "text": "I miss consciousness shifts"
       },
       {
         "id": 7,
-        "text": "When listening to others, I can sense what's beneath their words"
+        "text": "I hear unspoken meanings"
       },
       {
         "id": 8,
-        "text": "I feel a natural rhythm between activity and rest in my life"
+        "text": "I push through fatigue"
       },
       {
         "id": 9,
-        "text": "My awareness extends beyond my physical body"
+        "text": "I feel my body boundaries"
       },
       {
         "id": 10,
-        "text": "I can shift my state of consciousness intentionally"
+        "text": "I stay in one mental state"
       }
     ]
   },
@@ -241,43 +241,43 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "My decisions emerge from a place of inner knowing rather than external pressure"
+        "text": "I follow external pressure"
       },
       {
         "id": 2,
-        "text": "I can see the wisdom in perspectives very different from my own"
+        "text": "I dismiss opposing views"
       },
       {
         "id": 3,
-        "text": "My response to challenges comes from presence rather than reaction"
+        "text": "I respond with presence"
       },
       {
         "id": 4,
-        "text": "I recognize the teaching potential in difficult relationships"
+        "text": "I avoid difficult relationships"
       },
       {
         "id": 5,
-        "text": "My understanding translates naturally into compassionate action"
+        "text": "I take compassionate action"
       },
       {
         "id": 6,
-        "text": "I can hold space for others' growth without trying to fix them"
+        "text": "I try fixing others"
       },
       {
         "id": 7,
-        "text": "My life experiences contribute to an evolving inner wisdom"
+        "text": "I learn from experience"
       },
       {
         "id": 8,
-        "text": "I navigate uncertainty with trust rather than fear"
+        "text": "I act from fear"
       },
       {
         "id": 9,
-        "text": "My presence alone can have a calming effect on situations"
+        "text": "I bring calm to situations"
       },
       {
         "id": 10,
-        "text": "I experience wisdom as a living force rather than abstract knowledge"
+        "text": "I separate wisdom from action"
       }
     ]
   },
@@ -288,71 +288,71 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "I feel energized rather than defeated when receiving constructive criticism"
+        "text": "I welcome criticism"
       },
       {
         "id": 2,
-        "text": "I take responsibility for my mistakes without dwelling in guilt"
+        "text": "I blame myself for mistakes"
       },
       {
         "id": 3,
-        "text": "I feel motivated to take action even when tasks seem challenging"
+        "text": "I avoid challenging tasks"
       },
       {
         "id": 4,
-        "text": "I can process disappointments while staying open to new possibilities"
+        "text": "I process disappointments"
       },
       {
         "id": 5,
-        "text": "I approach unfamiliar situations with curiosity rather than anxiety"
+        "text": "I approach new situations"
       },
       {
         "id": 6,
-        "text": "I feel genuinely happy when others succeed in areas where I aspire to grow"
+        "text": "I resent others' success"
       },
       {
         "id": 7,
-        "text": "I maintain inner calm during disagreements with others"
+        "text": "I stay calm in disagreements"
       },
       {
         "id": 8,
-        "text": "I welcome perspectives that challenge my existing viewpoints"
+        "text": "I reject challenging views"
       },
       {
         "id": 9,
-        "text": "I make decisions based on inner clarity rather than external pressure"
+        "text": "I follow inner guidance"
       },
       {
         "id": 10,
-        "text": "I remain centered and clear-minded during stressful situations"
+        "text": "I lose focus under stress"
       },
       {
         "id": 11,
-        "text": "I find myself naturally taking action to support others' wellbeing"
+        "text": "I support others"
       },
       {
         "id": 12,
-        "text": "I adapt to life changes with flexibility and acceptance"
+        "text": "I resist life changes"
       },
       {
         "id": 13,
-        "text": "I can recognize truth in viewpoints very different from my own"
+        "text": "I recognize different truths"
       },
       {
         "id": 14,
-        "text": "Others tell me they feel more at ease in my presence"
+        "text": "I create tension in others"
       },
       {
         "id": 15,
-        "text": "I experience spontaneous moments of joy in everyday activities"
+        "text": "I notice daily joy"
       },
       {
         "id": 16,
-        "text": "I maintain inner peace regardless of external circumstances"
+        "text": "I maintain inner peace"
       },
       {
         "id": 17,
-        "text": "I perceive challenging situations as opportunities for growth"
+        "text": "I avoid challenges"
       }
     ]
   }
