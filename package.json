@@ -11,6 +11,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "seed": "cd backend && npm run seed",
+    "seed:firestore": "netlify functions:invoke seed-firestore --no-identity",
     "type-check": "vue-tsc --noEmit",
     "tsc": "tsc"
   },

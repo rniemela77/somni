@@ -124,7 +124,36 @@ export const openaiService = {
       quizResults.forEach((item, index) => {
         formattedResults += `Quiz: ${item.quizTitle || 'Personality Quiz'}\n`;
         formattedResults += `Question ${index+1}: ${item.question}\n`;
-        formattedResults += `Answer: ${item.answer}\n\n`;
+        // Format the answer to show the slider value and its interpretation
+        const value = parseInt(item.answer);
+        let interpretation;
+        
+        // More granular interpretation of the slider value
+        if (value <= -100) {
+          interpretation = "Almost Never";
+        } else if (value <= -75) {
+          interpretation = "Very Rarely";
+        } else if (value <= -50) {
+          interpretation = "Rarely";
+        } else if (value <= -25) {
+          interpretation = "Occasionally Not";
+        } else if (value < 0) {
+          interpretation = "Slightly More No Than Yes";
+        } else if (value === 0) {
+          interpretation = "Exactly Half the Time";
+        } else if (value < 25) {
+          interpretation = "Slightly More Yes Than No";
+        } else if (value < 50) {
+          interpretation = "Occasionally Yes";
+        } else if (value < 75) {
+          interpretation = "Frequently";
+        } else if (value < 100) {
+          interpretation = "Very Frequently";
+        } else {
+          interpretation = "Almost Always";
+        }
+        
+        formattedResults += `Answer: ${interpretation}\n\n`;
       });
       
       // Build the prompt

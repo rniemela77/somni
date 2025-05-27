@@ -19,17 +19,29 @@
           
           <div class="slider-container">
             <div class="slider-labels d-flex justify-content-between mb-2">
-              <span>Almost Never</span>
-              <span>Almost Always</span>
+              <span>Almost Never (-100)</span>
+              <span>Sometimes (0)</span>
+              <span>Almost Always (+100)</span>
             </div>
             
-            <input type="range"
-                   class="form-range"
-                   v-model="answers[question.id]"
-                   min="-100"
-                   max="100"
-                   :disabled="isSubmitting || submissionSuccess"
-                   required />
+            <div class="slider-track position-relative">
+              <div class="slider-fill" :style="{ 
+                width: (Math.abs(parseFloat(answers[question.id])) / 2) + '%',
+                left: parseFloat(answers[question.id]) < 0 ? 'auto' : '50%',
+                right: parseFloat(answers[question.id]) < 0 ? '50%' : 'auto'
+              }"></div>
+              <input type="range"
+                     class="form-range"
+                     v-model="answers[question.id]"
+                     min="-100"
+                     max="100"
+                     :disabled="isSubmitting || submissionSuccess"
+                     required />
+            </div>
+            
+            <div class="slider-value text-center mt-2">
+              <small class="text-muted">Current value: {{ answers[question.id] }}</small>
+            </div>
           </div>
         </div>
       </div>
@@ -82,9 +94,9 @@ export default {
 
       quizTitle.value = quizStore.currentQuiz.title;
       questions.value = quizStore.currentQuiz.questions;
-      // Initialize all answers to 50 (middle of the slider)
+      // Initialize all answers to 0 (neutral/sometimes)
       answers.value = questions.value.reduce((acc, q) => {
-        acc[q.id] = "50";
+        acc[q.id] = "0";
         return acc;
       }, {});
       message.value = "";
@@ -130,12 +142,29 @@ export default {
   position: relative;
 }
 
+.slider-track {
+  height: 0.5rem;
+  background: #dee2e6;
+  border-radius: 0.25rem;
+  position: relative;
+  margin: 1rem 0;
+}
+
+.slider-fill {
+  height: 100%;
+  background-color: #0d6efd;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 0;
+}
+
 .slider-container::after {
   content: '';
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   width: 2px;
   height: 24px;
   background-color: #6c757d;
@@ -150,6 +179,8 @@ export default {
   padding: 0;
   background-color: transparent;
   appearance: none;
+  position: relative;
+  z-index: 1;
 }
 
 .form-range::-webkit-slider-thumb {
@@ -162,6 +193,8 @@ export default {
   transition: all 0.2s ease;
   margin-top: -0.5rem;
   box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+  position: relative;
+  z-index: 2;
 }
 
 .form-range::-webkit-slider-thumb:hover {
@@ -172,7 +205,7 @@ export default {
 .form-range::-webkit-slider-runnable-track {
   width: 100%;
   height: 0.5rem;
-  background: #e9ecef;
+  background: transparent;
   border-radius: 0.25rem;
   cursor: pointer;
 }
@@ -181,5 +214,23 @@ export default {
   color: #6c757d;
   font-size: 0.85rem;
   opacity: 0.8;
+}
+
+.slider-labels span {
+  text-align: center;
+  flex: 1;
+}
+
+.slider-labels span:first-child {
+  text-align: left;
+}
+
+.slider-labels span:last-child {
+  text-align: right;
+}
+
+.slider-value {
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 </style> 

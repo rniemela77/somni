@@ -5,9 +5,6 @@ import {
   PERSONALITY_ANALYSIS_SECTIONS,
 } from "../config/personalityAnalysis";
 import { initializeUserDocument } from "./firebase-user";
-import { getUserPersonality, getUserPersonalityAnalysis, updateUserPersonalityAnalysis } from "./firebase-utils";
-
-// Removed duplicate updateUserPersonalityAnalysis function
 
 // Update user's personality analysis data
 export const updateUserPersonalityAnalysis = async (userId, analysisData) => {

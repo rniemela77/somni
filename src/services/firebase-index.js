@@ -16,7 +16,7 @@ export {
   incrementDimensionValue,
   updateUserPersonalityAnalysis,
   getUserPersonalityAnalysis
-} from './firebase-personality';
+} from '../../firebase';
 
 // Export authentication services
 export { authService } from './firebase-auth';

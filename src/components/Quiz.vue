@@ -20,14 +20,18 @@
                                 <p class="fw-bold">{{ answer.questionText }}</p>
                                 <div class="answer-slider-container p-3 bg-light rounded">
                                     <div class="slider-bar position-relative">
-                                        <div class="slider-fill" :style="{ width: answer.userAnswer + '%' }"></div>
-                                        <div class="slider-marker" :style="{ left: answer.userAnswer + '%' }">
-                                            {{ answer.userAnswer }}%
+                                        <div class="slider-fill" :style="{ 
+                                            width: (Math.abs(parseFloat(answer.userAnswer)) / 2) + '%',
+                                            left: parseFloat(answer.userAnswer) < 0 ? 'auto' : '50%',
+                                            right: parseFloat(answer.userAnswer) < 0 ? '50%' : 'auto'
+                                        }"></div>
+                                        <div class="slider-marker" :style="{ left: ((parseFloat(answer.userAnswer) + 100) / 2) + '%' }">
+                                            {{ answer.userAnswer }}
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-between mt-2">
-                                        <small class="text-muted">Almost Never</small>
-                                        <small class="text-muted">Almost Always</small>
+                                        <small class="text-muted">Almost Never (-100)</small>
+                                        <small class="text-muted">Almost Always (+100)</small>
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +160,9 @@ export default {
     height: 100%;
     background-color: #0d6efd;
     border-radius: 4px;
-    transition: width 0.3s ease;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 0;
 }
 
 .slider-marker {
@@ -172,6 +178,20 @@ export default {
 
 .answer-slider-container {
     border: 1px solid #dee2e6;
+    position: relative;
+}
+
+/* Add center line marker */
+.slider-bar::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background-color: #6c757d;
+    opacity: 0.3;
+    transform: translateX(-50%);
 }
 
 .fade-in {

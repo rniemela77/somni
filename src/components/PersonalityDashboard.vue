@@ -32,9 +32,9 @@ import { quizService, resultsService, authService } from '../services/firebase';
 import { openaiService } from '../services/openai';
 import { 
   updateUserPersonalityAnalysis, 
-  getUserPersonalityAnalysis 
+  getUserPersonalityAnalysis,
+  getUserPersonality 
 } from '../../firebase';
-import { getUserPersonality } from '../../src/services/firebase-utils';
 import { 
   PERSONALITY_ANALYSIS_SECTIONS 
 } from '../config/personalityAnalysis';

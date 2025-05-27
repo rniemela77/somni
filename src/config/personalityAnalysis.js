@@ -59,7 +59,19 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
  * Generates the OpenAI prompt based on config
  */
 export const generateAnalysisPrompt = (formattedResults) => {
-  let prompt = 'Here are quiz results for someone taking a personality test. Please analyze the personality based on these responses:\n\n';
+  let prompt = 'Here are quiz results for someone taking a personality test. Each answer is given on a scale from -100 to +100, with the following interpretations:\n\n';
+  prompt += '-100: Almost Never\n';
+  prompt += '-75 to -99: Very Rarely\n';
+  prompt += '-50 to -74: Rarely\n';
+  prompt += '-25 to -49: Occasionally Not\n';
+  prompt += '-1 to -24: Slightly More No Than Yes\n';
+  prompt += '0: Exactly Half the Time\n';
+  prompt += '1 to 24: Slightly More Yes Than No\n';
+  prompt += '25 to 49: Occasionally Yes\n';
+  prompt += '50 to 74: Frequently\n';
+  prompt += '75 to 99: Very Frequently\n';
+  prompt += '100: Almost Always\n\n';
+  prompt += 'Please analyze the personality based on these responses, taking into account these precise gradients in their answers:\n\n';
   
   // Add the formatted results
   prompt += formattedResults + '\n\n';

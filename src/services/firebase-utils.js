@@ -1,5 +1,6 @@
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebase-config";
+import { PERSONALITY_ANALYSIS_SECTIONS } from "../config/personalityAnalysis";
 import { initializeUserDocument } from "./firebase-user";
 
 // Utility function to get user's tags
