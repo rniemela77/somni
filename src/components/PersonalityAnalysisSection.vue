@@ -48,16 +48,6 @@ export default {
       return Object.values(this.personalityAnalysisSections)
         .sort((a, b) => a.display.order - b.display.order);
     },
-    getKeywordColor(index) {
-      const colors = [
-        'rgba(58, 81, 153, 0.08)',
-        'rgba(92, 116, 87, 0.08)',
-        'rgba(140, 156, 214, 0.15)',
-        'rgba(169, 190, 166, 0.15)',
-        'rgba(78, 136, 199, 0.08)',
-      ];
-      return colors[index % colors.length];
-    }
   }
 };
 </script>

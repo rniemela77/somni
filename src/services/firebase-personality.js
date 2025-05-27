@@ -5,57 +5,9 @@ import {
   PERSONALITY_ANALYSIS_SECTIONS,
 } from "../config/personalityAnalysis";
 import { initializeUserDocument } from "./firebase-user";
+import { getUserPersonality, getUserPersonalityAnalysis, updateUserPersonalityAnalysis } from "./firebase-utils";
 
-// Update user's dimension value
-export const updateDimensionValue = async (userId, dimension, value) => {
-  try {
-    // Ensure user document exists
-    await initializeUserDocument(userId);
-    
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
-    
-    // Clamp value to dimension range
-    const [min, max] = dimensionConfig.range;
-    const clampedValue = Math.max(min, Math.min(max, value));
-    
-    // Update tags
-    await updateDoc(userRef, {
-      tags: newTags,
-      updatedAt: new Date()
-    });
-    
-    return true;
-  } catch (error) {
-    console.error('Error updating dimension value:', error);
-    return false;
-  }
-};
-
-// Get user's tags
-export const getUserPersonality = async (userId) => {
-  try {
-    // Ensure user document exists
-    await initializeUserDocument(userId);
-    
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
-    if (userDoc.exists()) {
-      const data = userDoc.data();
-      return {
-        tags: data.tags || []
-      };
-    }
-    return {
-      tags: []
-    };
-  } catch (error) {
-    console.error('Error getting user personality:', error);
-    return {
-      tags: []
-    };
-  }
-};
+// Removed duplicate updateUserPersonalityAnalysis function
 
 // Update user's personality analysis data
 export const updateUserPersonalityAnalysis = async (userId, analysisData) => {
@@ -86,47 +38,5 @@ export const updateUserPersonalityAnalysis = async (userId, analysisData) => {
   } catch (error) {
     console.error('Error updating personality analysis:', error);
     return false;
-  }
-};
-
-// Get user's personality analysis data
-export const getUserPersonalityAnalysis = async (userId) => {
-  try {
-    // Ensure user document exists
-    await initializeUserDocument(userId);
-    
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
-    if (userDoc.exists()) {
-      const data = userDoc.data();
-      
-      // If personalityAnalysis doesn't exist, initialize it
-      if (!data.personalityAnalysis) {
-        const personalityAnalysis = {};
-        Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
-          personalityAnalysis[sectionKey] = null;
-        });
-        return { personalityAnalysis };
-      }
-      
-      return {
-        personalityAnalysis: data.personalityAnalysis
-      };
-    }
-    
-    // Return empty structure if no data exists
-    const personalityAnalysis = {};
-    Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
-      personalityAnalysis[sectionKey] = null;
-    });
-    return { personalityAnalysis };
-  } catch (error) {
-    console.error('Error getting user personality analysis:', error);
-    // Return empty structure on error
-    const personalityAnalysis = {};
-    Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
-      personalityAnalysis[sectionKey] = null;
-    });
-    return { personalityAnalysis };
   }
 }; 

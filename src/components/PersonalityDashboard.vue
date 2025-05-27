@@ -34,6 +34,7 @@ import {
   updateUserPersonalityAnalysis, 
   getUserPersonalityAnalysis 
 } from '../../firebase';
+import { getUserPersonality } from '../../src/services/firebase-utils';
 import { 
   PERSONALITY_ANALYSIS_SECTIONS 
 } from '../config/personalityAnalysis';
