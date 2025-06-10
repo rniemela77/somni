@@ -22,7 +22,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav ms-auto mb-2 gap-3 mb-lg-0 align-items-center">
               <li class="nav-item">
                 <router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
               </li>
