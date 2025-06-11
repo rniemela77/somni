@@ -10,6 +10,8 @@ import {
   getDocs,
   deleteDoc,
   setDoc,
+  getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { quizService } from "./firebase-quiz";
 
@@ -17,36 +19,51 @@ import { quizService } from "./firebase-quiz";
 export const resultsService = {
   async submitQuizResult(userId, quizId, answers) {
     try {
-      // First, check if there's an existing result for this user and quiz
-      const existingResultsQuery = query(
-        collection(db, "results"),
-        where("userId", "==", userId),
-        where("quizId", "==", quizId)
-      );
-      
-      const existingResultsSnapshot = await getDocs(existingResultsQuery);
-      
-      // If there are existing results, delete them
-      if (!existingResultsSnapshot.empty) {
-        // Since we want one result per quiz, we'll delete all previous results
-        const deletePromises = existingResultsSnapshot.docs.map(doc => 
-          deleteDoc(doc.ref)
-        );
-        await Promise.all(deletePromises);
+      // First, get the quiz data to access the questions and their points
+      const { quiz, error: quizError } = await quizService.getQuizById(quizId);
+      if (quizError) {
+        throw new Error(quizError);
       }
+
+      // Calculate the total score for this attribute
+      let totalScore = 0;
+      for (const question of quiz.questions) {
+        // answers[question.id] will be between -100 and 100 from the slider
+        // we multiply it by the question's points (-0.1 or 0.1) to get the weighted score
+        const answerValue = answers[question.id];
+        const weight = question.points;
+        totalScore += (answerValue / 100) * weight;
+      }
+
+      // Scale the total score to be between -100 and 100
+      const scaledScore = Math.round(totalScore * 1000);
+
+      // Get the user's document
+      const userRef = doc(db, "users", userId);
+      const userSnap = await getDoc(userRef);
       
-      // Now add the new result
-      const resultDoc = await addDoc(collection(db, "results"), {
-        userId,
-        quizId,
-        answers,
-        timestamp: new Date(),
+      if (!userSnap.exists()) {
+        throw new Error("User not found");
+      }
+
+      // Update the user's document with the new attribute score
+      const attribute = quiz.attribute;
+      await updateDoc(userRef, {
+        [`attributes.${attribute}`]: scaledScore
       });
       
-      return { resultId: resultDoc.id, error: null };
+      return { 
+        attribute,
+        score: scaledScore,
+        error: null 
+      };
     } catch (error) {
       console.error("Error submitting quiz:", error);
-      return { resultId: null, error: error.message };
+      return { 
+        attribute: null,
+        score: null,
+        error: error.message 
+      };
     }
   },
 
