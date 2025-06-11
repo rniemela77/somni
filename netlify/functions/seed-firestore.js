@@ -20,6 +20,7 @@ export const handler = async (event, context) => {
         title: quiz.title,
         description: quiz.description,
         questions: quiz.questions,
+        attribute: quiz.attribute
       });
       console.log(`Quiz ${quiz.id} added successfully!`);
     }

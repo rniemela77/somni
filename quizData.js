@@ -1,6 +1,6 @@
 const quizzes = [
   {
-    "id": "emotional-landscape",
+    "id": "neuroticism-emotional-stability",
     "title": "Emotional Landscape",
     "description": "This quiz explores your level of emotional stability versus neurotic tendencies. Move the slider to indicate how each statement reflects your experience.",
     "attribute": "Neuroticism-Emotional Stability",
@@ -58,7 +58,7 @@ const quizzes = [
     ]
   },
   {
-    "id": "social-dynamics",
+    "id": "introversion-extraversion",
     "title": "Social Dynamics",
     "description": "This quiz assesses your tendency toward introversion or extraversion. Move the slider to indicate how each statement reflects your regular behavior.",
     "attribute": "Introversion-Extraversion",
@@ -116,7 +116,7 @@ const quizzes = [
     ]
   },
   {
-    "id": "consciousness-patterns",
+    "id": "openness-closedness-to-experience",
     "title": "Experience Spectrum",
     "description": "This quiz assesses your openness to new ideas versus preference for familiar approaches. Move the slider to indicate how each statement reflects your typical behavior.",
     "attribute": "Openness-Closedness to Experience",

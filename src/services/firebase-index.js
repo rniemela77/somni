@@ -13,7 +13,6 @@ export {
 export {
   updateDimensionValue,
   getUserPersonality,
-  incrementDimensionValue,
   updateUserPersonalityAnalysis,
   getUserPersonalityAnalysis
 } from '../../firebase';

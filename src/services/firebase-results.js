@@ -30,13 +30,13 @@ export const resultsService = {
       for (const question of quiz.questions) {
         // answers[question.id] will be between -100 and 100 from the slider
         // we multiply it by the question's points (-0.1 or 0.1) to get the weighted score
-        const answerValue = answers[question.id];
+        const answerValue = parseFloat(answers[question.id]);
         const weight = question.points;
         totalScore += (answerValue / 100) * weight;
       }
 
       // Scale the total score to be between -100 and 100
-      const scaledScore = Math.round(totalScore * 1000);
+      const scaledScore = Math.round(totalScore * 100);
 
       // Get the user's document
       const userRef = doc(db, "users", userId);

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { quizService, resultsService } from '../services/firebase';
+import { quizService, resultsService } from '../services/firebase-index';
 import { useAuthStore } from './auth';
 
 export const useQuizStore = defineStore('quiz', {
