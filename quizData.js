@@ -7,48 +7,53 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "I replay conversations in my mind after they happen"
+        "text": "I replay conversations in my mind after they happen",
+        "points": -0.1
       },
       {
         "id": 2,
         "text": "I adapt easily when plans shift",
-        "reversed": true
+        "points": 0.1
       },
       {
         "id": 3,
-        "text": "I sometimes struggle to switch off my thoughts at night"
+        "text": "I sometimes struggle to switch off my thoughts at night",
+        "points": -0.1
       },
       {
         "id": 4,
-        "text": "I can carry on as usual when things don’t go my way",
-        "reversed": true
+        "text": "I can carry on as usual when things don't go my way",
+        "points": 0.1
       },
       {
         "id": 5,
-        "text": "I notice tension building in my body under pressure"
+        "text": "I notice tension building in my body under pressure",
+        "points": -0.1
       },
       {
         "id": 6,
         "text": "I feel grounded even in chaotic situations",
-        "reversed": true
+        "points": 0.1
       },
       {
         "id": 7,
-        "text": "I find small setbacks weigh on me longer than expected"
+        "text": "I find small setbacks weigh on me longer than expected",
+        "points": -0.1
       },
       {
         "id": 8,
         "text": "I quickly let go of frustrations",
-        "reversed": true
+        "points": 0.1
       },
       {
         "id": 9,
-        "text": "I feel uneasy without a clear plan"
+        "text": "I feel uneasy without a clear plan",
+        "points": -0.1
       },
       {
         "id": 10,
         "text": "I remain steady when facing uncertainty",
-        "reversed": true
+        "points": 0.1
       }
     ]
   },
@@ -60,48 +65,53 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "I find it energizing to dive into large group activities"
+        "text": "I find it energizing to dive into large group activities",
+        "points": 0.1
       },
       {
         "id": 2,
         "text": "I feel comfortable reflecting on ideas in solitude",
-        "reversed": true
+        "points": -0.1
       },
       {
         "id": 3,
-        "text": "I often initiate conversations with unfamiliar people"
+        "text": "I often initiate conversations with unfamiliar people",
+        "points": 0.1
       },
       {
         "id": 4,
         "text": "I prefer low-key gatherings over bustling events",
-        "reversed": true
+        "points": -0.1
       },
       {
         "id": 5,
-        "text": "I enjoy sharing thoughts in group discussions"
+        "text": "I enjoy sharing thoughts in group discussions",
+        "points": 0.1
       },
       {
         "id": 6,
         "text": "I retreat to quiet spaces to recharge",
-        "reversed": true
+        "points": -0.1
       },
       {
         "id": 7,
-        "text": "I seek out opportunities to meet new people"
+        "text": "I seek out opportunities to meet new people",
+        "points": 0.1
       },
       {
         "id": 8,
         "text": "I find long stretches of solo time fulfilling",
-        "reversed": true
+        "points": -0.1
       },
       {
         "id": 9,
-        "text": "I feel at ease when speaking up in a crowd"
+        "text": "I feel at ease when speaking up in a crowd",
+        "points": 0.1
       },
       {
         "id": 10,
         "text": "I value moments of silence over lively chatter",
-        "reversed": true
+        "points": -0.1
       }
     ]
   },
@@ -113,48 +123,53 @@ const quizzes = [
     "questions": [
       {
         "id": 1,
-        "text": "I explore unfamiliar topics just for the sake of learning"
+        "text": "I explore unfamiliar topics just for the sake of learning",
+        "points": -0.1
       },
       {
         "id": 2,
         "text": "I prefer routines that have worked for me before",
-        "reversed": true
+        "points": 0.1
       },
       {
         "id": 3,
-        "text": "I notice different perspectives in everyday situations"
+        "text": "I notice different perspectives in everyday situations",
+        "points": -0.1
       },
       {
         "id": 4,
         "text": "I stick to tried-and-true solutions when problems arise",
-        "reversed": true
+        "points": 0.1
       },
       {
         "id": 5,
-        "text": "I feel energized by unexpected detours"
+        "text": "I feel energized by unexpected detours",
+        "points": -0.1
       },
       {
         "id": 6,
         "text": "I find comfort in predictable outcomes",
-        "reversed": true
+        "points": 0.1
       },
       {
         "id": 7,
-        "text": "I question assumptions I encounter"
+        "text": "I question assumptions I encounter",
+        "points": -0.1
       },
       {
         "id": 8,
         "text": "I avoid stepping outside my usual methods",
-        "reversed": true
+        "points": 0.1
       },
       {
         "id": 9,
-        "text": "I seek out diverse experiences when I can"
+        "text": "I seek out diverse experiences when I can",
+        "points": -0.1
       },
       {
         "id": 10,
         "text": "I prefer familiarity over novelty",
-        "reversed": true
+        "points": 0.1
       }
     ]
   },    
