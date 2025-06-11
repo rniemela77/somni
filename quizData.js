@@ -2,360 +2,162 @@ const quizzes = [
   {
     "id": "emotional-landscape",
     "title": "Emotional Landscape",
-    "description": "This quiz explores your current emotional state across different aspects of life. Move the slider to indicate how strongly each statement resonates with your present experience.",
+    "description": "This quiz explores your level of emotional stability versus neurotic tendencies. Move the slider to indicate how each statement reflects your experience.",
+    "attribute": "Neuroticism-Emotional Stability",
     "questions": [
       {
         "id": 1,
-        "text": "I solve work challenges"
+        "text": "I replay conversations in my mind after they happen"
       },
       {
         "id": 2,
-        "text": "I listen to others' perspectives"
+        "text": "I adapt easily when plans shift",
+        "reversed": true
       },
       {
         "id": 3,
-        "text": "I hold back from planning my future"
+        "text": "I sometimes struggle to switch off my thoughts at night"
       },
       {
         "id": 4,
-        "text": "I remain tense during difficult moments"
+        "text": "I can carry on as usual when things don’t go my way",
+        "reversed": true
       },
       {
         "id": 5,
-        "text": "I notice moments of joy"
+        "text": "I notice tension building in my body under pressure"
       },
       {
         "id": 6,
-        "text": "I doubt my decisions"
+        "text": "I feel grounded even in chaotic situations",
+        "reversed": true
       },
       {
         "id": 7,
-        "text": "I set boundaries in relationships"
+        "text": "I find small setbacks weigh on me longer than expected"
       },
       {
         "id": 8,
-        "text": "I avoid examining difficult experiences"
+        "text": "I quickly let go of frustrations",
+        "reversed": true
       },
       {
         "id": 9,
-        "text": "I express myself in groups"
+        "text": "I feel uneasy without a clear plan"
       },
       {
         "id": 10,
-        "text": "I question my life direction"
+        "text": "I remain steady when facing uncertainty",
+        "reversed": true
+      }
+    ]
+  },
+  {
+    "id": "social-dynamics",
+    "title": "Social Dynamics",
+    "description": "This quiz assesses your tendency toward introversion or extraversion. Move the slider to indicate how each statement reflects your regular behavior.",
+    "attribute": "Introversion-Extraversion",
+    "questions": [
+      {
+        "id": 1,
+        "text": "I find it energizing to dive into large group activities"
+      },
+      {
+        "id": 2,
+        "text": "I feel comfortable reflecting on ideas in solitude",
+        "reversed": true
+      },
+      {
+        "id": 3,
+        "text": "I often initiate conversations with unfamiliar people"
+      },
+      {
+        "id": 4,
+        "text": "I prefer low-key gatherings over bustling events",
+        "reversed": true
+      },
+      {
+        "id": 5,
+        "text": "I enjoy sharing thoughts in group discussions"
+      },
+      {
+        "id": 6,
+        "text": "I retreat to quiet spaces to recharge",
+        "reversed": true
+      },
+      {
+        "id": 7,
+        "text": "I seek out opportunities to meet new people"
+      },
+      {
+        "id": 8,
+        "text": "I find long stretches of solo time fulfilling",
+        "reversed": true
+      },
+      {
+        "id": 9,
+        "text": "I feel at ease when speaking up in a crowd"
+      },
+      {
+        "id": 10,
+        "text": "I value moments of silence over lively chatter",
+        "reversed": true
       }
     ]
   },
   {
     "id": "consciousness-patterns",
-    "title": "Consciousness Patterns",
-    "description": "This quiz examines your typical responses to various life situations. Rate how frequently each statement reflects your natural tendencies.",
+    "title": "Experience Spectrum",
+    "description": "This quiz assesses your openness to new ideas versus preference for familiar approaches. Move the slider to indicate how each statement reflects your typical behavior.",
+    "attribute": "Openness-Closedness to Experience",
     "questions": [
       {
         "id": 1,
-        "text": "I help others without conditions"
+        "text": "I explore unfamiliar topics just for the sake of learning"
       },
       {
         "id": 2,
-        "text": "I avoid obstacles"
+        "text": "I prefer routines that have worked for me before",
+        "reversed": true
       },
       {
         "id": 3,
-        "text": "I take sides in conflicts"
+        "text": "I notice different perspectives in everyday situations"
       },
       {
         "id": 4,
-        "text": "I notice beauty in daily moments"
+        "text": "I stick to tried-and-true solutions when problems arise",
+        "reversed": true
       },
       {
         "id": 5,
-        "text": "I compare myself to others' success"
+        "text": "I feel energized by unexpected detours"
       },
       {
         "id": 6,
-        "text": "I maintain calm"
+        "text": "I find comfort in predictable outcomes",
+        "reversed": true
       },
       {
         "id": 7,
-        "text": "I act on my values"
+        "text": "I question assumptions I encounter"
       },
       {
         "id": 8,
-        "text": "I judge new experiences"
+        "text": "I avoid stepping outside my usual methods",
+        "reversed": true
       },
       {
         "id": 9,
-        "text": "I observe my reactions"
+        "text": "I seek out diverse experiences when I can"
       },
       {
         "id": 10,
-        "text": "I feel separate from everything"
+        "text": "I prefer familiarity over novelty",
+        "reversed": true
       }
     ]
-  },
-  {
-    "id": "life-domains",
-    "title": "Life Domain Integration",
-    "description": "This quiz explores how you experience different areas of your life. Move the slider to indicate how strongly each statement reflects your current experience.",
-    "questions": [
-      {
-        "id": 1,
-        "text": "I express myself at work"
-      },
-      {
-        "id": 2,
-        "text": "I feel tense at home"
-      },
-      {
-        "id": 3,
-        "text": "I withdraw in relationships"
-      },
-      {
-        "id": 4,
-        "text": "I prioritize others' needs"
-      },
-      {
-        "id": 5,
-        "text": "I focus on immediate tasks"
-      },
-      {
-        "id": 6,
-        "text": "I notice my body"
-      },
-      {
-        "id": 7,
-        "text": "I hold back creative expression"
-      },
-      {
-        "id": 8,
-        "text": "I participate in community"
-      },
-      {
-        "id": 9,
-        "text": "I separate beliefs from actions"
-      },
-      {
-        "id": 10,
-        "text": "I disconnect from the world"
-      }
-    ]
-  },
-  {
-    "id": "transformative-potential",
-    "title": "Transformative Potential",
-    "description": "This quiz explores your capacity for personal growth and transformation. Move the slider to indicate how strongly each statement reflects your current experience.",
-    "questions": [
-      {
-        "id": 1,
-        "text": "I resist new ideas"
-      },
-      {
-        "id": 2,
-        "text": "I notice my patterns"
-      },
-      {
-        "id": 3,
-        "text": "I dwell on setbacks"
-      },
-      {
-        "id": 4,
-        "text": "I seek simple answers"
-      },
-      {
-        "id": 5,
-        "text": "I hold fixed views of past events"
-      },
-      {
-        "id": 6,
-        "text": "I explore challenging ideas"
-      },
-      {
-        "id": 7,
-        "text": "I react automatically"
-      },
-      {
-        "id": 8,
-        "text": "I consider future impacts"
-      },
-      {
-        "id": 9,
-        "text": "I maintain familiar patterns"
-      },
-      {
-        "id": 10,
-        "text": "I learn from challenges"
-      }
-    ]
-  },
-  {
-    "id": "energy-awareness",
-    "title": "Energy & Presence",
-    "description": "This quiz examines your awareness of subtle energies and states of consciousness. Move the slider to indicate how frequently you experience each statement.",
-    "questions": [
-      {
-        "id": 1,
-        "text": "I sense room atmospheres"
-      },
-      {
-        "id": 2,
-        "text": "I ignore body signals"
-      },
-      {
-        "id": 3,
-        "text": "I notice inner stillness"
-      },
-      {
-        "id": 4,
-        "text": "I mix others' feelings with mine"
-      },
-      {
-        "id": 5,
-        "text": "I track my energy levels"
-      },
-      {
-        "id": 6,
-        "text": "I miss consciousness shifts"
-      },
-      {
-        "id": 7,
-        "text": "I hear unspoken meanings"
-      },
-      {
-        "id": 8,
-        "text": "I push through fatigue"
-      },
-      {
-        "id": 9,
-        "text": "I feel my body boundaries"
-      },
-      {
-        "id": 10,
-        "text": "I stay in one mental state"
-      }
-    ]
-  },
-  {
-    "id": "wisdom-integration",
-    "title": "Wisdom Integration",
-    "description": "This quiz explores how you embody and express wisdom in daily life. Move the slider to indicate how strongly each statement reflects your experience.",
-    "questions": [
-      {
-        "id": 1,
-        "text": "I follow external pressure"
-      },
-      {
-        "id": 2,
-        "text": "I dismiss opposing views"
-      },
-      {
-        "id": 3,
-        "text": "I respond with presence"
-      },
-      {
-        "id": 4,
-        "text": "I avoid difficult relationships"
-      },
-      {
-        "id": 5,
-        "text": "I take compassionate action"
-      },
-      {
-        "id": 6,
-        "text": "I try fixing others"
-      },
-      {
-        "id": 7,
-        "text": "I learn from experience"
-      },
-      {
-        "id": 8,
-        "text": "I act from fear"
-      },
-      {
-        "id": 9,
-        "text": "I bring calm to situations"
-      },
-      {
-        "id": 10,
-        "text": "I separate wisdom from action"
-      }
-    ]
-  },
-  {
-    "id": "life-perspective",
-    "title": "Life Response Patterns",
-    "description": "This quiz explores your typical responses to life situations. Rate how frequently each statement reflects your experience in the past month.",
-    "questions": [
-      {
-        "id": 1,
-        "text": "I welcome criticism"
-      },
-      {
-        "id": 2,
-        "text": "I blame myself for mistakes"
-      },
-      {
-        "id": 3,
-        "text": "I avoid challenging tasks"
-      },
-      {
-        "id": 4,
-        "text": "I process disappointments"
-      },
-      {
-        "id": 5,
-        "text": "I approach new situations"
-      },
-      {
-        "id": 6,
-        "text": "I resent others' success"
-      },
-      {
-        "id": 7,
-        "text": "I stay calm in disagreements"
-      },
-      {
-        "id": 8,
-        "text": "I reject challenging views"
-      },
-      {
-        "id": 9,
-        "text": "I follow inner guidance"
-      },
-      {
-        "id": 10,
-        "text": "I lose focus under stress"
-      },
-      {
-        "id": 11,
-        "text": "I support others"
-      },
-      {
-        "id": 12,
-        "text": "I resist life changes"
-      },
-      {
-        "id": 13,
-        "text": "I recognize different truths"
-      },
-      {
-        "id": 14,
-        "text": "I create tension in others"
-      },
-      {
-        "id": 15,
-        "text": "I notice daily joy"
-      },
-      {
-        "id": 16,
-        "text": "I maintain inner peace"
-      },
-      {
-        "id": 17,
-        "text": "I avoid challenges"
-      }
-    ]
-  }
+  },    
 ];
 
 export default quizzes;
