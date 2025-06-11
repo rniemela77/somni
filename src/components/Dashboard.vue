@@ -1,6 +1,5 @@
 <template>
-  <div>
-    
+  <div class="container">
     <!-- Personality Analysis Section for authenticated users -->
     <div v-if="authStore.isAuthenticated" class="mb-4">
       <PersonalityDashboard />
@@ -137,16 +136,13 @@ import { useAuthStore } from '../stores/auth';
 import PersonalityDashboard from './PersonalityDashboard.vue';
 
 export default {
-  name: 'Home',
+  name: 'Dashboard',
   components: {
     PersonalityDashboard
   },
   setup() {
     const authStore = useAuthStore();
     return { authStore };
-  },
-  mounted() {
-    console.log('Home component mounted');
   }
 };
 </script>

@@ -4,14 +4,14 @@ import SignIn from "./components/SignIn.vue";
 import Quiz from "./components/Quiz.vue";
 import Success from "./components/Success.vue";
 import Cancel from "./components/Cancel.vue";
-import Home from "./components/Home.vue";
-import Profile from "./components/Profile.vue";
+import Dashboard from "./components/Dashboard.vue";
+import Account from "./components/Account.vue";
 import { useAuthStore } from "./stores/auth";
 
 const routes = [
   { 
     path: "/", 
-    component: Home,
+    component: Dashboard,
     name: 'home'
   },
   { 
@@ -33,9 +33,9 @@ const routes = [
     meta: { requiresAuth: true }
   },
   { 
-    path: "/profile", 
-    component: Profile,
-    name: 'profile',
+    path: "/account", 
+    component: Account,
+    name: 'account',
     meta: { requiresAuth: true }
   },
   { 

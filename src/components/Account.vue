@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h2 class="mb-4 fw-bold position-relative">Your Profile</h2>
+  <div class="container">
+    <h2 class="mb-4 fw-bold position-relative">Your Account</h2>
 
     <!-- Auth Status Message (temporary for debugging) -->
     <div v-if="waitingForAuth" class="alert alert-warning d-flex align-items-center">
@@ -115,7 +115,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '/.netlify/functions';
 const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_your_stripe_key_here';
 
 export default {
-  name: 'ProfilePage',
+  name: 'AccountPage',
   setup() {
     const authStore = useAuthStore();
     const route = useRoute();
@@ -135,7 +135,7 @@ export default {
     };
   },
   async mounted() {
-    console.log('Profile component mounted');
+    console.log('Account component mounted');
 
     // Initialize Stripe
     this.stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
