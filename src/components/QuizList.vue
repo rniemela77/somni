@@ -1,6 +1,41 @@
 <template>
   <div class="container">
     <h2 class="text-center mb-4">Select a Quiz</h2>
+
+    <!-- Tips Section -->
+    <div class="tips-section mb-5">
+      <h3 class="h6 d-flex align-items-center mb-3">
+        <i class="bi bi-lightbulb text-primary me-2"></i>
+        Tips for Accurate Results
+      </h3>
+      <div class="row">
+        <div class="col-md-6">
+          <ul class="list-unstyled">
+            <li class="mb-2 d-flex align-items-start">
+              <i class="bi bi-check text-success me-2"></i>
+              <span>Choose a time when your mood is neutral - avoid taking quizzes on exceptionally good or bad days</span>
+            </li>
+            <li class="mb-2 d-flex align-items-start">
+              <i class="bi bi-check text-success me-2"></i>
+              <span>Find a quiet, distraction-free environment to focus on your responses</span>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <ul class="list-unstyled">
+            <li class="mb-2 d-flex align-items-start">
+              <i class="bi bi-check text-success me-2"></i>
+              <span>Answer based on your general tendencies, not just recent events</span>
+            </li>
+            <li class="mb-2 d-flex align-items-start">
+              <i class="bi bi-check text-success me-2"></i>
+              <span>Take your time - there's no rush to complete the assessment</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <div v-if="availableQuizzes.length === 0" class="alert alert-info text-center">
       <p>Loading quizzes...</p>
     </div>
@@ -88,5 +123,23 @@ export default {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+.tips-section {
+  color: #666;
+}
+
+.tips-section h3 {
+  color: #333;
+  font-weight: 500;
+}
+
+.tips-section i {
+  font-size: 0.9rem;
+}
+
+.tips-section span {
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 </style> 
