@@ -92,63 +92,32 @@
 
 <script>
 import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
+import { useAuth } from '../composables/useAuth';
 
 export default {
   name: 'SignUp',
   setup() {
-    const router = useRouter();
-    const authStore = useAuthStore();
-    const email = ref("");
-    const password = ref("");
+    const { 
+      email, 
+      password, 
+      message, 
+      isLoading, 
+      signUp,
+      signInWithGoogle 
+    } = useAuth();
+
     const confirmPassword = ref("");
-    const message = ref("");
-    
-    // Use the loading state from the auth store
-    const isLoading = computed(() => authStore.loading);
 
     const isPasswordMatch = computed(() => {
       return password.value === confirmPassword.value;
     });
 
-    const signUp = async () => {
+    const handleSignUp = async () => {
       if (!isPasswordMatch.value) {
         message.value = "Passwords do not match";
         return;
       }
-
-      message.value = "";
-      
-      try {
-        const { error } = await authStore.signUp(email.value, password.value);
-        
-        if (error) {
-          message.value = error;
-        } else {
-          message.value = "Account created successfully!";
-          router.push('/quiz');
-        }
-      } catch (error) {
-        message.value = error.message;
-      }
-    };
-
-    const signInWithGoogle = async () => {
-      message.value = "";
-      
-      try {
-        const { error } = await authStore.signInWithGoogle();
-        
-        if (error) {
-          message.value = error;
-        } else {
-          message.value = "Account created successfully!";
-          router.push('/quiz');
-        }
-      } catch (error) {
-        message.value = error.message;
-      }
+      await signUp();
     };
 
     return {
@@ -158,7 +127,7 @@ export default {
       message,
       isLoading,
       isPasswordMatch,
-      signUp,
+      signUp: handleSignUp,
       signInWithGoogle
     };
   }

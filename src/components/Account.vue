@@ -141,7 +141,7 @@ export default {
     this.stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
 
     // Get the current authenticated user from the store
-    const currentUser = this.authStore.getCurrentUser();
+    const currentUser = this.authStore.user;
     console.log('Current user on mount:', currentUser?.uid || 'No user');
 
     await this.loadUserInfo();
@@ -173,7 +173,7 @@ export default {
   },
   methods: {
     async loadUserInfo() {
-      const currentUser = this.authStore.getCurrentUser();
+      const currentUser = this.authStore.user;
 
       if (currentUser) {
         console.log('Loading user info for:', currentUser.email);
@@ -208,7 +208,7 @@ export default {
         this.paymentError = null;
         
         // Get the current user
-        const currentUser = this.authStore.getCurrentUser();
+        const currentUser = this.authStore.user;
         if (!currentUser) {
           throw new Error('Authentication required. Please log in again.');
         }

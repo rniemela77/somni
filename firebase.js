@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore, collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { auth, db } from "./src/services/firebase-config";
+import { collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
 // Import the personality analysis configuration
 import { 
@@ -12,22 +11,6 @@ import {
 export { initializeUserDocument } from "./src/services/firebase-user";
 export { updateUserPersonalityAnalysis } from "./src/services/firebase-personality";
 export { getUserPersonality, getUserPersonalityAnalysis } from "./src/services/firebase-utils";
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
 
 // Update user's dimension value
 export const updateDimensionValue = async (userId, dimension, value) => {
@@ -58,4 +41,4 @@ export const checkUserPaidStatus = async (userId) => {
   return userDoc.exists() && userDoc.data().isPaid;
 };
 
-export { auth, db, firebaseConfig };
+export { auth, db };

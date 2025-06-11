@@ -9,6 +9,16 @@
 
     <div v-else>
       <h3 class="text-center mb-4">Your Personality Dashboard</h3>
+      
+      <!-- Add Scales -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <PersonalityScales 
+            :scores="attributeScores"
+          />
+        </div>
+      </div>
+
       <div class="text-center mb-4">
         <button @click="generateDescription" 
                 class="btn btn-outline-primary"
@@ -28,6 +38,9 @@
 </template>
 
 <script>
+import { ref, computed, watch } from 'vue';
+import PersonalityScales from './PersonalityScales.vue';
+import PersonalityAnalysisSection from './PersonalityAnalysisSection.vue';
 import { quizService, resultsService, authService } from '../services/firebase-index';
 import { openaiService } from '../services/openai';
 import { 
@@ -39,16 +52,19 @@ import {
   PERSONALITY_ANALYSIS_SECTIONS 
 } from '../config/personalityAnalysis';
 import { useAuthStore } from '../stores/auth';
-import PersonalityAnalysisSection from './PersonalityAnalysisSection.vue';
 
 export default {
   name: 'PersonalityDashboard',
   components: {
-    PersonalityAnalysisSection
+    PersonalityAnalysisSection,
+    PersonalityScales
   },
   setup() {
     const authStore = useAuthStore();
-    return { authStore };
+    
+    return { 
+      authStore
+    };
   },
   data() {
     return {
@@ -64,6 +80,9 @@ export default {
     };
   },
   computed: {
+    attributeScores() {
+      return this.authStore.userAttributes || {};
+    },
     allAnswers() {
       const answers = [];
       this.results.forEach(result => {
@@ -87,22 +106,13 @@ export default {
       return this.generatingDescription || this.noQuizzesCompleted;
     }
   },
+  mounted() {
+    // If we have a user but no attributes, try to refresh the auth store
+    if (this.authStore.user && !this.authStore.userAttributes) {
+      this.authStore.setUser(this.authStore.user);
+    }
+  },
   methods: {
-    async loadUserPersonality() {
-      if (this.authStore.loading) {
-        console.log('Auth still loading, delaying loadUserPersonality');
-        return;
-      }
-      const user = authService.getCurrentUser();
-      if (user) {
-        try {
-          const userData = await getUserPersonality(user.uid);
-          this.userTags = userData.tags || [];
-        } catch (error) {
-          console.error("Error loading user personality:", error);
-        }
-      }
-    },
     async loadResults() {
       if (this.authStore.loading) {
         console.log('Auth still loading, delaying loadResults');

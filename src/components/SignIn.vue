@@ -73,55 +73,19 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
+import { useAuth } from '../composables/useAuth';
 
 export default {
   name: 'SignIn',
   setup() {
-    const router = useRouter();
-    const authStore = useAuthStore();
-    const email = ref("");
-    const password = ref("");
-    const message = ref("");
-    
-    // Use the loading state from the auth store
-    const isLoading = computed(() => authStore.loading);
-
-    const signIn = async () => {
-      message.value = "";
-      
-      try {
-        const { error } = await authStore.signIn(email.value, password.value);
-        
-        if (error) {
-          message.value = error;
-        } else {
-          message.value = "Login successful!";
-          router.push('/quiz');
-        }
-      } catch (error) {
-        message.value = error.message;
-      }
-    };
-
-    const signInWithGoogle = async () => {
-      message.value = "";
-      
-      try {
-        const { error } = await authStore.signInWithGoogle();
-        
-        if (error) {
-          message.value = error;
-        } else {
-          message.value = "Login successful!";
-          router.push('/quiz');
-        }
-      } catch (error) {
-        message.value = error.message;
-      }
-    };
+    const { 
+      email, 
+      password, 
+      message, 
+      isLoading, 
+      signIn, 
+      signInWithGoogle 
+    } = useAuth();
 
     return {
       email,
