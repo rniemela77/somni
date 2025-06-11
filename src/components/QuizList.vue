@@ -46,30 +46,13 @@
         <div class="card h-100">
           <div class="card-body">
             <h3 class="card-title">{{ quiz.title }}</h3>
-            <div v-if="getQuizResult(quiz.id)" class="mb-2">
-              <p class="text-muted">
-                Last completed on {{ formatDate(getQuizResult(quiz.id).timestamp) }}
-              </p>
-            </div>
-            <p class="card-text">{{ getQuizResult(quiz.id) ? 'Retaking this quiz will replace your previous answers.' : 'Start this assessment to discover more about yourself' }}</p>
+            <p class="card-text">{{ quiz.description }}</p>
           </div>
           <div class="card-footer text-center">
-            <div v-if="getQuizResult(quiz.id)" class="d-grid gap-2">
-              <button 
-                class="btn btn-outline-primary" 
-                @click="$emit('select-quiz', quiz.id)">
-                Retake Quiz
-              </button>
-              <button 
-                class="btn btn-link" 
-                @click="$emit('show-answers', quiz.id)">
-                See Answers
-              </button>
-            </div>
             <button 
-              v-else
               class="btn btn-primary w-100" 
               @click="$emit('select-quiz', quiz.id)">
+              <i class="bi bi-pencil-fill me-1"></i>
               Begin Assessment
             </button>
           </div>
@@ -80,36 +63,25 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useQuizStore } from '../stores/quiz';
+import { useAuthStore } from '../stores/auth';
 
 export default {
   name: 'QuizList',
   setup() {
     const quizStore = useQuizStore();
     const availableQuizzes = computed(() => quizStore.availableQuizzes);
-    const userResults = computed(() => quizStore.userResults);
 
-    const getQuizResult = (quizId) => {
-      return userResults.value.find(result => result.quizId === quizId);
-    };
-
-    const formatDate = (timestamp) => {
-      if (!timestamp) return 'N/A';
-      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-      return new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }).format(date);
-    };
+    onMounted(async () => {
+      // Load quizzes if they haven't been loaded yet
+      if (quizStore.availableQuizzes.length === 0) {
+        await quizStore.loadQuizzes();
+      }
+    });
 
     return {
-      availableQuizzes,
-      getQuizResult,
-      formatDate
+      availableQuizzes
     };
   }
 };
