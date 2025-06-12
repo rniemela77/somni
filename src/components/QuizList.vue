@@ -36,8 +36,14 @@
       </div>
     </div>
 
-    <div v-if="availableQuizzes.length === 0" class="alert alert-info text-center">
+    <div v-if="error" class="alert alert-danger text-center">
+      <p>{{ error }}</p>
+    </div>
+    <div v-else-if="loading" class="alert alert-info text-center">
       <p>Loading quizzes...</p>
+    </div>
+    <div v-else-if="availableQuizzes.length === 0" class="alert alert-warning text-center">
+      <p>No quizzes available.</p>
     </div>
     <div v-else class="row row-cols-1 row-cols-md-2 g-4">
       <div v-for="quiz in availableQuizzes" 
@@ -63,7 +69,7 @@
 </template>
 
 <script>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
 
@@ -71,17 +77,55 @@ export default {
   name: 'QuizList',
   setup() {
     const quizStore = useQuizStore();
+    const authStore = useAuthStore();
+    const loading = ref(false);
+    const error = ref(null);
     const availableQuizzes = computed(() => quizStore.availableQuizzes);
 
     onMounted(async () => {
-      // Load quizzes if they haven't been loaded yet
-      if (quizStore.availableQuizzes.length === 0) {
+      try {
+        loading.value = true;
+        error.value = null;
+
+        // Wait for auth to be ready
+        if (authStore.loading) {
+          console.log('[QuizList] Auth is loading, waiting...');
+          await new Promise(resolve => {
+            const unsubscribe = authStore.$subscribe((mutation, state) => {
+              console.log('[QuizList] Auth state changed:', {
+                loading: state.loading,
+                isAuthenticated: state.isAuthenticated
+              });
+              if (!state.loading) {
+                unsubscribe();
+                resolve();
+              }
+            });
+          });
+        }
+
+        if (!authStore.isAuthenticated) {
+          console.log('[QuizList] User is not authenticated');
+          error.value = 'Please sign in to view quizzes';
+          return;
+        }
+
+        console.log('[QuizList] Auth ready, loading quizzes...');
         await quizStore.loadQuizzes();
+        console.log('[QuizList] Quizzes loaded:', quizStore.availableQuizzes.length);
+      } catch (err) {
+        error.value = err.message || 'Failed to load quizzes';
+        console.error('[QuizList] Error:', err);
+      } finally {
+        loading.value = false;
+        console.log('[QuizList] Loading complete');
       }
     });
 
     return {
-      availableQuizzes
+      availableQuizzes,
+      loading,
+      error
     };
   }
 };

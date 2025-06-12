@@ -7,64 +7,75 @@
       </button>
     </div>
 
-    <p class="text-muted mb-4">{{ quizStore.currentQuiz.description }}</p>
+    <div v-if="loading" class="text-center">
+      <p>Loading quiz...</p>
+    </div>
+    <div v-else-if="error" class="alert alert-danger">
+      <p>{{ error }}</p>
+      <button class="btn btn-outline-primary mt-2" @click="loadQuiz">
+        Try Again
+      </button>
+    </div>
+    <div v-else>
+      <p class="text-muted mb-4">{{ quizStore.currentQuiz?.description }}</p>
 
-    <form @submit.prevent="submitQuiz" class="mb-4">
-      <div v-for="(question, index) in questions" 
-           :key="question.id"
-           class="card mb-3">
-        <div class="card-body">
-          <p class="fw-bold">Question {{ index + 1 }}</p>
-          <p class="mb-4">{{ question.text }}</p>
-          
-          <div class="slider-container">
-            <div class="slider-labels d-flex justify-content-between mb-2">
-              <span>Almost Never (-100)</span>
-              <span>Sometimes (0)</span>
-              <span>Almost Always (+100)</span>
-            </div>
+      <form @submit.prevent="submitQuiz" class="mb-4">
+        <div v-for="(question, index) in questions" 
+             :key="question.id"
+             class="card mb-3">
+          <div class="card-body">
+            <p class="fw-bold">Question {{ index + 1 }}</p>
+            <p class="mb-4">{{ question.text }}</p>
             
-            <div class="slider-track position-relative">
-              <div class="slider-fill" :style="{ 
-                width: (Math.abs(parseFloat(answers[question.id])) / 2) + '%',
-                left: parseFloat(answers[question.id]) < 0 ? 'auto' : '50%',
-                right: parseFloat(answers[question.id]) < 0 ? '50%' : 'auto'
-              }"></div>
-              <input type="range"
-                     class="form-range"
-                     v-model="answers[question.id]"
-                     min="-100"
-                     max="100"
-                     :disabled="isSubmitting || submissionSuccess"
-                     required />
-            </div>
-            
-            <div class="slider-value text-center mt-2">
-              <small class="text-muted">Current value: {{ answers[question.id] }}</small>
+            <div class="slider-container">
+              <div class="slider-labels d-flex justify-content-between mb-2">
+                <span>Almost Never (-100)</span>
+                <span>Sometimes (0)</span>
+                <span>Almost Always (+100)</span>
+              </div>
+              
+              <div class="slider-track position-relative">
+                <div class="slider-fill" :style="{ 
+                  width: (Math.abs(parseFloat(answers[question.id])) / 2) + '%',
+                  left: parseFloat(answers[question.id]) < 0 ? 'auto' : '50%',
+                  right: parseFloat(answers[question.id]) < 0 ? '50%' : 'auto'
+                }"></div>
+                <input type="range"
+                       class="form-range"
+                       v-model="answers[question.id]"
+                       min="-100"
+                       max="100"
+                       :disabled="isSubmitting || submissionSuccess"
+                       required />
+              </div>
+              
+              <div class="slider-value text-center mt-2">
+                <small class="text-muted">Current value: {{ answers[question.id] }}</small>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="text-center">
-        <button type="submit" 
-                class="btn btn-primary w-100"
-                :disabled="isSubmitting || submissionSuccess">
-          {{ isSubmitting ? 'Submitting...' : 'Submit Quiz' }}
+        <div class="text-center">
+          <button type="submit" 
+                  class="btn btn-primary w-100"
+                  :disabled="isSubmitting || submissionSuccess">
+            {{ isSubmitting ? 'Submitting...' : 'Submit Quiz' }}
+          </button>
+        </div>
+      </form>
+
+      <p v-if="message" 
+         class="alert mt-3" 
+         :class="{ 'alert-danger': message.includes('Error'), 'alert-success': message.includes('successfully') }">
+        {{ message }}
+      </p>
+
+      <div v-if="submissionSuccess" class="text-center mt-4">
+        <button @click="$emit('back-to-selection')" class="btn btn-secondary">
+          Take Another Quiz
         </button>
       </div>
-    </form>
-
-    <p v-if="message" 
-       class="alert mt-3" 
-       :class="{ 'alert-danger': message.includes('Error'), 'alert-success': message.includes('successfully') }">
-      {{ message }}
-    </p>
-
-    <div v-if="submissionSuccess" class="text-center mt-4">
-      <button @click="$emit('back-to-selection')" class="btn btn-secondary">
-        Take Another Quiz
-      </button>
     </div>
   </div>
 </template>
@@ -78,6 +89,8 @@ export default {
   props: ['quizId'],
   setup(props) {
     const quizStore = useQuizStore();
+    const loading = ref(true);
+    const error = ref(null);
     const quizTitle = ref("");
     const questions = ref([]);
     const answers = ref({});
@@ -86,20 +99,30 @@ export default {
     const submissionSuccess = ref(false);
 
     const loadQuiz = async () => {
-      const { error } = await quizStore.selectQuiz(props.quizId);
-      if (error) {
-        message.value = "Error loading quiz.";
-        return;
-      }
+      loading.value = true;
+      error.value = null;
+      
+      try {
+        const result = await quizStore.selectQuiz(props.quizId);
+        if (result.error) {
+          error.value = result.error;
+          return;
+        }
 
-      quizTitle.value = quizStore.currentQuiz.title;
-      questions.value = quizStore.currentQuiz.questions;
-      // Initialize all answers to 0 (neutral/sometimes)
-      answers.value = questions.value.reduce((acc, q) => {
-        acc[q.id] = "0";
-        return acc;
-      }, {});
-      message.value = "";
+        quizTitle.value = quizStore.currentQuiz.title;
+        questions.value = quizStore.currentQuiz.questions;
+        // Initialize all answers to 0 (neutral/sometimes)
+        answers.value = questions.value.reduce((acc, q) => {
+          acc[q.id] = "0";
+          return acc;
+        }, {});
+        message.value = "";
+      } catch (err) {
+        error.value = "Failed to load quiz. Please try again.";
+        console.error('Error loading quiz:', err);
+      } finally {
+        loading.value = false;
+      }
     };
 
     const submitQuiz = async () => {
@@ -124,13 +147,16 @@ export default {
 
     return {
       quizStore,
+      loading,
+      error,
       quizTitle,
       questions,
       answers,
       message,
       isSubmitting,
       submissionSuccess,
-      submitQuiz
+      submitQuiz,
+      loadQuiz
     };
   }
 };

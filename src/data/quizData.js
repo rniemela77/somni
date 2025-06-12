@@ -172,9 +172,7 @@ const quizzes = [
         "points": 0.1
       }
     ]
-  },    
+  }
 ];
 
-export default {
-  quizzes
-};
+export default quizzes; 

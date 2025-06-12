@@ -19,11 +19,13 @@ export const authService = {
    * @returns {Promise<{user: object|null, error: string|null}>}
    */
   async signIn(email, password) {
+    console.log('[Auth Service] Attempting sign in...');
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('[Auth Service] Sign in successful');
       return { user: userCredential.user, error: null };
     } catch (error) {
-      console.error("Sign in error:", error);
+      console.error("[Auth Service] Sign in error:", error);
       return { user: null, error: error.message };
     }
   },
@@ -33,12 +35,14 @@ export const authService = {
    * @returns {Promise<{user: object|null, error: string|null}>}
    */
   async signInWithGoogle() {
+    console.log('[Auth Service] Attempting Google sign in...');
     try {
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
+      console.log('[Auth Service] Google sign in successful');
       return { user: userCredential.user, error: null };
     } catch (error) {
-      console.error("Google sign in error:", error);
+      console.error("[Auth Service] Google sign in error:", error);
       return { user: null, error: error.message };
     }
   },
@@ -50,11 +54,13 @@ export const authService = {
    * @returns {Promise<{user: object|null, error: string|null}>}
    */
   async signUp(email, password) {
+    console.log('[Auth Service] Attempting sign up...');
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('[Auth Service] Sign up successful');
       return { user: userCredential.user, error: null };
     } catch (error) {
-      console.error("Sign up error:", error);
+      console.error("[Auth Service] Sign up error:", error);
       return { user: null, error: error.message };
     }
   },
@@ -64,11 +70,13 @@ export const authService = {
    * @returns {Promise<{error: string|null}>}
    */
   async logout() {
+    console.log('[Auth Service] Attempting logout...');
     try {
       await signOut(auth);
+      console.log('[Auth Service] Logout successful');
       return { error: null };
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error("[Auth Service] Logout error:", error);
       return { error: error.message };
     }
   },
@@ -78,7 +86,9 @@ export const authService = {
    * @returns {object|null} - The current user or null
    */
   getCurrentUser() {
-    return auth.currentUser;
+    const user = auth.currentUser;
+    console.log('[Auth Service] Getting current user:', user ? 'exists' : 'null');
+    return user;
   },
   
   /**
@@ -87,11 +97,13 @@ export const authService = {
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   async resetPassword(email) {
+    console.log('[Auth Service] Attempting password reset...');
     try {
       await sendPasswordResetEmail(auth, email);
+      console.log('[Auth Service] Password reset email sent');
       return { success: true, error: null };
     } catch (error) {
-      console.error("Password reset error:", error);
+      console.error("[Auth Service] Password reset error:", error);
       return { success: false, error: error.message };
     }
   },
@@ -102,6 +114,10 @@ export const authService = {
    * @returns {Function} - Unsubscribe function to remove the listener
    */
   onAuthStateChanged(callback) {
-    return onAuthStateChanged(auth, callback);
+    console.log('[Auth Service] Setting up auth state change listener');
+    return onAuthStateChanged(auth, (user) => {
+      console.log('[Auth Service] Auth state changed:', user ? 'user exists' : 'no user');
+      callback(user);
+    });
   }
 }; 

@@ -3,11 +3,11 @@ import { createPinia } from 'pinia';
 import App from "./App.vue";
 import router from "./router";
 import { useAuthStore } from "./stores/auth";
-import { authService } from './services/firebase-auth';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import "./styles/global.css";
+
 // Create Vue application
 const app = createApp(App);
 const pinia = createPinia();
@@ -16,18 +16,27 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 
-// Initialize auth state using the centralized store method
-const authStore = useAuthStore();
+// Initialize application
+async function initializeApp() {
+  console.log('[App] Starting initialization...');
+  try {
+    // Initialize auth store
+    const authStore = useAuthStore();
+    console.log('[App] Auth store created, initializing...');
+    await authStore.init();
+    console.log('[App] Auth store initialized, state:', {
+      loading: authStore.loading,
+      isAuthenticated: authStore.isAuthenticated,
+      user: authStore.user ? 'exists' : 'null'
+    });
+    
+    // Mount app
+    app.mount("#app");
+    console.log('[App] Application mounted');
+  } catch (error) {
+    console.error('[App] Failed to initialize:', error);
+  }
+}
 
-console.log('[App] Starting application initialization');
-
-// Set up auth listener
-authService.onAuthStateChanged(async (user) => {
-  await authStore.setUser(user);
-});
-
-// Mount app immediately
-// The loading screen will be shown until auth state is determined
-app.mount("#app");
-
-console.log('App initialized, auth loading state will show until Firebase confirms auth status');
+// Start initialization
+initializeApp();

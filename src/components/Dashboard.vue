@@ -134,6 +134,7 @@
 <script>
 import { useAuthStore } from '../stores/auth';
 import PersonalityDashboard from './PersonalityDashboard.vue';
+import { onMounted } from 'vue';
 
 export default {
   name: 'Dashboard',
@@ -142,6 +143,16 @@ export default {
   },
   setup() {
     const authStore = useAuthStore();
+
+    onMounted(() => {
+      console.log('[Dashboard] Auth store state:', {
+        user: authStore.user,
+        isAuthenticated: authStore.isAuthenticated,
+        userAttributes: authStore.userAttributes,
+        loading: authStore.loading
+      });
+    });
+
     return { authStore };
   }
 };

@@ -108,8 +108,7 @@
 import { loadStripe } from "@stripe/stripe-js";
 import { useAuthStore } from '../stores/auth';
 import { useRoute, useRouter } from 'vue-router';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-
+import { UserService } from '../services/user.service';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '/.netlify/functions';
 const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_your_stripe_key_here';
@@ -120,7 +119,8 @@ export default {
     const authStore = useAuthStore();
     const route = useRoute();
     const router = useRouter();
-    return { authStore, route, router };
+    const userService = new UserService();
+    return { authStore, route, router, userService };
   },
   data() {
     return {
@@ -185,6 +185,35 @@ export default {
       } else {
         console.log('No current user found when loading user info');
       }
+    },
+    async loadFirestoreUserData(userId) {
+      try {
+        const { data: userData, error } = await this.userService.getUser(userId);
+        if (error) {
+          console.error('Error loading user data:', error);
+          return;
+        }
+        this.firestoreUserData = userData;
+      } catch (error) {
+        console.error('Error in loadFirestoreUserData:', error);
+      }
+    },
+    async pollForFirestoreUpdates(userId) {
+      const maxAttempts = 10;
+      let attempts = 0;
+      
+      const pollInterval = setInterval(async () => {
+        attempts++;
+        
+        const { data: userData, error } = await this.userService.getUser(userId);
+        if (userData?.isPaid) {
+          clearInterval(pollInterval);
+          this.firestoreUserData = userData;
+        } else if (attempts >= maxAttempts) {
+          clearInterval(pollInterval);
+          console.log('Max polling attempts reached');
+        }
+      }, 2000);
     },
     formatDate(dateString) {
       if (!dateString) return 'N/A';
@@ -260,79 +289,6 @@ export default {
     },
     dismissSuccessMessage() {
       this.paymentSuccess = false;
-    },
-    async loadFirestoreUserData(userId) {
-      try {
-        console.log('🔄 Loading Firestore data for user:', userId);
-        const firestore = getFirestore();
-        const userDoc = doc(firestore, 'users', userId);
-        const userData = await getDoc(userDoc);
-
-        if (userData.exists()) {
-          this.firestoreUserData = userData.data();
-          console.log('📊 Complete user object from Firestore:', {
-            ...this.firestoreUserData,
-            id: userId
-          });
-          console.log('💰 Payment status (isPaid):', this.firestoreUserData.isPaid 
-            ? '✅ Paid' 
-            : '❌ Not paid');
-          
-          // Log all fields related to payment/premium status
-          const paymentFields = {
-            isPaid: this.firestoreUserData.isPaid,
-            isPremium: this.firestoreUserData.isPremium,
-            premiumPurchaseDate: this.firestoreUserData.premiumPurchaseDate
-          };
-          console.log('💳 Payment-related fields:', paymentFields);
-        } else {
-          console.log('⚠️ No user data found in Firestore. User may not have completed payment yet.');
-        }
-      } catch (error) {
-        console.error('❌ Error fetching user data from Firestore:', error);
-      }
-    },
-    async pollForFirestoreUpdates(userId) {
-      console.log('🔄 Starting to poll for Firestore payment updates...');
-      
-      // Check for payment status updates 5 times with a 3 second interval
-      let attempts = 0;
-      const maxAttempts = 5;
-      const interval = 3000; // 3 seconds
-      
-      const pollInterval = setInterval(async () => {
-        attempts++;
-        console.log(`🔍 Checking for payment update (Attempt ${attempts}/${maxAttempts})...`);
-        
-        try {
-          const firestore = getFirestore();
-          const userDoc = doc(firestore, 'users', userId);
-          const userData = await getDoc(userDoc);
-          
-          if (userData.exists()) {
-            const data = userData.data();
-            this.firestoreUserData = data;
-            console.log('Current Firestore data:', data);
-            
-            if (data.isPaid) {
-              console.log('✅ Payment confirmed in Firestore! isPaid=true');
-              clearInterval(pollInterval);
-            } else {
-              console.log('⏳ Payment not yet reflected in Firestore (isPaid=false or missing)');
-            }
-          } else {
-            console.log('⚠️ User document still not found in Firestore');
-          }
-        } catch (error) {
-          console.error('❌ Error polling Firestore:', error);
-        }
-        
-        // Stop polling after max attempts
-        if (attempts >= maxAttempts) {
-          console.log('⚠️ Max polling attempts reached. Webhook may not have been triggered yet.');
-          clearInterval(pollInterval);
-        }
-      }, interval);
     }
   }
 };

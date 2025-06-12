@@ -27,7 +27,7 @@
           <div class="scale-line"></div>
           <div class="scale-marker" 
                :style="{ left: `${calculatePosition(extraversionScore)}%` }"
-               :title="`Score: ${Math.round(extraversionScore)}`">
+               :title="`Score: ${Math.round(extraversionScore)} (${extraversionScore < 0 ? 'More Introverted' : 'More Extraverted'})`">
           </div>
         </div>
       </div>
@@ -35,8 +35,8 @@
       <!-- Openness Scale -->
       <div class="scale-item">
         <div class="scale-labels">
-          <span class="negative-label">Closedness</span>
-          <span class="positive-label">Openness</span>
+          <span class="negative-label">Openness</span>
+          <span class="positive-label">Closedness</span>
         </div>
         <div class="scale-bar">
           <div class="scale-line"></div>
@@ -73,7 +73,7 @@ export default {
   methods: {
     calculatePosition(score) {
       // Map -100 to 0% and 100 to 100%
-      return 50 + (score / 2)
+      return ((score + 100) / 2)
     }
   }
 }
@@ -108,14 +108,6 @@ export default {
   justify-content: space-between;
   margin-bottom: 0.5rem;
   font-weight: 500;
-}
-
-.negative-label {
-  color: #dc3545;
-}
-
-.positive-label {
-  color: #198754;
 }
 
 .scale-bar {

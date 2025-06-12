@@ -1,113 +1,145 @@
 import { defineStore } from 'pinia';
-import { quizService, resultsService } from '../services/firebase-index';
+import { UserService } from '../services/user.service';
+import { PersonalityService } from '../services/personality.service';
 import { useAuthStore } from './auth';
+import quizzes from '../data/quizData';
+
+const userService = new UserService();
+const personalityService = new PersonalityService();
 
 export const useQuizStore = defineStore('quiz', {
   state: () => ({
-    quizzes: [],
-    selectedQuiz: null,
-    userResults: [],
+    currentQuiz: null,
+    quizResults: [],
+    availableQuizzes: [],
     loading: false,
-    error: null,
+    error: null
   }),
-
-  getters: {
-    availableQuizzes: (state) => state.quizzes,
-    currentQuiz: (state) => state.selectedQuiz,
-    filteredResults: (state) => (quizId) => {
-      if (!quizId) return state.userResults;
-      return state.userResults.filter(result => result.quizId === quizId);
-    },
-  },
-
+  
   actions: {
     async loadQuizzes() {
       this.loading = true;
       this.error = null;
-
-      const { quizzes, error } = await quizService.getAllQuizzes();
       
-      if (error) {
-        this.error = error;
-      } else {
-        this.quizzes = quizzes;
-      }
+      try {
+        const authStore = useAuthStore();
+        if (!authStore.isAuthenticated) {
+          throw new Error('User must be authenticated to load quizzes');
+        }
 
-      this.loading = false;
-      return { error };
+        console.log('Loading quizzes:', quizzes);
+        this.availableQuizzes = quizzes;
+        console.log('Quizzes loaded successfully:', this.availableQuizzes);
+      } catch (err) {
+        this.error = err.message;
+        console.error('Failed to load quizzes:', err);
+        throw err;
+      } finally {
+        this.loading = false;
+      }
     },
 
     async selectQuiz(quizId) {
       this.loading = true;
       this.error = null;
-
-      const { quiz, error } = await quizService.getQuizById(quizId);
       
-      if (error) {
-        this.error = error;
-      } else {
-        this.selectedQuiz = quiz;
+      try {
+        const quiz = this.availableQuizzes.find(q => q.id === quizId);
+        if (!quiz) {
+          throw new Error(`Quiz with ID ${quizId} not found`);
+        }
+        
+        this.currentQuiz = quiz;
+        return { error: null };
+      } catch (err) {
+        this.error = err.message;
+        console.error('Failed to select quiz:', err);
+        return { error: err.message };
+      } finally {
+        this.loading = false;
       }
-
-      this.loading = false;
-      return { error };
     },
 
     async submitQuiz(answers) {
       this.loading = true;
       this.error = null;
+      
+      try {
+        const authStore = useAuthStore();
+        if (!authStore.isAuthenticated) {
+          throw new Error('User must be authenticated to submit quiz');
+        }
 
-      const authStore = useAuthStore();
-      if (!authStore.isAuthenticated) {
-        this.error = "You must be logged in to submit the quiz.";
+        if (!this.currentQuiz) {
+          throw new Error('No quiz is currently selected');
+        }
+
+        // Calculate quiz results
+        const score = this.calculateScore(answers);
+        const results = {
+          quizId: this.currentQuiz.id,
+          attribute: this.currentQuiz.attribute,
+          timestamp: new Date().toISOString(),
+          answers,
+          score: score * 100 // Convert from -1..1 to -100..100 scale
+        };
+
+        // Submit quiz results to personality service
+        const { error } = await personalityService.submitQuizResult(authStore.userId, results);
+
+        if (error) {
+          throw new Error(error);
+        }
+
+        // Update local quiz results
+        this.quizResults.push(results);
+        
+        return { resultId: results.timestamp, error: null };
+      } catch (err) {
+        this.error = err.message;
+        console.error('Failed to submit quiz:', err);
+        return { resultId: null, error: err.message };
+      } finally {
         this.loading = false;
-        return { error: this.error };
+      }
+    },
+
+    calculateScore(answers) {
+      if (!this.currentQuiz || !this.currentQuiz.questions) {
+        return 0;
       }
 
-      const { resultId, error } = await resultsService.submitQuizResult(
-        authStore.userId,
-        this.selectedQuiz.id,
-        answers
-      );
-
-      if (error) {
-        this.error = error;
-      }
-
-      this.loading = false;
-      return { resultId, error };
+      return this.currentQuiz.questions.reduce((total, question) => {
+        const answer = parseFloat(answers[question.id]) || 0;
+        // Normalize answer from -100 to 100 scale to -1 to 1 scale
+        const normalizedAnswer = answer / 100;
+        // Multiply by the question's point value
+        return total + (normalizedAnswer * question.points);
+      }, 0);
     },
 
     async loadUserResults() {
       this.loading = true;
       this.error = null;
-
-      const authStore = useAuthStore();
-      if (!authStore.isAuthenticated) {
-        this.error = "You must be logged in to view results.";
-        this.loading = false;
-        return { error: this.error };
-      }
-
-      const { results, error } = await resultsService.getUserResults(authStore.userId);
       
-      if (error) {
-        this.error = error;
-      } else {
-        this.userResults = results;
+      try {
+        const authStore = useAuthStore();
+        if (!authStore.isAuthenticated) {
+          throw new Error('User must be authenticated to load results');
+        }
+
+        const { data, error } = await personalityService.getUserPersonality(authStore.userId);
+        if (error) {
+          throw new Error(error);
+        }
+
+        this.quizResults = data.results || [];
+      } catch (err) {
+        this.error = err.message;
+        console.error('Failed to load user results:', err);
+      } finally {
+        this.loading = false;
       }
-
-      this.loading = false;
-      return { error };
-    },
-
-    clearSelectedQuiz() {
-      this.selectedQuiz = null;
-      this.error = null;
-    },
-
-    clearError() {
-      this.error = null;
-    },
-  },
+    }
+  }
 }); 

@@ -51,7 +51,7 @@ import { ref, computed, onMounted } from 'vue';
 import QuizList from './QuizList.vue';
 import QuizDetail from './QuizDetail.vue';
 import { useQuizStore } from '../stores/quiz';
-import { authService } from '../services/firebase';
+import { authService } from '../services/firebase-auth';
 
 export default {
     components: {
@@ -86,10 +86,6 @@ export default {
 
         const loadQuizzes = async () => {
             await quizStore.loadQuizzes();
-            const user = authService.getCurrentUser();
-            if (user) {
-                await quizStore.loadUserResults();
-            }
         };
 
         const selectQuiz = (quizId) => {

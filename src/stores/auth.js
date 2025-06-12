@@ -1,100 +1,149 @@
 import { defineStore } from 'pinia';
 import { authService } from '../services/firebase-auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { UserService } from '../services/user.service';
+
+const userService = new UserService();
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null,  // Will now contain both auth and Firestore data
+    user: null,
     loading: true,
-    error: null
+    error: null,
+    userAttributes: null
   }),
 
   getters: {
     isAuthenticated: (state) => !!state.user,
     userId: (state) => state.user?.uid,
-    userEmail: (state) => state.user?.email,
-    // New getter for quiz attributes
-    attributes: (state) => state.user?.attributes || null
+    userEmail: (state) => state.user?.email
   },
 
   actions: {
-    async setUser(firebaseUser) {
-      // Start with the Firebase auth user
-      this.user = firebaseUser ? { ...firebaseUser } : null;
-      
-      if (firebaseUser) {
-        try {
-          const db = getFirestore();
-          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-          
-          if (userDoc.exists()) {
-            // Merge Firestore data into user object
-            const firestoreData = userDoc.data();
-            this.user = {
-              ...this.user,  // Keep auth data
-              attributes: firestoreData.attributes || null,
-              tags: firestoreData.tags || [],
-              personalityAnalysis: firestoreData.personalityAnalysis || null,
-              isPaid: firestoreData.isPaid || false,
-              createdAt: firestoreData.createdAt,
-              updatedAt: firestoreData.updatedAt
-            };
-          }
-        } catch (error) {
-          console.error('[Auth Store] Error fetching user data:', error);
+    async setUser(user) {
+      console.log('[Auth] Setting user:', user ? 'exists' : 'null');
+      this.user = user;
+      if (user) {
+        const { data, error } = await userService.getUser(user.uid);
+        if (!error && data) {
+          this.userAttributes = data.attributes;
+          console.log('[Auth] User attributes loaded', this.userAttributes.attributes);
+        } else if (error) {
+          console.error('[Auth] Failed to load user attributes:', error);
         }
+      } else {
+        this.userAttributes = null;
+        console.log('[Auth] User attributes cleared');
       }
+    },
 
-      this.loading = false;
-      this.error = null;
+    async init() {
+      console.log('[Auth] Initializing auth store...');
+      this.loading = true;
+      try {
+        // Check if there's a current user
+        const currentUser = authService.getCurrentUser();
+        if (currentUser) {
+          console.log('[Auth] Found existing user');
+          await this.setUser(currentUser);
+        } else {
+          console.log('[Auth] No existing user found');
+        }
+
+        // Set up auth state listener
+        console.log('[Auth] Setting up auth state listener');
+        authService.onAuthStateChanged(async (user) => {
+          console.log('[Auth] Auth state changed:', user ? 'logged in' : 'logged out');
+          await this.setUser(user);
+          this.loading = false;
+        });
+      } catch (error) {
+        console.error('[Auth] Auth store initialization error:', error);
+        this.error = error.message;
+        this.loading = false;
+      }
     },
 
     async signIn(email, password) {
       this.loading = true;
       this.error = null;
-      
-      const { user, error } = await authService.signIn(email, password);
-      
-      if (error) {
-        this.error = error;
+      try {
+        const { user, error } = await authService.signIn(email, password);
+        if (error) {
+          this.error = error;
+          return false;
+        }
+        await this.setUser(user);
+        return true;
+      } catch (error) {
+        console.error('Sign in error:', error);
+        this.error = error.message;
+        return false;
+      } finally {
+        this.loading = false;
       }
-      
-      this.loading = false;
-      return { user, error };
     },
 
     async signUp(email, password) {
       this.loading = true;
       this.error = null;
-      
-      const { user, error } = await authService.signUp(email, password);
-      
-      if (error) {
-        this.error = error;
+      try {
+        const { user, error } = await authService.signUp(email, password);
+        if (error) {
+          this.error = error;
+          return false;
+        }
+        await this.setUser(user);
+        return true;
+      } catch (error) {
+        console.error('Sign up error:', error);
+        this.error = error.message;
+        return false;
+      } finally {
+        this.loading = false;
       }
-      
-      this.loading = false;
-      return { user, error };
     },
 
-    async logout() {
+    async signOut() {
       this.loading = true;
       this.error = null;
-      
-      const { error } = await authService.logout();
-      
-      if (error) {
-        this.error = error;
-      } else {
-        this.user = null;
+      try {
+        const { error } = await authService.logout();
+        if (error) {
+          this.error = error;
+          return false;
+        }
+        await this.setUser(null);
+        return true;
+      } catch (error) {
+        console.error('Sign out error:', error);
+        this.error = error.message;
+        return false;
+      } finally {
+        this.loading = false;
       }
-      
-      this.loading = false;
-      return { error };
     },
 
-    clearError() {
+    async resetPassword(email) {
+      this.loading = true;
       this.error = null;
+      try {
+        const { success, error } = await authService.resetPassword(email);
+        if (error) {
+          this.error = error;
+          return false;
+        }
+        return success;
+      } catch (error) {
+        console.error('Password reset error:', error);
+        this.error = error.message;
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    setUserAttributes(attributes) {
+      this.userAttributes = attributes;
     }
   }
 }); 

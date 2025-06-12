@@ -16,18 +16,22 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { authService, getUserPersonality } from '../services/firebase-index';
+import { PersonalityService } from '../services/personality.service';
+import { useAuthStore } from '../stores/auth';
 
 export default {
   name: 'UserTags',
   setup() {
     const tags = ref([]);
+    const authStore = useAuthStore();
+    const personalityService = new PersonalityService();
 
     const loadPersonality = async () => {
-      const user = authService.getCurrentUser();
-      if (user) {
-        const userData = await getUserPersonality(user.uid);
-        tags.value = userData.tags;
+      if (authStore.user) {
+        const { data, error } = await personalityService.getUserPersonality(authStore.user.uid);
+        if (data) {
+          tags.value = data.tags;
+        }
       }
     };
 
