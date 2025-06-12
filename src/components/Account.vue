@@ -3,7 +3,7 @@
     <h2 class="mb-4 fw-bold position-relative">Your Account</h2>
 
     <!-- Auth Status Message (temporary for debugging) -->
-    <div v-if="waitingForAuth" class="alert alert-warning d-flex align-items-center">
+    <div v-if="authStore.loading" class="alert alert-warning d-flex align-items-center">
       <div class="warning-icon me-2">!</div>
       <div class="warning-message">
         <h3>Authentication in progress...</h3>
@@ -38,13 +38,13 @@
       <div class="col-md-6 mb-4">
         <div class="card">
           <div class="card-body">
-            <div v-if="firestoreUserData && firestoreUserData.isPaid" class="subscription-status-paid">
+            <div v-if="authStore.userAttributes?.isPaid" class="subscription-status-paid">
               <div class="badge bg-success mb-2">Premium Access</div>
               <p class="subscription-info">
                 You have full access to all premium features. Thank you for your support!
               </p>
-              <p class="subscription-date text-muted" v-if="firestoreUserData.premiumPurchaseDate">
-                Purchased on {{ formatDate(firestoreUserData.premiumPurchaseDate.toDate()) }}
+              <p class="subscription-date text-muted" v-if="authStore.userAttributes.premiumPurchaseDate">
+                Purchased on {{ formatDate(authStore.userAttributes.premiumPurchaseDate.toDate()) }}
               </p>
             </div>
             
@@ -108,7 +108,7 @@
 import { loadStripe } from "@stripe/stripe-js";
 import { useAuthStore } from '../stores/auth';
 import { useRoute, useRouter } from 'vue-router';
-import { UserService } from '../services/user.service';
+import { computed, ref, onMounted } from 'vue';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '/.netlify/functions';
 const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_your_stripe_key_here';
@@ -119,103 +119,41 @@ export default {
     const authStore = useAuthStore();
     const route = useRoute();
     const router = useRouter();
-    const userService = new UserService();
-    return { authStore, route, router, userService };
-  },
-  data() {
-    return {
-      userInfo: null,
-      waitingForAuth: false,
-      isLoading: false,
-      paymentError: null,
-      paymentSuccess: false,
-      stripePromise: null,
-      firestoreUserData: null,
-      paymentSuccessMessage: 'Your premium access has been activated successfully. Enjoy all the benefits!'
-    };
-  },
-  async mounted() {
-    console.log('Account component mounted');
+    const stripePromise = ref(null);
+    const isLoading = ref(false);
+    const paymentError = ref(null);
+    const paymentSuccess = ref(false);
+    const paymentSuccessMessage = ref('Your premium access has been activated successfully. Enjoy all the benefits!');
 
-    // Initialize Stripe
-    this.stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
+    // Computed properties for user data
+    const userInfo = computed(() => ({
+      uid: authStore.user?.uid,
+      email: authStore.user?.email,
+      createdAt: authStore.user?.metadata.creationTime
+    }));
 
-    // Get the current authenticated user from the store
-    const currentUser = this.authStore.user;
-    console.log('Current user on mount:', currentUser?.uid || 'No user');
+    // Initialize component
+    onMounted(async () => {
+      // Initialize Stripe
+      stripePromise.value = loadStripe(STRIPE_PUBLIC_KEY);
 
-    await this.loadUserInfo();
-    
-    // Fetch complete user data from Firestore, including payment status
-    if (currentUser) {
-      await this.loadFirestoreUserData(currentUser.uid);
-    }
-    
-    // Check for payment status from redirect
-    if (this.route.query.payment_status) {
-      if (this.route.query.payment_status === 'success') {
-        console.log('Payment success detected in URL parameters');
-        this.paymentSuccess = true;
-        
-        // Poll for Firestore data updates after successful payment
-        if (currentUser) {
-          this.pollForFirestoreUpdates(currentUser.uid);
+      // Check for payment status from redirect
+      if (route.query.payment_status) {
+        if (route.query.payment_status === 'success') {
+          console.log('Payment success detected in URL parameters');
+          paymentSuccess.value = true;
+          
+          // Clear query parameters to avoid showing success message on refresh
+          router.replace({ query: {} });
+        } else if (route.query.payment_status === 'canceled') {
+          console.log('Payment cancellation detected in URL parameters');
+          paymentError.value = 'Payment was canceled. Please try again.';
+          router.replace({ query: {} });
         }
-        
-        // Clear query parameters to avoid showing success message on refresh
-        this.router.replace({ query: {} });
-      } else if (this.route.query.payment_status === 'canceled') {
-        console.log('Payment cancellation detected in URL parameters');
-        this.paymentError = 'Payment was canceled. Please try again.';
-        this.router.replace({ query: {} });
       }
-    }
-  },
-  methods: {
-    async loadUserInfo() {
-      const currentUser = this.authStore.user;
+    });
 
-      if (currentUser) {
-        console.log('Loading user info for:', currentUser.email);
-        this.userInfo = {
-          uid: currentUser.uid,
-          email: currentUser.email,
-          createdAt: currentUser.metadata.creationTime
-        };
-      } else {
-        console.log('No current user found when loading user info');
-      }
-    },
-    async loadFirestoreUserData(userId) {
-      try {
-        const { data: userData, error } = await this.userService.getUser(userId);
-        if (error) {
-          console.error('Error loading user data:', error);
-          return;
-        }
-        this.firestoreUserData = userData;
-      } catch (error) {
-        console.error('Error in loadFirestoreUserData:', error);
-      }
-    },
-    async pollForFirestoreUpdates(userId) {
-      const maxAttempts = 10;
-      let attempts = 0;
-      
-      const pollInterval = setInterval(async () => {
-        attempts++;
-        
-        const { data: userData, error } = await this.userService.getUser(userId);
-        if (userData?.isPaid) {
-          clearInterval(pollInterval);
-          this.firestoreUserData = userData;
-        } else if (attempts >= maxAttempts) {
-          clearInterval(pollInterval);
-          console.log('Max polling attempts reached');
-        }
-      }, 2000);
-    },
-    formatDate(dateString) {
+    const formatDate = (dateString) => {
       if (!dateString) return 'N/A';
 
       const date = new Date(dateString);
@@ -224,20 +162,21 @@ export default {
         month: 'short',
         day: 'numeric'
       }).format(date);
-    },
-    async startCheckout() {
+    };
+
+    const startCheckout = async () => {
       console.log('Starting checkout');
       
       try {
-        if (!this.userInfo) {
+        if (!userInfo.value) {
           throw new Error('User must be logged in to make a purchase');
         }
         
-        this.isLoading = true;
-        this.paymentError = null;
+        isLoading.value = true;
+        paymentError.value = null;
         
         // Get the current user
-        const currentUser = this.authStore.user;
+        const currentUser = authStore.user;
         if (!currentUser) {
           throw new Error('Authentication required. Please log in again.');
         }
@@ -251,7 +190,7 @@ export default {
           throw new Error('Failed to authenticate your session. Please try logging in again.');
         }
         
-        // 1. Create a checkout session on the backend
+        // Create a checkout session on the backend
         const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
           method: 'POST',
           headers: {
@@ -259,8 +198,8 @@ export default {
             'Authorization': `Bearer ${idToken}`
           },
           body: JSON.stringify({
-            userId: this.userInfo.uid,
-            userEmail: this.userInfo.email,
+            userId: userInfo.value.uid,
+            userEmail: userInfo.value.email,
             price: 199,
             productName: 'Premium Subscription'
           })
@@ -273,23 +212,36 @@ export default {
         
         const data = await response.json();
         
-        // 2. Redirect to Stripe Checkout using the provided URL
-        // This will use the same tab/window rather than opening a new one
+        // Redirect to Stripe Checkout
         window.location.href = data.url;
       } catch (error) {
         console.error('Checkout error:', error);
         if (error.message.includes('Unexpected token')) {
-          this.paymentError = 'Error connecting to the payment server. Please try again later.';
+          paymentError.value = 'Error connecting to the payment server. Please try again later.';
         } else {
-          this.paymentError = error.message || 'An error occurred during checkout';
+          paymentError.value = error.message || 'An error occurred during checkout';
         }
       } finally {
-        this.isLoading = false;
+        isLoading.value = false;
       }
-    },
-    dismissSuccessMessage() {
-      this.paymentSuccess = false;
-    }
+    };
+
+    const dismissSuccessMessage = () => {
+      paymentSuccess.value = false;
+      paymentError.value = null;
+    };
+
+    return {
+      authStore,
+      userInfo,
+      isLoading,
+      paymentError,
+      paymentSuccess,
+      paymentSuccessMessage,
+      formatDate,
+      startCheckout,
+      dismissSuccessMessage
+    };
   }
 };
 </script>
