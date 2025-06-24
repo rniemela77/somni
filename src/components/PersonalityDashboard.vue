@@ -10,6 +10,11 @@
     <div v-else>
       <h3 class="text-center mb-4">Your Personality Dashboard</h3>
       
+      <!-- No quizzes message -->
+      <div v-if="noQuizzesCompleted" class="alert alert-warning mb-4">
+        No quizzes completed yet. <router-link to="/quiz">Take a quiz now</router-link>
+      </div>
+      
       <!-- Add Scales -->
       <div class="card mb-4">
         <div class="card-body">
@@ -25,9 +30,6 @@
                 :disabled="buttonDisabled">
             {{ generateButtonText }}
         </button>
-        <div v-if="noQuizzesCompleted" class="alert alert-warning mt-3">
-          No quizzes completed yet. <router-link to="/quiz">Take a quiz now</router-link>
-        </div>
       </div>
 
       <PersonalityAnalysisSection 

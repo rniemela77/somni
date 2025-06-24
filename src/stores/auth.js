@@ -28,7 +28,20 @@ export const useAuthStore = defineStore('auth', {
           this.userAttributes = data.attributes;
           console.log('[Auth] User attributes loaded:', this.userAttributes);
         } else if (error) {
-          console.error('[Auth] Failed to load user attributes:', error);
+          // If user not found, try to initialize them
+          console.log('[Auth] User not found, attempting initialization...');
+          const { data: initData, error: initError } = await userService.initializeUser(user.uid, {
+            email: user.email,
+            attributes: {},
+            results: []
+          });
+          
+          if (!initError && initData) {
+            this.userAttributes = initData.attributes;
+            console.log('[Auth] User initialized and attributes loaded:', this.userAttributes);
+          } else {
+            console.error('[Auth] Failed to initialize user:', initError);
+          }
         }
       } else {
         this.userAttributes = null;
@@ -92,6 +105,19 @@ export const useAuthStore = defineStore('auth', {
           this.error = error;
           return false;
         }
+        
+        // Initialize the user document in Firestore
+        const { error: initError } = await userService.initializeUser(user.uid, {
+          email: user.email,
+          attributes: {},
+          results: []
+        });
+        
+        if (initError) {
+          this.error = initError;
+          return false;
+        }
+        
         await this.setUser(user);
         return true;
       } catch (error) {
