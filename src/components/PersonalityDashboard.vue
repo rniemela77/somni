@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import PersonalityScales from './PersonalityScales.vue';
 import PersonalityAnalysisSection from './PersonalityAnalysisSection.vue';
 import { PersonalityService } from '../services/personality.service';
@@ -57,12 +57,15 @@ export default {
     const authStore = useAuthStore();
     const personalityService = new PersonalityService();
     const userService = new UserService();
+    
     const dashboardLoading = ref(true);
-    const results = ref([]);
+    const parsedFeeling = ref({});
+    const generatingDescription = ref(false);
+    const error = ref(null);
 
-    const loadResults = async () => {
+    const loadPersonalityData = async () => {
       if (authStore.loading) {
-        console.log('Auth still loading, delaying loadResults');
+        console.log('Auth still loading, delaying loadPersonalityData');
         return;
       }
       
@@ -80,16 +83,11 @@ export default {
           return;
         }
 
-        if (personalityData) {
-          results.value = personalityData.results || [];
-          console.log("Loaded results:", results.value);
-          
-          if (results.value.length === 0) {
-            console.log("No quiz results found. Please take some quizzes first.");
-          }
+        if (personalityData && personalityData.personalityAnalysis) {
+          parsedFeeling.value = personalityData.personalityAnalysis;
         }
       } catch (err) {
-        console.error("Exception in loadResults:", err);
+        console.error("Exception in loadPersonalityData:", err);
       }
     };
 
@@ -97,16 +95,17 @@ export default {
       if (authStore.user) {
         try {
           // Fetch fresh user data
-          const { data: userData, error } = await userService.getUser(authStore.user.uid);
-          if (error) {
-            console.error('Error fetching user data:', error);
+          const { data: userData, error: userError } = await userService.getUser(authStore.user.uid);
+          if (userError) {
+            console.error('Error fetching user data:', userError);
             return;
           }
           
           // Update auth store with fresh data
           authStore.setUserAttributes(userData.attributes || {});
           
-          await loadResults();
+          // Load saved personality analysis
+          await loadPersonalityData();
         } catch (err) {
           console.error('Error initializing dashboard:', err);
         } finally {
@@ -114,107 +113,83 @@ export default {
         }
       }
     });
+
+    // Computed properties
+    const attributeScores = computed(() => authStore.userAttributes || {});
     
-    return { 
-      authStore,
-      personalityService,
-      userService,
-      dashboardLoading,
-      results,
-      loadResults
-    };
-  },
-  data() {
-    return {
-      generatingDescription: false,
-      coreFeeling: null,
-      parsedFeeling: {},
-      userTags: [],
-      hasSavedAnalysis: false,
-      needsFullAnalysis: false,
-      personalityAnalysisSections: PERSONALITY_ANALYSIS_SECTIONS
-    };
-  },
-  computed: {
-    attributeScores() {
-      return this.authStore.userAttributes || {};
-    },
-    allAnswers() {
-      const answers = [];
-      this.results.forEach(result => {
-        result.answers.forEach(answer => {
-          answers.push({
-            question: answer.questionText,
-            answer: answer.userAnswer,
-            quizTitle: result.quizTitle
-          });
-        });
-      });
-      return answers;
-    },
-    generateButtonText() {
-      return this.generatingDescription ? 'GENERATING...' : 'GENERATE NEW ANALYSIS';
-    },
-    noQuizzesCompleted() {
-      return this.results.length === 0;
-    },
-    buttonDisabled() {
-      return this.generatingDescription || this.noQuizzesCompleted;
-    }
-  },
-  methods: {
-    async generateDescription() {
-      console.log('Results data:', this.results);
-      console.log('Computed all answers:', this.allAnswers);
-      
-      if (this.results.length === 0) {
-        console.log("Loading quiz results...");
-        await this.loadResults();
-        if (this.results.length === 0) {
-          console.log("No quiz results available to analyze. Please take some quizzes first.");
-          return;
-        }
-      }
+    const generateButtonText = computed(() => 
+      generatingDescription.value ? 'GENERATING...' : 'GENERATE NEW ANALYSIS'
+    );
+    
+    const noQuizzesCompleted = computed(() => {
+      const attributes = attributeScores.value;
+      return !attributes || Object.keys(attributes).length === 0;
+    });
+    
+    const buttonDisabled = computed(() => 
+      generatingDescription.value || noQuizzesCompleted.value
+    );
 
-      if (this.allAnswers.length === 0) {
-        console.log("No quiz answers found. Please make sure you have completed quizzes with answers.");
-        return;
-      }
-
-      this.generatingDescription = true;
-      this.coreFeeling = null;
-      this.hasSavedAnalysis = false;
-      this.needsFullAnalysis = false;
+    // Methods
+    const generateDescription = async () => {
+      generatingDescription.value = true;
+      error.value = null;
 
       try {
-        const templates = openaiService.getPromptTemplates('personalityDescription');
-        console.log('Using prompt templates:', templates);
+        // Get the user's attribute scores
+        const attributes = attributeScores.value;
         
-        const { completion, error, usage } = await openaiService.analyzePersonality(this.allAnswers);
-        if (error) {
-          console.error("Error generating personality analysis:", error);
-          return;
+        // Check if we have any attributes to analyze
+        if (Object.keys(attributes).length === 0) {
+          throw new Error('No personality attributes found. Please take some quizzes first.');
         }
 
-        this.parsedFeeling = completion;
+        // Generate personality analysis based on attributes
+        const { completion, error: analysisError, usage } = await openaiService.analyzePersonality(attributes);
+        
+        if (analysisError) {
+          throw new Error(analysisError);
+        }
+
+        // Update the parsedFeeling ref
+        parsedFeeling.value = completion;
 
         // Save the analysis
-        if (this.authStore.user) {
-          const { error: updateError } = await this.personalityService.updatePersonalityAnalysis(
-            this.authStore.user.uid,
-            this.parsedFeeling
+        if (authStore.user) {
+          const { error: updateError } = await personalityService.updatePersonalityAnalysis(
+            authStore.user.uid,
+            { personalityAnalysis: completion }
           );
           
           if (updateError) {
             console.error("Error saving personality analysis:", updateError);
           }
         }
-      } catch (error) {
-        console.error("Exception in generateDescription:", error);
+      } catch (err) {
+        console.error("Exception in generateDescription:", err);
+        error.value = err.message;
       } finally {
-        this.generatingDescription = false;
+        generatingDescription.value = false;
       }
-    }
+    };
+
+    return {
+      // State
+      dashboardLoading,
+      parsedFeeling,
+      generatingDescription,
+      error,
+      
+      // Computed
+      attributeScores,
+      generateButtonText,
+      noQuizzesCompleted,
+      buttonDisabled,
+      
+      // Methods
+      generateDescription,
+      loadPersonalityData
+    };
   }
 };
 </script>

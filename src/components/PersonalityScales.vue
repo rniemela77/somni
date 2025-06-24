@@ -6,6 +6,7 @@
       <div class="scale-item">
         <div class="scale-labels">
           <span class="negative-label">Neuroticism</span>
+          <span class="score">{{ Math.round(emotionalStabilityScore) }}</span>
           <span class="positive-label">Emotional Stability</span>
         </div>
         <div class="scale-bar">
@@ -21,13 +22,14 @@
       <div class="scale-item">
         <div class="scale-labels">
           <span class="negative-label">Introversion</span>
+          <span class="score">{{ Math.round(extraversionScore) }}</span>
           <span class="positive-label">Extraversion</span>
         </div>
         <div class="scale-bar">
           <div class="scale-line"></div>
           <div class="scale-marker" 
                :style="{ left: `${calculatePosition(extraversionScore)}%` }"
-               :title="`Score: ${Math.round(extraversionScore)} (${extraversionScore < 0 ? 'More Introverted' : 'More Extraverted'})`">
+               :title="`Score: ${Math.round(extraversionScore)}`">
           </div>
         </div>
       </div>
@@ -36,6 +38,7 @@
       <div class="scale-item">
         <div class="scale-labels">
           <span class="negative-label">Openness</span>
+          <span class="score">{{ Math.round(opennessScore) }}</span>
           <span class="positive-label">Closedness</span>
         </div>
         <div class="scale-bar">
@@ -51,6 +54,8 @@
 </template>
 
 <script>
+import personalityScales from '../data/attributes';
+
 export default {
   name: 'PersonalityScales',
   props: {
@@ -61,19 +66,20 @@ export default {
   },
   computed: {
     emotionalStabilityScore() {
-      return this.scores['Neuroticism-Emotional Stability'] || 0
+      console.log('Scores object:', this.scores);
+      return this.scores['Neuroticism-Emotional Stability'] || 0;
     },
     extraversionScore() {
-      return this.scores['Introversion-Extraversion'] || 0
+      return this.scores['Introversion-Extraversion'] || 0;
     },
     opennessScore() {
-      return this.scores['Openness-Closedness to Experience'] || 0
+      return this.scores['Openness-Closedness to Experience'] || 0;
     }
   },
   methods: {
     calculatePosition(score) {
       // Map -100 to 0% and 100 to 100%
-      return ((score + 100) / 2)
+      return ((score + 100) / 2);
     }
   }
 }
@@ -106,8 +112,30 @@ export default {
 .scale-labels {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 0.5rem;
   font-weight: 500;
+}
+
+.negative-label, .positive-label {
+  flex: 1;
+}
+
+.negative-label {
+  text-align: left;
+}
+
+.positive-label {
+  text-align: right;
+}
+
+.score {
+  font-weight: bold;
+  color: #0d6efd;
+  background: rgba(13, 110, 253, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
 }
 
 .scale-bar {
@@ -126,6 +154,25 @@ export default {
   height: 2px;
   background: #dee2e6;
   transform: translateY(-50%);
+}
+
+/* Add tick marks for -50, 0, and 50 */
+.scale-line::before,
+.scale-line::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 12px;
+  background: #dee2e6;
+}
+
+.scale-line::before {
+  left: 25%;
+}
+
+.scale-line::after {
+  right: 25%;
 }
 
 .scale-marker {

@@ -1,3 +1,5 @@
+import personalityScales from '../data/attributes';
+
 export const PERSONALITY_ANALYSIS_SECTIONS = {
   core: {
     id: "core",
@@ -146,35 +148,38 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
 };
 
 /**
- * Generates the OpenAI prompt based on config
+ * Generates the OpenAI prompt based on attribute scores
  */
-export const generateAnalysisPrompt = (formattedResults) => {
-  let prompt = 'Here are quiz results for someone taking a personality test. Each answer is given on a scale from -100 to +100, with the following interpretations:\n\n';
-  prompt += '-100: Almost Never\n';
-  prompt += '-75 to -99: Very Rarely\n';
-  prompt += '-50 to -74: Rarely\n';
-  prompt += '-25 to -49: Occasionally Not\n';
-  prompt += '-1 to -24: Slightly More No Than Yes\n';
-  prompt += '0: Exactly Half the Time\n';
-  prompt += '1 to 24: Slightly More Yes Than No\n';
-  prompt += '25 to 49: Occasionally Yes\n';
-  prompt += '50 to 74: Frequently\n';
-  prompt += '75 to 99: Very Frequently\n';
-  prompt += '100: Almost Always\n\n';
-  prompt += 'Please analyze the personality based on these responses, taking into account these precise gradients in their answers:\n\n';
-  
-  // Add the formatted results
-  prompt += formattedResults + '\n\n';
-  
-  // Add section instructions
-  prompt += '\n';
-  Object.values(PERSONALITY_ANALYSIS_SECTIONS).forEach(section => {
-    prompt += `${section.title}: ${section.promptInstructions}\n`;
+export const generateAnalysisPrompt = (attributes) => {
+  let prompt = 'Here is a personality profile based on various psychological scales. Each scale ranges from -100 to +100, where:\n\n';
+  prompt += '- Negative values (-100 to -1) indicate stronger alignment with the first trait\n';
+  prompt += '- Positive values (1 to 100) indicate stronger alignment with the second trait\n';
+  prompt += '- The magnitude indicates the strength of the tendency\n\n';
+  prompt += 'Here are the individual\'s scores on each scale:\n\n';
+
+  // Add the attribute scores in a formatted way
+  Object.entries(attributes).forEach(([key, value]) => {
+    const scale = personalityScales[key.toLowerCase().replace(/-/g, '_')];
+    if (scale) {
+      prompt += `${scale.name}: ${value} `;
+      if (value < 0) {
+        prompt += `(Strong ${scale.negative})`;
+      } else if (value > 0) {
+        prompt += `(Strong ${scale.positive})`;
+      } else {
+        prompt += '(Balanced)';
+      }
+      prompt += '\n';
+    }
   });
   
-  prompt += '\n';
+  prompt += '\nBased on these attribute scores, please provide a comprehensive personality analysis. ';
+  prompt += 'Consider how different attributes interact and influence each other. ';
+  prompt += 'Look for unique patterns and combinations that reveal deeper insights about the individual.\n\n';
+  
+  // Add section instructions
   Object.values(PERSONALITY_ANALYSIS_SECTIONS).forEach(section => {
-    prompt += `${section.title}: [${section.id === 'keywords' ? 'comma-separated list' : 'your analysis'}]\n\n`;
+    prompt += `${section.title}: ${section.promptInstructions}\n\n`;
   });
   
   return prompt;

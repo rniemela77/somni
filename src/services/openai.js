@@ -1,6 +1,6 @@
 // OpenAI API service for interacting with GPT models
 // This service handles API calls to OpenAI GPT models via Netlify Functions
-import { generateAnalysisPrompt } from '../config/personalityAnalysis';
+import { generateAnalysisPrompt, PERSONALITY_ANALYSIS_SECTIONS } from '../config/personalityAnalysis';
 
 // Configuration options
 const defaultOptions = {
@@ -26,30 +26,28 @@ const defaultPrompts = {
   }
 };
 
-// OpenAI Service
-export const openaiService = {
-  // Store current configuration
-  config: { ...defaultOptions },
-  
-  // Store prompt templates
-  promptTemplates: { ...defaultPrompts },
-  
+class OpenAIService {
+  constructor() {
+    this.config = { ...defaultOptions };
+    this.promptTemplates = { ...defaultPrompts };
+  }
+
   // Update configuration
   updateConfig(newConfig) {
     this.config = { ...this.config, ...newConfig };
     return this.config;
-  },
+  }
   
   // Reset configuration to defaults
   resetConfig() {
     this.config = { ...defaultOptions };
     return this.config;
-  },
+  }
   
   // Get current configuration
   getConfig() {
     return { ...this.config };
-  },
+  }
   
   // Update prompt templates
   updatePromptTemplates(template, newTemplates) {
@@ -57,7 +55,7 @@ export const openaiService = {
       this.promptTemplates[template] = { ...this.promptTemplates[template], ...newTemplates };
     }
     return this.promptTemplates[template];
-  },
+  }
   
   // Get prompt templates
   getPromptTemplates(template = null) {
@@ -65,7 +63,7 @@ export const openaiService = {
       return { ...this.promptTemplates[template] };
     }
     return { ...this.promptTemplates };
-  },
+  }
   
   // Reset prompt templates to defaults
   resetPromptTemplates(template) {
@@ -73,7 +71,7 @@ export const openaiService = {
       this.promptTemplates[template] = { ...defaultPrompts[template] };
     }
     return this.promptTemplates[template];
-  },
+  }
   
   // Send a prompt to OpenAI via Netlify function
   async getCompletion(prompt, customOptions = {}) {
@@ -114,68 +112,75 @@ export const openaiService = {
       console.error('Error calling OpenAI API via Netlify function:', error);
       return { completion: null, error: error.message, usage: null };
     }
-  },
+  }
   
-  // Analyze all quiz results and generate personality description
-  async analyzePersonality(quizResults, customPrompt = null) {
+  // Analyze personality based on attribute scores
+  async analyzePersonality(attributes) {
     try {
-      // Format all the results into a meaningful prompt
-      let formattedResults = '';
-      quizResults.forEach((item, index) => {
-        formattedResults += `Quiz: ${item.quizTitle || 'Personality Quiz'}\n`;
-        formattedResults += `Question ${index+1}: ${item.question}\n`;
-        // Format the answer to show the slider value and its interpretation
-        const value = parseInt(item.answer);
-        let interpretation;
-        
-        // More granular interpretation of the slider value
-        if (value <= -100) {
-          interpretation = "Almost Never";
-        } else if (value <= -75) {
-          interpretation = "Very Rarely";
-        } else if (value <= -50) {
-          interpretation = "Rarely";
-        } else if (value <= -25) {
-          interpretation = "Occasionally Not";
-        } else if (value < 0) {
-          interpretation = "Slightly More No Than Yes";
-        } else if (value === 0) {
-          interpretation = "Exactly Half the Time";
-        } else if (value < 25) {
-          interpretation = "Slightly More Yes Than No";
-        } else if (value < 50) {
-          interpretation = "Occasionally Yes";
-        } else if (value < 75) {
-          interpretation = "Frequently";
-        } else if (value < 100) {
-          interpretation = "Very Frequently";
-        } else {
-          interpretation = "Almost Always";
-        }
-        
-        formattedResults += `Answer: ${interpretation}\n\n`;
+      const prompt = generateAnalysisPrompt(attributes);
+      
+      const response = await fetch('/.netlify/functions/openai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt,
+          ...this.config
+        })
       });
-      
-      // Build the prompt
-      let promptText;
-      
-      if (customPrompt) {
-        // Use custom prompt if provided
-        promptText = customPrompt;
-      } else {
-        // Use the new config-based prompt generator
-        promptText = generateAnalysisPrompt(formattedResults);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const data = await response.json();
       
-      console.log('Analyzing personality based on', quizResults.length, 'quiz answers');
-      
-      // Get completion from OpenAI via Netlify function
-      return this.getCompletion(promptText);
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      // The Netlify function returns data.completion directly
+      return {
+        completion: this.parseAnalysis(data.completion),
+        error: null,
+        usage: data.usage
+      };
     } catch (error) {
-      console.error('Error analyzing personality:', error);
-      return { completion: null, error: error.message, usage: null };
+      console.error('Error in analyzePersonality:', error);
+      return {
+        completion: null,
+        error: error.message,
+        usage: null
+      };
     }
   }
-};
 
-export default openaiService; 
+  // Parse the analysis text into sections
+  parseAnalysis(text) {
+    const sections = {};
+    let currentSection = null;
+    
+    text.split('\n').forEach(line => {
+      const trimmedLine = line.trim();
+      if (!trimmedLine) return;
+      
+      // Check if this line is a section header
+      const sectionMatch = Object.values(PERSONALITY_ANALYSIS_SECTIONS).find(
+        section => trimmedLine.startsWith(section.title + ':')
+      );
+      
+      if (sectionMatch) {
+        currentSection = sectionMatch.id;
+        sections[currentSection] = trimmedLine.substring(sectionMatch.title.length + 1).trim();
+      } else if (currentSection && trimmedLine) {
+        // Append to current section if it's a continuation
+        sections[currentSection] += ' ' + trimmedLine;
+      }
+    });
+    
+    return sections;
+  }
+}
+
+export const openaiService = new OpenAIService(); 
