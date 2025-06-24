@@ -78,7 +78,7 @@ export default {
     const router = useRouter();
 
     const handleSignOut = async () => {
-      const { error } = await authStore.logout();
+      const { error } = await authStore.signOut();
       if (!error) {
         router.push('/signin');
       }

@@ -26,7 +26,7 @@ export const useAuthStore = defineStore('auth', {
         const { data, error } = await userService.getUser(user.uid);
         if (!error && data) {
           this.userAttributes = data.attributes;
-          console.log('[Auth] User attributes loaded', this.userAttributes.attributes);
+          console.log('[Auth] User attributes loaded:', this.userAttributes);
         } else if (error) {
           console.error('[Auth] Failed to load user attributes:', error);
         }
