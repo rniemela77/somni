@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Header only shown when not submitted -->
+    <div v-if="!submissionSuccess" class="d-flex justify-content-between align-items-center mb-4">
       <h2>{{ quizTitle }}</h2>
       <button class="btn btn-outline-secondary" @click="$router.push({ name: 'quiz-list' })">
         ← Back to Quiz Selection
@@ -17,64 +18,72 @@
       </button>
     </div>
     <div v-else>
-      <p class="text-muted mb-4">{{ quizStore.currentQuiz?.description }}</p>
+      <!-- Quiz Form -->
+      <div v-if="!submissionSuccess">
+        <p class="text-muted mb-4">{{ quizStore.currentQuiz?.description }}</p>
 
-      <form @submit.prevent="submitQuiz" class="mb-4">
-        <div v-for="(question, index) in questions" 
-             :key="question.id"
-             class="card mb-3">
-          <div class="card-body">
-            <p class="fw-bold">Question {{ index + 1 }}</p>
-            <p class="mb-4">{{ question.text }}</p>
-            
-            <div class="slider-container">
-              <div class="slider-labels d-flex justify-content-between mb-2">
-                <span>Almost Never (-100)</span>
-                <span>Sometimes (0)</span>
-                <span>Almost Always (+100)</span>
-              </div>
+        <form @submit.prevent="submitQuiz" class="mb-4">
+          <div v-for="(question, index) in questions" 
+               :key="question.id"
+               class="card mb-3">
+            <div class="card-body">
+              <p class="fw-bold">Question {{ index + 1 }}</p>
+              <p class="mb-4">{{ question.text }}</p>
               
-              <div class="slider-track position-relative">
-                <div class="slider-fill" :style="{ 
-                  width: (Math.abs(parseFloat(answers[question.id])) / 2) + '%',
-                  left: parseFloat(answers[question.id]) < 0 ? 'auto' : '50%',
-                  right: parseFloat(answers[question.id]) < 0 ? '50%' : 'auto'
-                }"></div>
-                <input type="range"
-                       class="form-range"
-                       v-model="answers[question.id]"
-                       min="-100"
-                       max="100"
-                       :disabled="isSubmitting || submissionSuccess"
-                       required />
-              </div>
-              
-              <div class="slider-value text-center mt-2">
-                <small class="text-muted">Current value: {{ answers[question.id] }}</small>
+              <div class="slider-container">
+                <div class="slider-labels d-flex justify-content-between mb-2">
+                  <span>Almost Never (-100)</span>
+                  <span>Sometimes (0)</span>
+                  <span>Almost Always (+100)</span>
+                </div>
+                
+                <div class="slider-track position-relative">
+                  <div class="slider-fill" :style="{ 
+                    width: (Math.abs(parseFloat(answers[question.id])) / 2) + '%',
+                    left: parseFloat(answers[question.id]) < 0 ? 'auto' : '50%',
+                    right: parseFloat(answers[question.id]) < 0 ? '50%' : 'auto'
+                  }"></div>
+                  <input type="range"
+                         class="form-range"
+                         v-model="answers[question.id]"
+                         min="-100"
+                         max="100"
+                         :disabled="isSubmitting"
+                         required />
+                </div>
+                
+                <div class="slider-value text-center mt-2">
+                  <small class="text-muted">Current value: {{ answers[question.id] }}</small>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="text-center">
-          <button type="submit" 
-                  class="btn btn-primary w-100"
-                  :disabled="isSubmitting || submissionSuccess">
-            {{ isSubmitting ? 'Submitting...' : 'Submit Quiz' }}
+          <div class="text-center">
+            <button type="submit" 
+                    class="btn btn-primary w-100"
+                    :disabled="isSubmitting">
+              {{ isSubmitting ? 'Submitting...' : 'Submit Quiz' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success View -->
+      <div v-else class="text-center">
+        <div class="success-icon mb-4">
+          <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+        </div>
+        <h2 class="mb-4">Quiz Submitted Successfully!</h2>
+        <p class="text-muted mb-4">Your responses have been recorded and your personality profile has been updated.</p>
+        <div class="d-flex justify-content-center gap-3">
+          <button @click="$router.push({ name: 'quiz-list' })" class="btn btn-primary">
+            Take Another Quiz
+          </button>
+          <button @click="$router.push({ name: 'home' })" class="btn btn-outline-primary">
+            View Dashboard
           </button>
         </div>
-      </form>
-
-      <p v-if="message" 
-         class="alert mt-3" 
-         :class="{ 'alert-danger': message.includes('Error'), 'alert-success': message.includes('successfully') }">
-        {{ message }}
-      </p>
-
-      <div v-if="submissionSuccess" class="text-center mt-4">
-        <button @click="$router.push({ name: 'quiz-list' })" class="btn btn-secondary">
-          Take Another Quiz
-        </button>
       </div>
     </div>
   </div>
