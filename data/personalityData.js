@@ -183,7 +183,61 @@ const personalityData = [
     id: "conscientiousness_impulsivity",
     displayName: "Conscientiousness-Impulsivity",
     positive: "Conscientiousness",
-    negative: "Impulsivity"
+    negative: "Impulsivity",
+    title: "Planning and Action Style",
+    description: "This quiz evaluates your tendency toward careful planning versus spontaneous action. Move the slider to indicate how each statement reflects your typical behavior.",
+    questions: [
+      {
+        id: 1,
+        text: "I create detailed plans before starting projects",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I make decisions based on immediate feelings",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I keep my workspace neat and organized",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I prefer to go with the flow rather than stick to schedules",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I complete tasks well ahead of deadlines",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I often act without considering consequences",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I maintain detailed records of my activities",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I make purchases without much prior thought",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I follow through on my commitments reliably",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I change plans at the last minute when something more exciting comes up",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "agreeableness_antagonism",
