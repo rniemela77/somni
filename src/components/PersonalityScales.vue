@@ -1,6 +1,5 @@
 <template>
   <div class="personality-scales">
-    <h2 class="scales-title">Personality Overview</h2>
     <div class="scales-container">
       <div v-for="scale in availableScales" :key="scale.id" class="scale-item">
         <div class="scale-labels">
