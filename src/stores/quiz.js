@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { UserService } from '../services/user.service';
 import { PersonalityService } from '../services/personality.service';
 import { useAuthStore } from './auth';
-import quizzes from '../data/quizData';
+import { quizService } from '../services/firebase-quiz';
 
 const userService = new UserService();
 const personalityService = new PersonalityService();
@@ -27,7 +27,11 @@ export const useQuizStore = defineStore('quiz', {
           throw new Error('User must be authenticated to load quizzes');
         }
 
-        console.log('Loading quizzes:', quizzes);
+        const { quizzes, error } = await quizService.getAllQuizzes();
+        if (error) {
+          throw new Error(error);
+        }
+
         this.availableQuizzes = quizzes;
         console.log('Quizzes loaded successfully:', this.availableQuizzes);
       } catch (err) {
@@ -44,7 +48,11 @@ export const useQuizStore = defineStore('quiz', {
       this.error = null;
       
       try {
-        const quiz = this.availableQuizzes.find(q => q.id === quizId);
+        const { quiz, error } = await quizService.getQuizById(quizId);
+        if (error) {
+          throw new Error(error);
+        }
+        
         if (!quiz) {
           throw new Error(`Quiz with ID ${quizId} not found`);
         }
