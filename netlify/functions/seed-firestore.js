@@ -19,13 +19,17 @@ const quizzes = personalityData.filter(item => item.questions);
 const handler = async (event, context) => {
   try {
     for (const quiz of quizzes) {
+      // Use set with merge:true to update existing documents or create new ones
       await db.collection("quizzes").doc(quiz.id).set({
         title: quiz.title,
         description: quiz.description,
         questions: quiz.questions,
-        id: quiz.id
-      });
-      console.log(`Quiz ${quiz.id} added successfully!`);
+        id: quiz.id,
+        displayName: quiz.displayName,
+        positive: quiz.positive,
+        negative: quiz.negative
+      }, { merge: true });
+      console.log(`Quiz ${quiz.id} updated successfully!`);
     }
     console.log("Firestore seeding complete!");
     
