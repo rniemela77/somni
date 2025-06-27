@@ -3,9 +3,9 @@
     <div class="scales-container">
       <div v-for="scale in availableScales" :key="scale.id" class="scale-item">
         <div class="scale-labels">
-          <span class="negative-label">{{ scale.negative }}</span>
+          <span class="negative-label" :class="{ 'fw-bold': getScoreForScale(scale) < 0 }">{{ scale.negative }}</span>
           <span class="score">{{ Math.round(getScoreForScale(scale)) }}</span>
-          <span class="positive-label">{{ scale.positive }}</span>
+          <span class="positive-label" :class="{ 'fw-bold': getScoreForScale(scale) > 0 }">{{ scale.positive }}</span>
         </div>
         <div class="scale-bar">
           <div class="scale-line"></div>
@@ -51,7 +51,7 @@ export default {
 
 <style scoped>
 .personality-scales {
-  padding: 2rem;
+  padding: 1rem;
 }
 
 .scales-title {
@@ -62,15 +62,16 @@ export default {
 }
 
 .scales-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  max-width: 600px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+  gap: clamp(1rem, 2vw, 2rem);
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .scale-item {
   width: 100%;
+  min-width: 0; /* Prevents overflow in grid items */
 }
 
 .scale-labels {
@@ -79,11 +80,15 @@ export default {
   align-items: center;
   margin-bottom: 0.5rem;
   font-weight: 500;
+  gap: 0.5rem; /* Add gap between labels */
 }
 
 .negative-label, .positive-label {
   flex: 1;
   font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .negative-label {
@@ -103,6 +108,7 @@ export default {
   font-size: 0.9rem;
   min-width: 4rem;
   text-align: center;
+  flex-shrink: 0; /* Prevents score from shrinking */
 }
 
 .scale-bar {
