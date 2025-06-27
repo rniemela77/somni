@@ -57,7 +57,7 @@
           <div class="card-footer text-center">
             <button 
               class="btn btn-primary w-100" 
-              @click="$emit('select-quiz', quiz.id)">
+              @click="$router.push({ name: 'quiz-detail', params: { id: quiz.id }})">
               <i class="bi bi-pencil-fill me-1"></i>
               Begin Assessment
             </button>
@@ -72,11 +72,12 @@
 import { computed, onMounted, ref } from 'vue';
 import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'QuizList',
-  emits: ['select-quiz'],
   setup() {
+    const router = useRouter();
     const quizStore = useQuizStore();
     const authStore = useAuthStore();
     const loading = ref(false);

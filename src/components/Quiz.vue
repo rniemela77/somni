@@ -1,47 +1,23 @@
 <template>
     <div>
-        <QuizList v-if="!selectedQuiz" @select-quiz="selectQuiz" />
-        <QuizDetail v-else :quizId="selectedQuiz" @back-to-selection="backToSelection" />
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import QuizList from './QuizList.vue';
-import QuizDetail from './QuizDetail.vue';
+import { onMounted } from 'vue';
 import { useQuizStore } from '../stores/quiz';
-import { authService } from '../services/firebase-auth';
 
 export default {
-    components: {
-        QuizList,
-        QuizDetail
-    },
+    name: 'Quiz',
     setup() {
         const quizStore = useQuizStore();
-        const selectedQuiz = ref(null);
-        const availableQuizzes = computed(() => quizStore.availableQuizzes);
 
-        const loadQuizzes = async () => {
+        onMounted(async () => {
             await quizStore.loadQuizzes();
-        };
+        });
 
-        const selectQuiz = (quizId) => {
-            selectedQuiz.value = quizId;
-        };
-
-        const backToSelection = () => {
-            selectedQuiz.value = null;
-        };
-
-        onMounted(loadQuizzes);
-
-        return {
-            availableQuizzes,
-            selectedQuiz,
-            selectQuiz,
-            backToSelection
-        };
+        return {};
     }
 };
 </script>

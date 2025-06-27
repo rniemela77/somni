@@ -30,7 +30,20 @@ const routes = [
     path: "/quiz", 
     component: Quiz,
     name: 'quiz',
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: "",
+        name: "quiz-list",
+        component: () => import("./components/QuizList.vue")
+      },
+      {
+        path: ":id",
+        name: "quiz-detail",
+        component: () => import("./components/QuizDetail.vue"),
+        props: true
+      }
+    ]
   },
   { 
     path: "/account", 

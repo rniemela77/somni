@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>{{ quizTitle }}</h2>
-      <button class="btn btn-outline-secondary" @click="$emit('back-to-selection')">
+      <button class="btn btn-outline-secondary" @click="$router.push({ name: 'quiz-list' })">
         ← Back to Quiz Selection
       </button>
     </div>
@@ -72,7 +72,7 @@
       </p>
 
       <div v-if="submissionSuccess" class="text-center mt-4">
-        <button @click="$emit('back-to-selection')" class="btn btn-secondary">
+        <button @click="$router.push({ name: 'quiz-list' })" class="btn btn-secondary">
           Take Another Quiz
         </button>
       </div>
@@ -83,11 +83,18 @@
 <script>
 import { ref, computed } from 'vue';
 import { useQuizStore } from '../stores/quiz';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'QuizDetail',
-  props: ['quizId'],
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
   setup(props) {
+    const router = useRouter();
     const quizStore = useQuizStore();
     const loading = ref(true);
     const error = ref(null);
@@ -103,7 +110,7 @@ export default {
       error.value = null;
       
       try {
-        const result = await quizStore.selectQuiz(props.quizId);
+        const result = await quizStore.selectQuiz(props.id);
         if (result.error) {
           error.value = result.error;
           return;
