@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import personalityScales from '../data/attributes';
+import personalityData from '../../data/personalityData';
 
 export default {
   name: 'PersonalityScales',
@@ -66,14 +66,16 @@ export default {
   },
   computed: {
     emotionalStabilityScore() {
-      console.log('Scores object:', this.scores);
-      return this.scores['Neuroticism-Emotional Stability'] || 0;
+      const scale = personalityData.find(s => s.id === 'neuroticism_emotional_stability');
+      return this.scores[scale.displayName] || 0;
     },
     extraversionScore() {
-      return this.scores['Introversion-Extraversion'] || 0;
+      const scale = personalityData.find(s => s.id === 'introversion_extraversion');
+      return this.scores[scale.displayName] || 0;
     },
     opennessScore() {
-      return this.scores['Openness-Closedness to Experience'] || 0;
+      const scale = personalityData.find(s => s.id === 'openness_closedness');
+      return this.scores[scale.displayName] || 0;
     }
   },
   methods: {

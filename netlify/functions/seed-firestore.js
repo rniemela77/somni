@@ -1,6 +1,6 @@
 import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
-import quizzes from "../../src/data/quizData.js";
+import personalityData from "../../data/personalityData.js";
 
 // Parse the service account from environment variable
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -12,15 +12,18 @@ const app = initializeApp({
 
 const db = getFirestore();
 
-// Using named export for Netlify Functions
-export const handler = async (event, context) => {
+// Update any usage of quizzes to filter personalityData for items with questions
+const quizzes = personalityData.filter(item => item.questions);
+
+// Using ES module export
+const handler = async (event, context) => {
   try {
     for (const quiz of quizzes) {
       await db.collection("quizzes").doc(quiz.id).set({
         title: quiz.title,
         description: quiz.description,
         questions: quiz.questions,
-        attribute: quiz.attribute
+        id: quiz.id
       });
       console.log(`Quiz ${quiz.id} added successfully!`);
     }
@@ -38,3 +41,5 @@ export const handler = async (event, context) => {
     };
   }
 };
+
+export { handler };

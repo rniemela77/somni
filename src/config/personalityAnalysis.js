@@ -1,4 +1,4 @@
-import personalityScales from '../data/attributes';
+import personalityData from '../../data/personalityData';
 
 export const PERSONALITY_ANALYSIS_SECTIONS = {
   core: {
@@ -159,9 +159,9 @@ export const generateAnalysisPrompt = (attributes) => {
 
   // Add the attribute scores in a formatted way
   Object.entries(attributes).forEach(([key, value]) => {
-    const scale = personalityScales[key.toLowerCase().replace(/-/g, '_')];
+    const scale = personalityData.find(scale => scale.id === key.toLowerCase().replace(/-/g, '_'));
     if (scale) {
-      prompt += `${scale.name}: ${value} `;
+      prompt += `${scale.displayName}: ${value} `;
       if (value < 0) {
         prompt += `(Strong ${scale.negative})`;
       } else if (value > 0) {
