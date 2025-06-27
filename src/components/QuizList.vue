@@ -53,13 +53,27 @@
           <div class="card-body">
             <h3 class="card-title">{{ quiz.title }}</h3>
             <p class="card-text">{{ quiz.description }}</p>
+            
+            <!-- Score Display -->
+            <div v-if="getUserScore(quiz.id) !== null" class="mt-3 p-3 bg-light rounded">
+              <div class="d-flex align-items-center gap-2">
+                <span class="score-badge">{{ Math.round(getUserScore(quiz.id)) }}</span>
+                <span class="text-muted">
+                  Leaning towards 
+                  <strong>{{ getScoreInterpretation(quiz, getUserScore(quiz.id)) }}</strong>
+                </span>
+              </div>
+            </div>
           </div>
           <div class="card-footer text-center">
             <button 
-              class="btn btn-primary w-100" 
+              :class="[
+                'btn w-100',
+                getUserScore(quiz.id) !== null ? 'btn-link text-primary text-decoration-none' : 'btn-primary'
+              ]"
               @click="$router.push({ name: 'quiz-detail', params: { id: quiz.id }})">
               <i class="bi bi-pencil-fill me-1"></i>
-              Begin Assessment
+              {{ getUserScore(quiz.id) !== null ? 'Retake Assessment' : 'Begin Assessment' }}
             </button>
           </div>
         </div>
@@ -73,6 +87,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
+import personalityData from '../../data/personalityData';
 
 export default {
   name: 'QuizList',
@@ -83,6 +98,22 @@ export default {
     const loading = ref(false);
     const error = ref(null);
     const availableQuizzes = computed(() => quizStore.availableQuizzes);
+
+    const getUserScore = (quizId) => {
+      const attributes = authStore.userAttributes || {};
+      return attributes[quizId] !== undefined ? attributes[quizId] : null;
+    };
+
+    const getScoreInterpretation = (quiz, score) => {
+      if (score === null) return '';
+      
+      // Find the quiz definition
+      const quizDef = personalityData.find(p => p.id === quiz.id);
+      if (!quizDef) return '';
+
+      // Return the appropriate label based on the score
+      return score > 0 ? quizDef.positive : quizDef.negative;
+    };
 
     onMounted(async () => {
       try {
@@ -127,7 +158,9 @@ export default {
     return {
       availableQuizzes,
       loading,
-      error
+      error,
+      getUserScore,
+      getScoreInterpretation
     };
   }
 };
@@ -159,5 +192,18 @@ export default {
 .tips-section span {
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+.score-badge {
+  background: #0d6efd;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.bg-light {
+  background-color: rgba(13, 110, 253, 0.05) !important;
 }
 </style> 
