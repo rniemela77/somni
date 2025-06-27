@@ -2,50 +2,17 @@
   <div class="personality-scales">
     <h2 class="scales-title">Personality Overview</h2>
     <div class="scales-container">
-      <!-- Emotional Stability Scale -->
-      <div class="scale-item">
+      <div v-for="scale in availableScales" :key="scale.id" class="scale-item">
         <div class="scale-labels">
-          <span class="negative-label">Neuroticism</span>
-          <span class="score">{{ Math.round(emotionalStabilityScore) }}</span>
-          <span class="positive-label">Emotional Stability</span>
+          <span class="negative-label">{{ scale.negative }}</span>
+          <span class="score">{{ Math.round(getScoreForScale(scale)) }}</span>
+          <span class="positive-label">{{ scale.positive }}</span>
         </div>
         <div class="scale-bar">
           <div class="scale-line"></div>
           <div class="scale-marker" 
-               :style="{ left: `${calculatePosition(emotionalStabilityScore)}%` }"
-               :title="`Score: ${Math.round(emotionalStabilityScore)}`">
-          </div>
-        </div>
-      </div>
-
-      <!-- Extraversion Scale -->
-      <div class="scale-item">
-        <div class="scale-labels">
-          <span class="negative-label">Introversion</span>
-          <span class="score">{{ Math.round(extraversionScore) }}</span>
-          <span class="positive-label">Extraversion</span>
-        </div>
-        <div class="scale-bar">
-          <div class="scale-line"></div>
-          <div class="scale-marker" 
-               :style="{ left: `${calculatePosition(extraversionScore)}%` }"
-               :title="`Score: ${Math.round(extraversionScore)}`">
-          </div>
-        </div>
-      </div>
-
-      <!-- Openness Scale -->
-      <div class="scale-item">
-        <div class="scale-labels">
-          <span class="negative-label">Openness</span>
-          <span class="score">{{ Math.round(opennessScore) }}</span>
-          <span class="positive-label">Closedness</span>
-        </div>
-        <div class="scale-bar">
-          <div class="scale-line"></div>
-          <div class="scale-marker" 
-               :style="{ left: `${calculatePosition(opennessScore)}%` }"
-               :title="`Score: ${Math.round(opennessScore)}`">
+               :style="{ left: `${calculatePosition(getScoreForScale(scale))}%` }"
+               :title="`Score: ${Math.round(getScoreForScale(scale))}`">
           </div>
         </div>
       </div>
@@ -65,23 +32,19 @@ export default {
     }
   },
   computed: {
-    emotionalStabilityScore() {
-      const scale = personalityData.find(s => s.id === 'neuroticism_emotional_stability');
-      return this.scores[scale.displayName] || 0;
-    },
-    extraversionScore() {
-      const scale = personalityData.find(s => s.id === 'introversion_extraversion');
-      return this.scores[scale.displayName] || 0;
-    },
-    opennessScore() {
-      const scale = personalityData.find(s => s.id === 'openness_closedness');
-      return this.scores[scale.displayName] || 0;
+    availableScales() {
+      // Get all scales that have questions defined
+      return personalityData.filter(scale => scale.questions);
     }
   },
   methods: {
     calculatePosition(score) {
       // Map -100 to 0% and 100 to 100%
       return ((score + 100) / 2);
+    },
+    getScoreForScale(scale) {
+      // Return the score for the scale or 0 if not yet taken
+      return this.scores[scale.id] || 0;
     }
   }
 }
@@ -121,6 +84,7 @@ export default {
 
 .negative-label, .positive-label {
   flex: 1;
+  font-size: 0.9rem;
 }
 
 .negative-label {
@@ -138,6 +102,8 @@ export default {
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-size: 0.9rem;
+  min-width: 4rem;
+  text-align: center;
 }
 
 .scale-bar {
