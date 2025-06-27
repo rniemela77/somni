@@ -86,7 +86,7 @@ export const useQuizStore = defineStore('quiz', {
         const score = this.calculateScore(answers);
         const results = {
           quizId: this.currentQuiz.id,
-          attribute: this.currentQuiz.attribute,
+          attribute: this.currentQuiz.id,
           timestamp: new Date().toISOString(),
           answers,
           score: score * 100 // Convert from -1..1 to -100..100 scale
