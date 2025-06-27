@@ -75,6 +75,7 @@ import { useAuthStore } from '../stores/auth';
 
 export default {
   name: 'QuizList',
+  emits: ['select-quiz'],
   setup() {
     const quizStore = useQuizStore();
     const authStore = useAuthStore();

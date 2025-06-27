@@ -68,7 +68,6 @@ Firebase:
 - quiz questions are stored in /quizData.js, and seeded into the firebase database using `npm run seed`
 - user authentication is handled by firebase
 - frontend fetches quiz questions from the firebase database
-- user quiz answers are stored in the firebase database
 - home/dashboard has a button to generate a personality report
 - the personality report instructions are in `config/personalityAnalysis.js`
 - the personality report api call is in `netlify/functions/openai.js`
