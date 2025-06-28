@@ -3,14 +3,23 @@
     <div class="scales-container">
       <div v-for="scale in availableScales" :key="scale.id" class="scale-item">
         <div class="scale-labels">
-          <span class="negative-label" :class="{ 'fw-bold': getScoreForScale(scale) < 0 }">{{ scale.negative }}</span>
+          <span class="negative-label" :class="{ 'label--dominant': getScoreForScale(scale) < 0 }">{{ scale.negative }}</span>
           <span class="score">{{ Math.round(getScoreForScale(scale)) }}</span>
-          <span class="positive-label" :class="{ 'fw-bold': getScoreForScale(scale) > 0 }">{{ scale.positive }}</span>
+          <span class="positive-label" :class="{ 'label--dominant': getScoreForScale(scale) > 0 }">{{ scale.positive }}</span>
         </div>
         <div class="scale-bar">
           <div class="scale-line"></div>
+          <!-- Score line from center -->
+          <div class="scale-value" 
+               :style="{ 
+                 width: Math.abs(getScoreForScale(scale)) / 2 + '%',
+                 left: getScoreForScale(scale) >= 0 ? '50%' : 'auto',
+                 right: getScoreForScale(scale) < 0 ? '50%' : 'auto'
+               }">
+          </div>
+          <!-- Score marker -->
           <div class="scale-marker" 
-               :style="{ left: `${calculatePosition(getScoreForScale(scale))}%` }"
+               :style="{ left: calculatePosition(getScoreForScale(scale)) + '%' }"
                :title="`Score: ${Math.round(getScoreForScale(scale))}`">
           </div>
         </div>
@@ -80,15 +89,21 @@ export default {
   align-items: center;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  gap: 0.5rem; /* Add gap between labels */
+  gap: 0.5rem;
 }
 
 .negative-label, .positive-label {
   flex: 1;
+  color: #5d5d5d;
   font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.label--dominant {
+  font-weight: bold;
+  color: #000000;
 }
 
 .negative-label {
@@ -106,7 +121,6 @@ export default {
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-size: 0.9rem;
-  min-width: 4rem;
   text-align: center;
   flex-shrink: 0; /* Prevents score from shrinking */
 }
@@ -116,9 +130,10 @@ export default {
   height: 24px;
   background: #f8f9fa;
   border-radius: 12px;
-  overflow: hidden;
+  margin: 4px 0;
 }
 
+/* Center line */
 .scale-line {
   position: absolute;
   top: 50%;
@@ -129,40 +144,42 @@ export default {
   transform: translateY(-50%);
 }
 
-/* Add tick marks for -50, 0, and 50 */
-.scale-line::before,
+/* Center marker */
 .scale-line::after {
   content: '';
   position: absolute;
-  top: -5px;
+  left: 50%;
+  top: 50%;
   width: 2px;
-  height: 12px;
+  height: 16px;
   background: #dee2e6;
+  transform: translate(-50%, -50%);
 }
 
-.scale-line::before {
-  left: 25%;
+/* Score line */
+.scale-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 4px;
+  background: #0d6efd;
+  transform: translateY(-50%);
 }
 
-.scale-line::after {
-  right: 25%;
-}
-
+/* Score marker */
 .scale-marker {
   position: absolute;
   top: 50%;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   background: #0d6efd;
   border: 2px solid white;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .scale-marker:hover {
   transform: translate(-50%, -50%) scale(1.2);
-  background: #0a58ca;
 }
 </style> 
