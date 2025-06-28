@@ -38,10 +38,15 @@
                 </div>
                 
                 <div class="slider-track position-relative">
-                  <div class="slider-fill" :style="{ 
-                    width: (Math.abs(parseFloat(answers[question.id])) / 2) + '%',
-                    left: parseFloat(answers[question.id]) < 0 ? 'auto' : '50%',
-                    right: parseFloat(answers[question.id]) < 0 ? '50%' : 'auto'
+                  <!-- Negative fill (from 0 to negative values) -->
+                  <div class="slider-fill negative" :style="{ 
+                    width: parseFloat(answers[question.id]) < 0 ? (Math.abs(parseFloat(answers[question.id])) / 2) + '%' : '0%',
+                    right: '50%'
+                  }"></div>
+                  <!-- Positive fill (from 0 to positive values) -->
+                  <div class="slider-fill positive" :style="{ 
+                    width: parseFloat(answers[question.id]) > 0 ? (parseFloat(answers[question.id]) / 2) + '%' : '0%',
+                    left: '50%'
                   }"></div>
                   <input type="range"
                          class="form-range"
@@ -180,25 +185,161 @@ export default {
 
 <style scoped>
 .slider-container {
-  padding: 0.5rem 0;
+  padding: 1.5rem 0;
   position: relative;
 }
 
 .slider-track {
-  height: 0.5rem;
-  background: #dee2e6;
-  border-radius: 0.25rem;
+  height: 32px;
+  background: #e9ecef;
+  border-radius: 16px;
   position: relative;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .slider-fill {
   height: 100%;
-  background-color: #0d6efd;
-  border-radius: 0.25rem;
-  transition: all 0.3s ease;
+  background: #4facfe;
   position: absolute;
   top: 0;
+  transition: width 0.3s ease;
+  border-radius: 16px;
+}
+
+.slider-fill.negative {
+  background: #4facfe;
+  border-radius: 16px;
+}
+
+.slider-fill.positive {
+  background: #4facfe;
+  border-radius: 16px;
+}
+
+.form-range {
+  width: 100%;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.form-range:focus {
+  outline: none;
+}
+
+/* Shared thumb styles through CSS variables */
+.form-range {
+  --thumb-width: 32px;
+  --thumb-height: 32px;
+  --thumb-radius: 16px;
+  --thumb-bg: white;
+  --thumb-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* WebKit (Chrome, Safari, Edge) */
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--thumb-width);
+  height: var(--thumb-height);
+  border-radius: var(--thumb-radius);
+  background: var(--thumb-bg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 0;
+  box-shadow: var(--thumb-shadow);
+  border: none;
+  position: relative;
+  z-index: 2;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 32px;
+  background: transparent;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+/* Firefox */
+.form-range::-moz-range-thumb {
+  width: var(--thumb-width);
+  height: var(--thumb-height);
+  border-radius: var(--thumb-radius);
+  background: var(--thumb-bg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--thumb-shadow);
+  border: none;
+  position: relative;
+  z-index: 2;
+}
+
+.form-range::-moz-range-track {
+  width: 100%;
+  height: 32px;
+  background: transparent;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+/* Hover and active states for both browsers */
+.form-range::-webkit-slider-thumb:hover,
+.form-range::-moz-range-thumb:hover {
+  transform: scale(1.05);
+}
+
+.form-range::-webkit-slider-thumb:active,
+.form-range::-moz-range-thumb:active {
+  transform: scale(0.98);
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  color: #6c757d;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.slider-labels span {
+  position: relative;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(233, 236, 239, 0.5);
+  transition: all 0.2s ease;
+}
+
+.slider-labels span:hover {
+  background: rgba(233, 236, 239, 0.8);
+}
+
+.slider-value {
+  position: absolute;
+  top: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4facfe;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.form-range:hover + .slider-value,
+.form-range:focus + .slider-value {
+  opacity: 1;
+  top: -2.5rem;
 }
 
 .slider-container::after {
@@ -208,71 +349,8 @@ export default {
   top: 50%;
   transform: translate(-50%, -50%);
   width: 2px;
-  height: 24px;
-  background-color: #6c757d;
-  opacity: 0.3;
+  height: 32px;
+  background-color: rgba(0,0,0,0.1);
   pointer-events: none;
-  border-radius: 1px;
-}
-
-.form-range {
-  width: 100%;
-  height: 2.5rem;
-  padding: 0;
-  background-color: transparent;
-  appearance: none;
-  position: relative;
-  z-index: 1;
-}
-
-.form-range::-webkit-slider-thumb {
-  appearance: none;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  background: #0d6efd;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: -0.5rem;
-  box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
-  position: relative;
-  z-index: 2;
-}
-
-.form-range::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-  box-shadow: 0 3px 6px rgba(13, 110, 253, 0.3);
-}
-
-.form-range::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 0.5rem;
-  background: transparent;
-  border-radius: 0.25rem;
-  cursor: pointer;
-}
-
-.slider-labels {
-  color: #6c757d;
-  font-size: 0.85rem;
-  opacity: 0.8;
-}
-
-.slider-labels span {
-  text-align: center;
-  flex: 1;
-}
-
-.slider-labels span:first-child {
-  text-align: left;
-}
-
-.slider-labels span:last-child {
-  text-align: right;
-}
-
-.slider-value {
-  font-size: 0.9rem;
-  font-weight: 500;
 }
 </style> 
