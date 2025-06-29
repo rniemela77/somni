@@ -6,6 +6,10 @@ const personalityData = [
     negative: "Introversion",
     title: "Social Dynamics",
     description: "This quiz assesses your tendency toward introversion or extraversion. Move the slider to indicate how each statement reflects your regular behavior.",
+    traitDescriptions: {
+      positive: "Extraverts draw energy from social interaction and external stimulation. They tend to think out loud, seek out group activities, and feel energized by being around others. They often process experiences by discussing them and prefer active engagement with the world around them.",
+      negative: "Introverts gain energy from solitude and internal reflection. They prefer deep one-on-one conversations, need quiet time to recharge, and process experiences internally before sharing. They often have rich inner lives and value meaningful, intimate connections over broad social networks."
+    },
     questions: [
       {
         id: 1,
@@ -66,6 +70,10 @@ const personalityData = [
     negative: "Neuroticism",
     title: "Emotional Landscape",
     description: "This quiz explores your level of emotional stability versus neurotic tendencies. Move the slider to indicate how each statement reflects your experience.",
+    traitDescriptions: {
+      positive: "Emotionally stable individuals maintain steady emotional states and recover quickly from setbacks. They tend to stay calm under pressure, adapt well to change, and maintain perspective in challenging situations. They generally experience less anxiety and are more resilient to stress.",
+      negative: "Neurotic individuals experience emotions more intensely and are more sensitive to environmental changes. They tend to be more self-aware and perceptive of subtle emotional shifts, though this can lead to overthinking and anxiety. They often feel things deeply and may need more time to process emotional experiences."
+    },
     questions: [
       {
         id: 1,
@@ -126,6 +134,10 @@ const personalityData = [
     negative: "Closedness",
     title: "Experience Spectrum",
     description: "This quiz assesses your openness to new ideas versus preference for familiar approaches. Move the slider to indicate how each statement reflects your typical behavior.",
+    traitDescriptions: {
+      positive: "Those high in openness actively seek out new experiences and ideas. They tend to be curious, creative, and willing to challenge conventional wisdom. They often enjoy abstract thinking, appreciate art and beauty, and are drawn to exploring different perspectives and possibilities.",
+      negative: "Those who prefer closedness value consistency and reliability in their experiences. They excel at maintaining stable routines, mastering established skills, and finding depth in familiar territory. They often have strong practical judgment and prefer concrete, proven solutions."
+    },
     questions: [
       {
         id: 1,
@@ -186,6 +198,10 @@ const personalityData = [
     negative: "Impulsivity",
     title: "Planning and Action Style",
     description: "This quiz evaluates your tendency toward careful planning versus spontaneous action. Move the slider to indicate how each statement reflects your typical behavior.",
+    traitDescriptions: {
+      positive: "Conscientious individuals are organized, methodical, and detail-oriented. They excel at long-term planning, maintaining order, and following through on commitments. They often have strong self-discipline and prefer structured approaches to achieving goals.",
+      negative: "Impulsive individuals are spontaneous, flexible, and quick to act on opportunities. They excel at thinking on their feet, adapting to the moment, and bringing fresh energy to situations. They often have a natural ability to seize the moment and think creatively under pressure."
+    },
     questions: [
       {
         id: 1,

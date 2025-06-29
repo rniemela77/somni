@@ -28,11 +28,11 @@
         <div class="scale-content" :class="{ 'scale-content-hidden': !isScaleExpanded(scale.id) }">
           <div class="trait-description">
             <h4>{{ scale.negative }}</h4>
-            <p>{{ getTraitDescription(scale, 'negative') }}</p>
+            <p>{{ scale.traitDescriptions?.negative || getTraitDescription(scale, 'negative') }}</p>
           </div>
           <div class="trait-description">
             <h4>{{ scale.positive }}</h4>
-            <p>{{ getTraitDescription(scale, 'positive') }}</p>
+            <p>{{ scale.traitDescriptions?.positive || getTraitDescription(scale, 'positive') }}</p>
           </div>
         </div>
       </div>
@@ -58,8 +58,7 @@ export default {
   },
   computed: {
     availableScales() {
-      // Get all scales that have questions defined
-      return personalityData.filter(scale => scale.questions);
+      return personalityData;
     }
   },
   methods: {

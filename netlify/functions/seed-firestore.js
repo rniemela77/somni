@@ -27,7 +27,11 @@ const handler = async (event, context) => {
         id: quiz.id,
         displayName: quiz.displayName,
         positive: quiz.positive,
-        negative: quiz.negative
+        negative: quiz.negative,
+        traitDescriptions: quiz.traitDescriptions || {
+          positive: "",
+          negative: ""
+        }
       }, { merge: true });
       console.log(`Quiz ${quiz.id} updated successfully!`);
     }
