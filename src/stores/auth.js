@@ -7,9 +7,9 @@ const userService = new UserService();
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
+    userAttributes: null,
     loading: true,
-    error: null,
-    userAttributes: null
+    error: null
   }),
 
   getters: {
@@ -19,33 +19,34 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    async setUser(user) {
-      console.log('[Auth] Setting user:', user ? 'exists' : 'null');
-      this.user = user;
-      if (user) {
-        const { data, error } = await userService.getUser(user.uid);
-        if (!error && data) {
-          this.userAttributes = data.attributes;
-          console.log('[Auth] User attributes loaded:', this.userAttributes);
-        } else if (error) {
-          // If user not found, try to initialize them
-          console.log('[Auth] User not found, attempting initialization...');
-          const { data: initData, error: initError } = await userService.initializeUser(user.uid, {
-            email: user.email,
-            attributes: {},
-            results: []
-          });
-          
-          if (!initError && initData) {
-            this.userAttributes = initData.attributes;
-            console.log('[Auth] User initialized and attributes loaded:', this.userAttributes);
-          } else {
-            console.error('[Auth] Failed to initialize user:', initError);
-          }
+    async setUser(firebaseUser) {
+      this.loading = true;
+      this.error = null;
+      
+      try {
+        if (!firebaseUser) {
+          this.user = null;
+          this.userAttributes = null;
+          return;
         }
-      } else {
-        this.userAttributes = null;
-        console.log('[Auth] User attributes cleared');
+
+        this.user = firebaseUser;
+        
+        // Get or create user document in one call
+        const { data, error } = await userService.getOrCreateUser(firebaseUser.uid);
+        
+        if (error) {
+          this.error = error;
+          return;
+        }
+
+        this.userAttributes = data?.attributes || {};
+        
+      } catch (error) {
+        console.error('[Auth Store] Error setting user:', error);
+        this.error = error.message;
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -60,6 +61,8 @@ export const useAuthStore = defineStore('auth', {
           await this.setUser(currentUser);
         } else {
           console.log('[Auth] No existing user found');
+          this.user = null;
+          this.userAttributes = null;
         }
 
         // Set up auth state listener
@@ -67,11 +70,11 @@ export const useAuthStore = defineStore('auth', {
         authService.onAuthStateChanged(async (user) => {
           console.log('[Auth] Auth state changed:', user ? 'logged in' : 'logged out');
           await this.setUser(user);
-          this.loading = false;
         });
       } catch (error) {
         console.error('[Auth] Auth store initialization error:', error);
         this.error = error.message;
+      } finally {
         this.loading = false;
       }
     },
@@ -96,6 +99,26 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async signInWithGoogle() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const { user, error } = await authService.signInWithGoogle();
+        if (error) {
+          this.error = error;
+          return false;
+        }
+        await this.setUser(user);
+        return true;
+      } catch (error) {
+        console.error('Google sign in error:', error);
+        this.error = error.message;
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async signUp(email, password) {
       this.loading = true;
       this.error = null;
@@ -105,19 +128,6 @@ export const useAuthStore = defineStore('auth', {
           this.error = error;
           return false;
         }
-        
-        // Initialize the user document in Firestore
-        const { error: initError } = await userService.initializeUser(user.uid, {
-          email: user.email,
-          attributes: {},
-          results: []
-        });
-        
-        if (initError) {
-          this.error = initError;
-          return false;
-        }
-        
         await this.setUser(user);
         return true;
       } catch (error) {

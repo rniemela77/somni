@@ -10,6 +10,18 @@ import {
   signInWithPopup
 } from "firebase/auth";
 
+const AUTH_ERROR_MESSAGES = {
+  'auth/user-not-found': 'No account found with this email',
+  'auth/wrong-password': 'Incorrect password',
+  'auth/email-already-in-use': 'An account already exists with this email',
+  'auth/invalid-email': 'Please enter a valid email address',
+  'auth/weak-password': 'Password should be at least 6 characters',
+  'auth/popup-closed-by-user': 'Google sign-in was cancelled',
+  'auth/network-request-failed': 'Network error. Please check your connection',
+  'auth/too-many-requests': 'Too many attempts. Please try again later',
+  'default': 'An unexpected error occurred'
+};
+
 // Auth Service
 export const authService = {
   /**
@@ -26,7 +38,10 @@ export const authService = {
       return { user: userCredential.user, error: null };
     } catch (error) {
       console.error("[Auth Service] Sign in error:", error);
-      return { user: null, error: error.message };
+      return { 
+        user: null, 
+        error: AUTH_ERROR_MESSAGES[error.code] || AUTH_ERROR_MESSAGES.default 
+      };
     }
   },
 
@@ -43,7 +58,10 @@ export const authService = {
       return { user: userCredential.user, error: null };
     } catch (error) {
       console.error("[Auth Service] Google sign in error:", error);
-      return { user: null, error: error.message };
+      return { 
+        user: null, 
+        error: AUTH_ERROR_MESSAGES[error.code] || AUTH_ERROR_MESSAGES.default 
+      };
     }
   },
 
@@ -61,7 +79,10 @@ export const authService = {
       return { user: userCredential.user, error: null };
     } catch (error) {
       console.error("[Auth Service] Sign up error:", error);
-      return { user: null, error: error.message };
+      return { 
+        user: null, 
+        error: AUTH_ERROR_MESSAGES[error.code] || AUTH_ERROR_MESSAGES.default 
+      };
     }
   },
 
@@ -77,7 +98,9 @@ export const authService = {
       return { error: null };
     } catch (error) {
       console.error("[Auth Service] Logout error:", error);
-      return { error: error.message };
+      return { 
+        error: AUTH_ERROR_MESSAGES[error.code] || AUTH_ERROR_MESSAGES.default 
+      };
     }
   },
 
@@ -104,7 +127,10 @@ export const authService = {
       return { success: true, error: null };
     } catch (error) {
       console.error("[Auth Service] Password reset error:", error);
-      return { success: false, error: error.message };
+      return { 
+        success: false, 
+        error: AUTH_ERROR_MESSAGES[error.code] || AUTH_ERROR_MESSAGES.default 
+      };
     }
   },
   

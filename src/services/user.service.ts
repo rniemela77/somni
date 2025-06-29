@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
 import { db } from './firebase-config';
 import { BaseService } from './base.service';
+import { serverTimestamp } from 'firebase/firestore';
 
 export interface User {
   id: string;
@@ -23,6 +24,32 @@ export interface User {
 }
 
 export class UserService extends BaseService {
+  async getOrCreateUser(userId: string): Promise<{ data: User | null; error: string | null }> {
+    return this.handleOperation(async () => {
+      const userRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        return userDoc.data() as User;
+      }
+      
+      // Default user structure
+      const newUser: User = {
+        id: userId,
+        isPaid: false,
+        tags: [],
+        attributes: {},
+        personalityAnalysis: {},
+        results: [],
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      
+      await setDoc(userRef, newUser);
+      return newUser;
+    });
+  }
+
   async getUser(userId: string) {
     return this.handleOperation(async () => {
       const userRef = doc(db, 'users', userId);
@@ -33,30 +60,6 @@ export class UserService extends BaseService {
       }
       
       return userDoc.data() as User;
-    });
-  }
-
-  async initializeUser(userId: string, userData: Partial<User> = {}) {
-    return this.handleOperation(async () => {
-      const userRef = doc(db, 'users', userId);
-      const userDoc = await getDoc(userRef);
-      
-      if (!userDoc.exists()) {
-        const newUserData = this.addTimestamps({
-          isPaid: false,
-          tags: [],
-          personalityAnalysis: {},
-          ...userData
-        });
-        
-        await setDoc(userRef, newUserData);
-        return { id: userId, ...newUserData } as User;
-      }
-      
-      return {
-        id: userDoc.id,
-        ...userDoc.data()
-      } as User;
     });
   }
 
