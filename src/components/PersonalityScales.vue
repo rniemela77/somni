@@ -2,25 +2,37 @@
   <div class="personality-scales">
     <div class="scales-container">
       <div v-for="scale in availableScales" :key="scale.id" class="scale-item">
-        <div class="scale-labels">
-          <span class="negative-label" :class="{ 'label--dominant': getScoreForScale(scale) < 0 }">{{ scale.negative }}</span>
-          <span class="score">{{ Math.round(getScoreForScale(scale)) }}</span>
-          <span class="positive-label" :class="{ 'label--dominant': getScoreForScale(scale) > 0 }">{{ scale.positive }}</span>
-        </div>
-        <div class="scale-bar">
-          <div class="scale-line"></div>
-          <!-- Score line from center -->
-          <div class="scale-value" 
-               :style="{ 
-                 width: Math.abs(getScoreForScale(scale)) / 2 + '%',
-                 left: getScoreForScale(scale) >= 0 ? '50%' : 'auto',
-                 right: getScoreForScale(scale) < 0 ? '50%' : 'auto'
-               }">
+        <button class="scale-header" @click="toggleScale(scale.id)">
+          <div class="scale-labels">
+            <span class="negative-label" :class="{ 'label--dominant': getScoreForScale(scale) < 0 }">{{ scale.negative }}</span>
+            <span class="score">{{ Math.round(getScoreForScale(scale)) }}</span>
+            <span class="positive-label" :class="{ 'label--dominant': getScoreForScale(scale) > 0 }">{{ scale.positive }}</span>
           </div>
-          <!-- Score marker -->
-          <div class="scale-marker" 
-               :style="{ left: calculatePosition(getScoreForScale(scale)) + '%' }"
-               :title="`Score: ${Math.round(getScoreForScale(scale))}`">
+          <div class="scale-bar">
+            <div class="scale-line"></div>
+            <!-- Score line from center -->
+            <div class="scale-value" 
+                 :style="{ 
+                   width: Math.abs(getScoreForScale(scale)) / 2 + '%',
+                   left: getScoreForScale(scale) >= 0 ? '50%' : 'auto',
+                   right: getScoreForScale(scale) < 0 ? '50%' : 'auto'
+                 }">
+            </div>
+            <!-- Score marker -->
+            <div class="scale-marker" 
+                 :style="{ left: calculatePosition(getScoreForScale(scale)) + '%' }"
+                 :title="`Score: ${Math.round(getScoreForScale(scale))}`">
+            </div>
+          </div>
+        </button>
+        <div class="scale-content" :class="{ 'scale-content-hidden': !isScaleExpanded(scale.id) }">
+          <div class="trait-description">
+            <h4>{{ scale.negative }}</h4>
+            <p>{{ getTraitDescription(scale, 'negative') }}</p>
+          </div>
+          <div class="trait-description">
+            <h4>{{ scale.positive }}</h4>
+            <p>{{ getTraitDescription(scale, 'positive') }}</p>
           </div>
         </div>
       </div>
@@ -39,6 +51,11 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      expandedScales: new Set()
+    }
+  },
   computed: {
     availableScales() {
       // Get all scales that have questions defined
@@ -53,6 +70,42 @@ export default {
     getScoreForScale(scale) {
       // Return the score for the scale or 0 if not yet taken
       return this.scores[scale.id] || 0;
+    },
+    toggleScale(scaleId) {
+      if (this.expandedScales.has(scaleId)) {
+        this.expandedScales.delete(scaleId);
+      } else {
+        this.expandedScales.add(scaleId);
+      }
+    },
+    isScaleExpanded(scaleId) {
+      return this.expandedScales.has(scaleId);
+    },
+    getTraitDescription(scale, type) {
+      if (!scale.questions) return '';
+      
+      // Get questions that are characteristic of this trait
+      const relevantQuestions = scale.questions.filter(q => 
+        type === 'positive' ? q.points > 0 : q.points < 0
+      );
+      
+      // Extract behaviors from questions
+      const behaviors = relevantQuestions
+        .map(q => q.text.toLowerCase())
+        .map(text => {
+          // Remove "I" statements and convert to descriptive form
+          return text
+            .replace(/^i /i, '')
+            .replace(/^i'm /i, 'Being ')
+            .replace(/^i've /i, 'Having ')
+            .replace(/^i'd /i, 'Preferring to ')
+            .replace(/^i'll /i, 'Tending to ');
+        });
+
+      // Join behaviors into a readable list
+      return behaviors.length > 0 
+        ? `Characterized by: ${behaviors.join('; ')}.`
+        : `No specific description available for ${type === 'positive' ? scale.positive : scale.negative}.`;
     }
   }
 }
@@ -71,8 +124,8 @@ export default {
 }
 
 .scales-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+  display: flex;
+  flex-direction: column;
   gap: clamp(1rem, 2vw, 2rem);
   max-width: 1200px;
   margin: 0 auto;
@@ -80,7 +133,58 @@ export default {
 
 .scale-item {
   width: 100%;
-  min-width: 0; /* Prevents overflow in grid items */
+  min-width: 0;
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.scale-item:hover {
+  border-color: #dee2e6;
+}
+
+.scale-header {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 1rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.scale-header:hover {
+  background: #f8f9fa;
+}
+
+.scale-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 1rem;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.scale-content-hidden {
+  display: none;
+}
+
+.trait-description {
+  padding: 1rem;
+}
+
+.trait-description h4 {
+  font-size: 0.9rem;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.trait-description p {
+  font-size: 0.85rem;
+  color: #6c757d;
+  line-height: 1.5;
 }
 
 .scale-labels {
