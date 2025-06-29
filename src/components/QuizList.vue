@@ -59,8 +59,8 @@
               <div class="d-flex align-items-center gap-2">
                 <span class="score-badge">{{ Math.round(getUserScore(quiz.id)) }}</span>
                 <span class="text-muted">
-                  Leaning towards 
-                  <strong>{{ getScoreInterpretation(quiz, getUserScore(quiz.id)) }}</strong>
+                  {{ getTraitIntensityText(getUserScore(quiz.id)) }}
+                  <strong>{{ getDominantTrait(getScaleById(quiz.id), getUserScore(quiz.id)) }}</strong>
                 </span>
               </div>
             </div>
@@ -87,7 +87,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
-import personalityData from '../../data/personalityData';
+import { usePersonalityTraits } from '../composables/usePersonalityTraits';
 
 export default {
   name: 'QuizList',
@@ -99,20 +99,15 @@ export default {
     const error = ref(null);
     const availableQuizzes = computed(() => quizStore.availableQuizzes);
 
+    const {
+      getTraitIntensityText,
+      getDominantTrait,
+      getScaleById
+    } = usePersonalityTraits();
+
     const getUserScore = (quizId) => {
       const attributes = authStore.userAttributes || {};
       return attributes[quizId] !== undefined ? attributes[quizId] : null;
-    };
-
-    const getScoreInterpretation = (quiz, score) => {
-      if (score === null) return '';
-      
-      // Find the quiz definition
-      const quizDef = personalityData.find(p => p.id === quiz.id);
-      if (!quizDef) return '';
-
-      // Return the appropriate label based on the score
-      return score > 0 ? quizDef.positive : quizDef.negative;
     };
 
     onMounted(async () => {
@@ -160,7 +155,9 @@ export default {
       loading,
       error,
       getUserScore,
-      getScoreInterpretation
+      getTraitIntensityText,
+      getDominantTrait,
+      getScaleById
     };
   }
 };
@@ -195,12 +192,11 @@ export default {
 }
 
 .score-badge {
-  background: #0d6efd;
-  color: white;
+  background: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-weight: bold;
-  font-size: 0.9rem;
 }
 
 .bg-light {

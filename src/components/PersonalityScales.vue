@@ -4,35 +4,45 @@
       <div v-for="scale in availableScales" :key="scale.id" class="scale-item">
         <button class="scale-header" @click="toggleScale(scale.id)">
           <div class="scale-labels">
-            <span class="negative-label" :class="{ 'label--dominant': getScoreForScale(scale) < 0 }">{{ scale.negative }}</span>
-            <span class="score">{{ Math.round(getScoreForScale(scale)) }}</span>
-            <span class="positive-label" :class="{ 'label--dominant': getScoreForScale(scale) > 0 }">{{ scale.positive }}</span>
+            <span class="negative-label" :class="{ 'label--dominant': getScoreForScale(scale, scores) < 0 }">{{ scale.negative }}</span>
+            <span class="score">{{ Math.round(getScoreForScale(scale, scores)) }}</span>
+            <span class="positive-label" :class="{ 'label--dominant': getScoreForScale(scale, scores) > 0 }">{{ scale.positive }}</span>
           </div>
           <div class="scale-bar">
             <div class="scale-line"></div>
             <!-- Score line from center -->
             <div class="scale-value" 
                  :style="{ 
-                   width: Math.abs(getScoreForScale(scale)) / 2 + '%',
-                   left: getScoreForScale(scale) >= 0 ? '50%' : 'auto',
-                   right: getScoreForScale(scale) < 0 ? '50%' : 'auto'
+                   width: Math.abs(getScoreForScale(scale, scores)) / 2 + '%',
+                   left: getScoreForScale(scale, scores) >= 0 ? '50%' : 'auto',
+                   right: getScoreForScale(scale, scores) < 0 ? '50%' : 'auto'
                  }">
             </div>
             <!-- Score marker -->
             <div class="scale-marker" 
-                 :style="{ left: calculatePosition(getScoreForScale(scale)) + '%' }"
-                 :title="`Score: ${Math.round(getScoreForScale(scale))}`">
+                 :style="{ left: calculatePosition(getScoreForScale(scale, scores)) + '%' }"
+                 :title="`Score: ${Math.round(getScoreForScale(scale, scores))}`">
             </div>
           </div>
         </button>
-        <div class="scale-content" :class="{ 'scale-content-hidden': !isScaleExpanded(scale.id) }">
+        <div class="scale-content" :class="{ 'scale-content-hidden': !expandedScales.has(scale.id) }">
           <div class="trait-description">
+            <div class="trait-intensity">
+              <template v-if="getScoreForScale(scale, scores) <= 0">
+                User {{ getTraitIntensityText(getScoreForScale(scale, scores)) }} {{ scale.negative.toLowerCase() }}
+              </template>
+            </div>
             <h4>{{ scale.negative }}</h4>
-            <p>{{ scale.traitDescriptions?.negative || getTraitDescription(scale, 'negative') }}</p>
+            <p>{{ getTraitDescription(scale, 'negative') }}</p>
           </div>
           <div class="trait-description">
+            <div class="trait-intensity">
+              <template v-if="getScoreForScale(scale, scores) > 0">
+                User {{ getTraitIntensityText(getScoreForScale(scale, scores)) }} {{ scale.positive.toLowerCase() }}
+              </template>
+            </div>
             <h4>{{ scale.positive }}</h4>
-            <p>{{ scale.traitDescriptions?.positive || getTraitDescription(scale, 'positive') }}</p>
+            <p>{{ getTraitDescription(scale, 'positive') }}</p>
           </div>
         </div>
       </div>
@@ -41,7 +51,8 @@
 </template>
 
 <script>
-import personalityData from '../../data/personalityData';
+import { ref } from 'vue';
+import { usePersonalityTraits } from '../composables/usePersonalityTraits';
 
 export default {
   name: 'PersonalityScales',
@@ -51,61 +62,36 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      expandedScales: new Set()
-    }
-  },
-  computed: {
-    availableScales() {
-      return personalityData;
-    }
-  },
-  methods: {
-    calculatePosition(score) {
-      // Map -100 to 0% and 100 to 100%
-      return ((score + 100) / 2);
-    },
-    getScoreForScale(scale) {
-      // Return the score for the scale or 0 if not yet taken
-      return this.scores[scale.id] || 0;
-    },
-    toggleScale(scaleId) {
-      if (this.expandedScales.has(scaleId)) {
-        this.expandedScales.delete(scaleId);
-      } else {
-        this.expandedScales.add(scaleId);
-      }
-    },
-    isScaleExpanded(scaleId) {
-      return this.expandedScales.has(scaleId);
-    },
-    getTraitDescription(scale, type) {
-      if (!scale.questions) return '';
-      
-      // Get questions that are characteristic of this trait
-      const relevantQuestions = scale.questions.filter(q => 
-        type === 'positive' ? q.points > 0 : q.points < 0
-      );
-      
-      // Extract behaviors from questions
-      const behaviors = relevantQuestions
-        .map(q => q.text.toLowerCase())
-        .map(text => {
-          // Remove "I" statements and convert to descriptive form
-          return text
-            .replace(/^i /i, '')
-            .replace(/^i'm /i, 'Being ')
-            .replace(/^i've /i, 'Having ')
-            .replace(/^i'd /i, 'Preferring to ')
-            .replace(/^i'll /i, 'Tending to ');
-        });
+  setup() {
+    const {
+      getTraitIntensityText,
+      getScoreForScale,
+      getTraitDescription,
+      calculatePosition,
+      getAllScales
+    } = usePersonalityTraits();
 
-      // Join behaviors into a readable list
-      return behaviors.length > 0 
-        ? `Characterized by: ${behaviors.join('; ')}.`
-        : `No specific description available for ${type === 'positive' ? scale.positive : scale.negative}.`;
-    }
+    const expandedScales = ref(new Set());
+
+    const toggleScale = (scaleId) => {
+      if (expandedScales.value.has(scaleId)) {
+        expandedScales.value.delete(scaleId);
+      } else {
+        expandedScales.value.add(scaleId);
+      }
+      // Force reactivity update since Set mutations aren't automatically tracked
+      expandedScales.value = new Set(expandedScales.value);
+    };
+
+    return {
+      availableScales: getAllScales(),
+      getTraitIntensityText,
+      getScoreForScale,
+      getTraitDescription,
+      calculatePosition,
+      toggleScale,
+      expandedScales
+    };
   }
 }
 </script>
@@ -161,7 +147,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  padding: 1rem;
+  padding: 0 1rem 1rem 1rem;
   border-top: 1px solid #e9ecef;
   background: #f8f9fa;
 }
@@ -175,9 +161,10 @@ export default {
 }
 
 .trait-description h4 {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #495057;
   margin-bottom: 0.5rem;
+  margin-top: 0;
 }
 
 .trait-description p {
@@ -247,11 +234,11 @@ export default {
   content: '';
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 0;
   width: 2px;
-  height: 16px;
+  height: 0;
   background: #dee2e6;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0);
 }
 
 /* Score line */
@@ -279,5 +266,13 @@ export default {
 
 .scale-marker:hover {
   transform: translate(-50%, -50%) scale(1.2);
+}
+
+.trait-intensity {
+  color: #026ecd;
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+  min-height: 1.5rem;
 }
 </style> 
