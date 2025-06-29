@@ -87,7 +87,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
   font-weight: 500;
   gap: 0.5rem;
 }
@@ -117,10 +116,7 @@ export default {
 .score {
   font-weight: bold;
   color: #0d6efd;
-  background: rgba(13, 110, 253, 0.1);
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   text-align: center;
   flex-shrink: 0; /* Prevents score from shrinking */
 }
@@ -130,7 +126,6 @@ export default {
   height: 24px;
   background: #f8f9fa;
   border-radius: 12px;
-  margin: 4px 0;
 }
 
 /* Center line */
