@@ -51,22 +51,18 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async init() {
-      console.log('[Auth] Initializing auth store...');
       this.loading = true;
       try {
         // Check if there's a current user
         const currentUser = authService.getCurrentUser();
         if (currentUser) {
-          console.log('[Auth] Found existing user');
           await this.setUser(currentUser);
         } else {
-          console.log('[Auth] No existing user found');
           this.user = null;
           this.userAttributes = null;
         }
 
         // Set up auth state listener
-        console.log('[Auth] Setting up auth state listener');
         authService.onAuthStateChanged(async (user) => {
           console.log('[Auth] Auth state changed:', user ? 'logged in' : 'logged out');
           await this.setUser(user);

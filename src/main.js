@@ -22,13 +22,7 @@ async function initializeApp() {
   try {
     // Initialize auth store
     const authStore = useAuthStore();
-    console.log('[App] Auth store created, initializing...');
     await authStore.init();
-    console.log('[App] Auth store initialized, state:', {
-      loading: authStore.loading,
-      isAuthenticated: authStore.isAuthenticated,
-      user: authStore.user ? 'exists' : 'null'
-    });
     
     // Mount app
     app.mount("#app");

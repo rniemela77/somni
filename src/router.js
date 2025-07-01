@@ -80,19 +80,11 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = authStore.isAuthenticated;
   const isAuthLoading = authStore.loading;
   
-  console.log('Router guard: Auth state =', isAuthenticated ? 'authenticated' : 'not authenticated', 'loading =', isAuthLoading);
-  
   // If auth is still loading, prevent navigation by waiting until auth is ready
   if (isAuthLoading) {
-    console.log('Auth state is still loading, allowing navigation to proceed');
     // Allow the navigation to proceed - the loading screen in App.vue will handle the waiting
     next();
     return;
-  }
-  
-  // Log authentication check
-  if (requiresAuth) {
-    console.log('Route requires auth, current auth state:', isAuthenticated);
   }
 
   // Normal auth flow once loading is complete
