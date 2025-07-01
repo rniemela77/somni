@@ -28,7 +28,7 @@
         <div class="scale-content" :class="{ 'scale-content-hidden': !expandedScales.has(scale.id) }">
           <div class="trait-description">
             <div class="trait-intensity">
-              <template v-if="getScoreForScale(scale, scores) <= 0">
+              <template v-if="getScoreForScale(scale, scores) < 0">
                 User {{ getTraitIntensityText(getScoreForScale(scale, scores)) }} {{ scale.negative.toLowerCase() }}
               </template>
             </div>
