@@ -32,7 +32,7 @@ export function usePersonalityTraits() {
   };
 
   const getAllScales = () => {
-    return personalityData;
+    return personalityData.filter(scale => scale.questions && scale.questions.length > 0);
   };
 
   return {
