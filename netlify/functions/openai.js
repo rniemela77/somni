@@ -1,7 +1,9 @@
 // Netlify function to proxy OpenAI API requests
 // This ensures API keys are never exposed to the client
+const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
+
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
@@ -28,6 +30,7 @@ exports.handler = async function(event, context) {
 
     // Get API key from environment variable (set in Netlify dashboard)
     const apiKey = process.env.OPENAI_API_KEY;
+    
     if (!apiKey) {
       return {
         statusCode: 500,
@@ -46,6 +49,7 @@ exports.handler = async function(event, context) {
     // Stream is not well-supported in Netlify functions, so we'll ignore it for now
     
     console.log('Sending prompt to OpenAI:', prompt.substring(0, 100) + '...');
+    console.log('Request options:', JSON.stringify(options));
 
     // Make the request to OpenAI API
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -57,14 +61,27 @@ exports.handler = async function(event, context) {
       body: JSON.stringify(options)
     });
 
+    const responseData = await response.text();
+    console.log('Raw response:', responseData);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || 'Failed to get completion from OpenAI');
+      let errorMessage = 'Failed to get completion from OpenAI';
+      try {
+        const errorData = JSON.parse(responseData);
+        errorMessage = errorData.error?.message || errorMessage;
+      } catch (e) {
+        console.error('Error parsing error response:', e);
+      }
+      throw new Error(errorMessage);
     }
 
-    const data = await response.json();
-    console.log('Received response from OpenAI');
+    const data = JSON.parse(responseData);
+    console.log('Parsed OpenAI response successfully');
     
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response format from OpenAI');
+    }
+
     // Return the response
     return {
       statusCode: 200,

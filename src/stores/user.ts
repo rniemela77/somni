@@ -46,7 +46,6 @@ interface UserState {
   // User data
   userAttributes: Record<string, number>;
   isPaid: boolean;
-  tags: string[];
   personalityAnalysis: Record<string, any>;
   results: QuizResult[];
   
@@ -80,7 +79,6 @@ export const useUserStore = defineStore('user', {
     // User data
     userAttributes: {},
     isPaid: false,
-    tags: [],
     personalityAnalysis: {},
     results: [],
     
@@ -126,7 +124,6 @@ export const useUserStore = defineStore('user', {
           // Update store state with user data
           this.userAttributes = data.attributes || {};
           this.isPaid = data.isPaid;
-          this.tags = data.tags;
           this.personalityAnalysis = data.personalityAnalysis || {};
           this.results = data.results || [];
         }
@@ -269,7 +266,6 @@ export const useUserStore = defineStore('user', {
         const newUser = {
           id: userId,
           isPaid: false,
-          tags: [],
           attributes: {},
           personalityAnalysis: {},
           results: [],
