@@ -85,7 +85,7 @@ const router = createRouter({
 // Navigation guards with proper typing
 router.beforeEach(async (
   to: RouteLocationNormalized,
-  from: RouteLocationNormalized,
+  _from: RouteLocationNormalized,
   next: NavigationGuardNext
 ) => {
   const requiresAuth = to.matched.some(record => record.meta?.requiresAuth);
