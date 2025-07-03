@@ -16,6 +16,7 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src'), // Type-safe alias resolution
     },
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.json']
   },
   build: {
     sourcemap: true,

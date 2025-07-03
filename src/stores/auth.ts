@@ -1,11 +1,24 @@
 import { defineStore } from 'pinia';
 import { authService } from '../services/firebase-auth';
-import { UserService } from '../services/user.service';
+import { UserService, User } from '../services/user.service';
+import { User as FirebaseUser } from 'firebase/auth';
 
 const userService = new UserService();
 
+interface AuthState {
+  user: FirebaseUser | null;
+  userAttributes: Record<string, number> | null;
+  loading: boolean;
+  error: string | null;
+}
+
+interface AuthResponse {
+  success: boolean;
+  error: string | null;
+}
+
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
+  state: (): AuthState => ({
     user: null,
     userAttributes: null,
     loading: true,
@@ -13,13 +26,13 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.user,
-    userId: (state) => state.user?.uid,
-    userEmail: (state) => state.user?.email
+    isAuthenticated: (state): boolean => !!state.user,
+    userId: (state): string | undefined => state.user?.uid,
+    userEmail: (state): string | undefined => state.user?.email
   },
 
   actions: {
-    async setUser(firebaseUser) {
+    async setUser(firebaseUser: FirebaseUser | null): Promise<void> {
       this.loading = true;
       this.error = null;
       
@@ -44,13 +57,13 @@ export const useAuthStore = defineStore('auth', {
         
       } catch (error) {
         console.error('[Auth Store] Error setting user:', error);
-        this.error = error.message;
+        this.error = error instanceof Error ? error.message : 'Unknown error';
       } finally {
         this.loading = false;
       }
     },
 
-    async init() {
+    async init(): Promise<void> {
       this.loading = true;
       try {
         // Check if there's a current user
@@ -69,13 +82,13 @@ export const useAuthStore = defineStore('auth', {
         });
       } catch (error) {
         console.error('[Auth] Auth store initialization error:', error);
-        this.error = error.message;
+        this.error = error instanceof Error ? error.message : 'Unknown error';
       } finally {
         this.loading = false;
       }
     },
 
-    async signIn(email, password) {
+    async signIn(email: string, password: string): Promise<boolean> {
       this.loading = true;
       this.error = null;
       try {
@@ -88,14 +101,14 @@ export const useAuthStore = defineStore('auth', {
         return true;
       } catch (error) {
         console.error('Sign in error:', error);
-        this.error = error.message;
+        this.error = error instanceof Error ? error.message : 'Unknown error';
         return false;
       } finally {
         this.loading = false;
       }
     },
 
-    async signInWithGoogle() {
+    async signInWithGoogle(): Promise<boolean> {
       this.loading = true;
       this.error = null;
       try {
@@ -108,14 +121,14 @@ export const useAuthStore = defineStore('auth', {
         return true;
       } catch (error) {
         console.error('Google sign in error:', error);
-        this.error = error.message;
+        this.error = error instanceof Error ? error.message : 'Unknown error';
         return false;
       } finally {
         this.loading = false;
       }
     },
 
-    async signUp(email, password) {
+    async signUp(email: string, password: string): Promise<boolean> {
       this.loading = true;
       this.error = null;
       try {
@@ -128,14 +141,14 @@ export const useAuthStore = defineStore('auth', {
         return true;
       } catch (error) {
         console.error('Sign up error:', error);
-        this.error = error.message;
+        this.error = error instanceof Error ? error.message : 'Unknown error';
         return false;
       } finally {
         this.loading = false;
       }
     },
 
-    async signOut() {
+    async signOut(): Promise<boolean> {
       this.loading = true;
       this.error = null;
       try {
@@ -148,14 +161,14 @@ export const useAuthStore = defineStore('auth', {
         return true;
       } catch (error) {
         console.error('Sign out error:', error);
-        this.error = error.message;
+        this.error = error instanceof Error ? error.message : 'Unknown error';
         return false;
       } finally {
         this.loading = false;
       }
     },
 
-    async resetPassword(email) {
+    async resetPassword(email: string): Promise<boolean> {
       this.loading = true;
       this.error = null;
       try {
@@ -167,14 +180,14 @@ export const useAuthStore = defineStore('auth', {
         return success;
       } catch (error) {
         console.error('Password reset error:', error);
-        this.error = error.message;
+        this.error = error instanceof Error ? error.message : 'Unknown error';
         return false;
       } finally {
         this.loading = false;
       }
     },
 
-    setUserAttributes(attributes) {
+    setUserAttributes(attributes: Record<string, number>): void {
       this.userAttributes = attributes;
     }
   }
