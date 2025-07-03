@@ -1,11 +1,7 @@
+// @ts-nocheck
 import { defineStore } from 'pinia';
-import { UserService } from '../services/user.service';
-import { PersonalityService } from '../services/personality.service';
-import { useAuthStore } from './auth';
+import { useUserStore } from './user';
 import { quizService } from '../services/firebase-quiz';
-
-const userService = new UserService();
-const personalityService = new PersonalityService();
 
 export const useQuizStore = defineStore('quiz', {
   state: () => ({
@@ -22,8 +18,8 @@ export const useQuizStore = defineStore('quiz', {
       this.error = null;
       
       try {
-        const authStore = useAuthStore();
-        if (!authStore.isAuthenticated) {
+        const userStore = useUserStore();
+        if (!userStore.isAuthenticated) {
           throw new Error('User must be authenticated to load quizzes');
         }
 
@@ -34,10 +30,10 @@ export const useQuizStore = defineStore('quiz', {
 
         this.availableQuizzes = quizzes;
         console.log('Quizzes loaded successfully:', this.availableQuizzes);
-      } catch (err) {
-        this.error = err.message;
-        console.error('Failed to load quizzes:', err);
-        throw err;
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : String(error);
+        console.error('Failed to load quizzes:', error);
+        throw error;
       } finally {
         this.loading = false;
       }
@@ -59,10 +55,10 @@ export const useQuizStore = defineStore('quiz', {
         
         this.currentQuiz = quiz;
         return { error: null };
-      } catch (err) {
-        this.error = err.message;
-        console.error('Failed to select quiz:', err);
-        return { error: err.message };
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : String(error);
+        console.error('Failed to select quiz:', error);
+        return { error: this.error };
       } finally {
         this.loading = false;
       }
@@ -73,8 +69,8 @@ export const useQuizStore = defineStore('quiz', {
       this.error = null;
       
       try {
-        const authStore = useAuthStore();
-        if (!authStore.isAuthenticated) {
+        const userStore = useUserStore();
+        if (!userStore.isAuthenticated) {
           throw new Error('User must be authenticated to submit quiz');
         }
 
@@ -92,21 +88,21 @@ export const useQuizStore = defineStore('quiz', {
           score: score * 100 // Convert from -1..1 to -100..100 scale
         };
 
-        // Submit quiz results to personality service
-        const { error } = await personalityService.submitQuizResult(authStore.userId, results);
+        // Submit quiz results using the user store
+        const { success, error } = await userStore.submitQuizResult(results);
 
-        if (error) {
-          throw new Error(error);
+        if (!success) {
+          throw new Error(error || 'Failed to submit quiz');
         }
 
         // Update local quiz results
         this.quizResults.push(results);
         
         return { resultId: results.timestamp, error: null };
-      } catch (err) {
-        this.error = err.message;
-        console.error('Failed to submit quiz:', err);
-        return { resultId: null, error: err.message };
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : String(error);
+        console.error('Failed to submit quiz:', error);
+        return { resultId: null, error: this.error };
       } finally {
         this.loading = false;
       }
@@ -131,20 +127,16 @@ export const useQuizStore = defineStore('quiz', {
       this.error = null;
       
       try {
-        const authStore = useAuthStore();
-        if (!authStore.isAuthenticated) {
+        const userStore = useUserStore();
+        if (!userStore.isAuthenticated) {
           throw new Error('User must be authenticated to load results');
         }
 
-        const { data, error } = await personalityService.getUserPersonality(authStore.userId);
-        if (error) {
-          throw new Error(error);
-        }
-
-        this.quizResults = data.results || [];
-      } catch (err) {
-        this.error = err.message;
-        console.error('Failed to load user results:', err);
+        // Get results directly from user store
+        this.quizResults = userStore.results || [];
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : String(error);
+        console.error('Failed to load user results:', error);
       } finally {
         this.loading = false;
       }

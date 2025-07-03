@@ -6,7 +6,7 @@ import Success from "./components/Success.vue";
 import Cancel from "./components/Cancel.vue";
 import Dashboard from "./components/Dashboard.vue";
 import Account from "./components/Account.vue";
-import { useAuthStore } from "./stores/auth";
+import { useUserStore } from "./stores/user";
 
 // Define custom meta types
 interface RouteMeta {
@@ -91,13 +91,13 @@ router.beforeEach(async (
   const requiresAuth = to.matched.some(record => record.meta?.requiresAuth);
   const requiresGuest = to.matched.some(record => record.meta?.requiresGuest);
   
-  // Use the auth store for authentication check
-  const authStore = useAuthStore();
-  const isAuthenticated = authStore.isAuthenticated;
-  const isAuthLoading = authStore.loading;
+  // Use the user store for authentication check
+  const userStore = useUserStore();
+  const isAuthenticated = userStore.isAuthenticated;
+  const isLoading = userStore.loading;
   
   // If auth is still loading, prevent navigation by waiting until auth is ready
-  if (isAuthLoading) {
+  if (isLoading) {
     // Allow the navigation to proceed - the loading screen in App.vue will handle the waiting
     next();
     return;

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <!-- Personality Analysis Section for authenticated users -->
-    <div v-if="authStore.isAuthenticated" class="mb-4">
+    <div v-if="userStore.isAuthenticated" class="mb-4">
       <PersonalityDashboard />
     </div>
     
@@ -10,33 +10,22 @@
   </div>
 </template>
 
-<script>
-import { useAuthStore } from '../stores/auth';
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { useUserStore } from '../stores/user';
 import PersonalityDashboard from './PersonalityDashboard.vue';
 import LandingPage from './features/dashboard/LandingPage.vue';
-import { onMounted } from 'vue';
 
-export default {
-  name: 'Dashboard',
-  components: {
-    PersonalityDashboard,
-    LandingPage
-  },
-  setup() {
-    const authStore = useAuthStore();
+const userStore = useUserStore();
 
-    onMounted(() => {
-      console.log('[Dashboard] Auth store state:', {
-        user: authStore.user,
-        isAuthenticated: authStore.isAuthenticated,
-        userAttributes: authStore.userAttributes,
-        loading: authStore.loading
-      });
-    });
-
-    return { authStore };
-  }
-};
+onMounted(() => {
+  console.log('[Dashboard] User store state:', {
+    user: userStore.user,
+    isAuthenticated: userStore.isAuthenticated,
+    userAttributes: userStore.userAttributes,
+    loading: userStore.loading
+  });
+});
 </script>
 
 <style scoped>

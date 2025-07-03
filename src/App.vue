@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <!-- Auth Loading Screen -->
-    <div v-if="authStore.loading" class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div v-if="userStore.loading" class="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div class="spinner-border text-primary" role="status" aria-label="Loading">
       </div>
       <p class="mb-0 ms-3">Loading...</p>
@@ -29,10 +29,16 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from './stores/auth';
+import { onMounted } from 'vue';
+import { useUserStore } from './stores/user';
 import NavBar from './components/NavBar.vue'
 
-const authStore = useAuthStore();
+const userStore = useUserStore();
+
+// Initialize auth state when app starts
+onMounted(async () => {
+  await userStore.init();
+});
 </script>
 
 <style>

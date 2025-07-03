@@ -12,7 +12,7 @@
 	          </button>
 	          <div class="collapse navbar-collapse" id="navbarNav">
 	            <ul class="navbar-nav ms-auto mb-2 gap-3 mb-lg-0 align-items-center">
-	              <template v-if="!authStore.isAuthenticated">
+	              <template v-if="!userStore.isAuthenticated">
 	                <li class="nav-item">
 	                  <router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
 	                </li>
@@ -41,14 +41,14 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '../stores/auth'
+import { useUserStore } from '../stores/user'
 import { useRouter } from 'vue-router'
 
-const authStore = useAuthStore()
+const userStore = useUserStore()
 const router = useRouter()
 
-const handleSignOut = async () => {
-  const success = await authStore.signOut()
+const handleSignOut = async (): Promise<void> => {
+  const { success } = await userStore.signOut()
   if (success) {
     router.push('/signin')
   }

@@ -52,15 +52,15 @@
         <div class="card h-100">
           <div class="card-body">
             <h3 class="card-title">{{ quiz.title }}</h3>
-            <p class="card-text">{{ quiz.description }}</p>
+            <p class="card-text">{{ quiz.questions.length }} questions</p>
             
             <!-- Score Display -->
             <div v-if="getUserScore(quiz.id) !== null" class="mt-3 p-3 bg-light rounded">
               <div class="d-flex align-items-center gap-2">
-                <span class="score-badge">{{ Math.round(getUserScore(quiz.id)) }}</span>
+                <span class="score-badge">{{ Math.round(getUserScore(quiz.id) || 0) }}</span>
                 <span class="text-muted">
-                  {{ getTraitIntensityText(getUserScore(quiz.id)) }}
-                  <strong>{{ getDominantTrait(getScaleById(quiz.id), getUserScore(quiz.id)) }}</strong>
+                  {{ getTraitIntensityTextSafe(getUserScore(quiz.id)) }}
+                  <strong>{{ getDominantTraitSafe(getScaleById(quiz.id), getUserScore(quiz.id)) }}</strong>
                 </span>
               </div>
             </div>
@@ -82,85 +82,92 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useQuizStore } from '../stores/quiz';
-import { useAuthStore } from '../stores/auth';
+import { useUserStore } from '../stores/user';
 import { useRouter } from 'vue-router';
 import { usePersonalityTraits } from '../composables/usePersonalityTraits';
 
-export default {
-  name: 'QuizList',
-  setup() {
-    const router = useRouter();
-    const quizStore = useQuizStore();
-    const authStore = useAuthStore();
-    const loading = ref(false);
-    const error = ref(null);
-    const availableQuizzes = computed(() => quizStore.availableQuizzes);
+interface Quiz {
+  id: string;
+  title: string;
+  questions: {
+    id: string;
+    text: string;
+    points: number;
+  }[];
+}
 
-    const {
-      getTraitIntensityText,
-      getDominantTrait,
-      getScaleById
-    } = usePersonalityTraits();
+const router = useRouter();
+const quizStore = useQuizStore();
+const userStore = useUserStore();
+const loading = ref(false);
+const error = ref<string | null>(null);
+const availableQuizzes = computed(() => quizStore.availableQuizzes);
 
-    const getUserScore = (quizId) => {
-      const attributes = authStore.userAttributes || {};
-      return attributes[quizId] !== undefined ? attributes[quizId] : null;
-    };
+const {
+  getTraitIntensityText,
+  getDominantTrait,
+  getScaleById
+} = usePersonalityTraits();
 
-    onMounted(async () => {
-      try {
-        loading.value = true;
-        error.value = null;
-
-        // Wait for auth to be ready
-        if (authStore.loading) {
-          console.log('[QuizList] Auth is loading, waiting...');
-          await new Promise(resolve => {
-            const unsubscribe = authStore.$subscribe((mutation, state) => {
-              console.log('[QuizList] Auth state changed:', {
-                loading: state.loading,
-                isAuthenticated: state.isAuthenticated
-              });
-              if (!state.loading) {
-                unsubscribe();
-                resolve();
-              }
-            });
-          });
-        }
-
-        if (!authStore.isAuthenticated) {
-          console.log('[QuizList] User is not authenticated');
-          error.value = 'Please sign in to view quizzes';
-          return;
-        }
-
-        console.log('[QuizList] Auth ready, loading quizzes...');
-        await quizStore.loadQuizzes();
-        console.log('[QuizList] Quizzes loaded:', quizStore.availableQuizzes.length);
-      } catch (err) {
-        error.value = err.message || 'Failed to load quizzes';
-        console.error('[QuizList] Error:', err);
-      } finally {
-        loading.value = false;
-        console.log('[QuizList] Loading complete');
-      }
-    });
-
-    return {
-      availableQuizzes,
-      loading,
-      error,
-      getUserScore,
-      getTraitIntensityText,
-      getDominantTrait,
-      getScaleById
-    };
-  }
+const getUserScore = (quizId: string): number | null => {
+  const attributes = userStore.userAttributes || {};
+  return attributes[quizId] !== undefined ? attributes[quizId] : null;
 };
+
+// Helper function to safely get trait intensity text
+const getTraitIntensityTextSafe = (score: number | null): string => {
+  if (score === null) return '';
+  return getTraitIntensityText(score);
+};
+
+// Helper function to safely get dominant trait
+const getDominantTraitSafe = (scale: any, score: number | null): string => {
+  if (score === null) return '';
+  return getDominantTrait(scale, score);
+};
+
+onMounted(async () => {
+  try {
+    loading.value = true;
+    error.value = null;
+
+    // Wait for user store to be ready
+    if (userStore.loading) {
+      console.log('[QuizList] User store is loading, waiting...');
+      await new Promise<void>((resolve) => {
+        const unsubscribe = userStore.$subscribe((mutation, state) => {
+          console.log('[QuizList] User state changed:', {
+            loading: state.loading,
+            isAuthenticated: userStore.isAuthenticated
+          });
+          if (!state.loading) {
+            unsubscribe();
+            resolve();
+          }
+        });
+      });
+    }
+
+    if (!userStore.isAuthenticated) {
+      console.log('[QuizList] User is not authenticated');
+      error.value = 'Please sign in to view quizzes';
+      return;
+    }
+
+    console.log('[QuizList] Auth ready, loading quizzes...');
+    await quizStore.loadQuizzes();
+    console.log('[QuizList] Quizzes loaded:', quizStore.availableQuizzes.length);
+  } catch (err: unknown) {
+    error.value = err instanceof Error ? err.message : 'Failed to load quizzes';
+    console.error('[QuizList] Error:', err);
+  } finally {
+    loading.value = false;
+    console.log('[QuizList] Loading complete');
+  }
+});
 </script>
 
 <style scoped>

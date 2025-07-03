@@ -3,10 +3,10 @@
     <h3>Your Personality Profile</h3>
 
     <!-- Active Tags Section -->
-    <div v-if="tags.length" class="tags-section">
+    <div v-if="userStore.tags.length" class="tags-section">
       <h4>Your Personality Type</h4>
       <div class="tags-container">
-        <div v-for="tag in tags" :key="tag" class="tag">
+        <div v-for="tag in userStore.tags" :key="tag" class="tag">
           {{ tag }}
         </div>
       </div>
@@ -14,34 +14,10 @@
   </div>
 </template>
 
-<script>
-import { ref, computed, onMounted } from 'vue';
-import { PersonalityService } from '../services/personality.service';
-import { useAuthStore } from '../stores/auth';
+<script setup lang="ts">
+import { useUserStore } from '../stores/user';
 
-export default {
-  name: 'UserTags',
-  setup() {
-    const tags = ref([]);
-    const authStore = useAuthStore();
-    const personalityService = new PersonalityService();
-
-    const loadPersonality = async () => {
-      if (authStore.user) {
-        const { data, error } = await personalityService.getUserPersonality(authStore.user.uid);
-        if (data) {
-          tags.value = data.tags;
-        }
-      }
-    };
-
-    onMounted(loadPersonality);
-
-    return {
-      tags
-    };
-  }
-};
+const userStore = useUserStore();
 </script>
 
 <style scoped>
