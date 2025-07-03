@@ -2,8 +2,45 @@
 // This service handles API calls to OpenAI GPT models via Netlify Functions
 import { generateAnalysisPrompt, PERSONALITY_ANALYSIS_SECTIONS } from '../config/personalityAnalysis';
 
+interface OpenAIConfig {
+  model: string;
+  temperature: number;
+  max_tokens: number;
+  api_version: string;
+  stream: boolean;
+}
+
+interface PromptTemplate {
+  prompt1: string;
+  prompt2: string;
+  prompt3: string;
+}
+
+interface PromptTemplates {
+  personalityDescription: PromptTemplate;
+  [key: string]: PromptTemplate;
+}
+
+interface CompletionResponse {
+  completion: Record<string, string> | null;
+  error: string | null;
+  usage: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+  } | null;
+}
+
+interface OpenAIRequestBody {
+  prompt: string;
+  model: string;
+  temperature: number;
+  max_tokens: number;
+  stream: boolean;
+}
+
 // Configuration options
-const defaultOptions = {
+const defaultOptions: OpenAIConfig = {
   model: 'gpt-4',
   temperature: 0.7, // higher temperature = more creative
   max_tokens: 1000,
@@ -12,7 +49,7 @@ const defaultOptions = {
 };
 
 // Default prompt templates (legacy, will eventually be replaced by config)
-const defaultPrompts = {
+const defaultPrompts: PromptTemplates = {
   // Personality description from all quiz answers
   personalityDescription: {
     prompt1: 'Here are quiz results for someone taking a personality test. Please analyze the personality based on these responses:\n\n',
@@ -27,30 +64,33 @@ const defaultPrompts = {
 };
 
 class OpenAIService {
+  private config: OpenAIConfig;
+  private promptTemplates: PromptTemplates;
+
   constructor() {
     this.config = { ...defaultOptions };
     this.promptTemplates = { ...defaultPrompts };
   }
 
   // Update configuration
-  updateConfig(newConfig) {
+  updateConfig(newConfig: Partial<OpenAIConfig>): OpenAIConfig {
     this.config = { ...this.config, ...newConfig };
     return this.config;
   }
   
   // Reset configuration to defaults
-  resetConfig() {
+  resetConfig(): OpenAIConfig {
     this.config = { ...defaultOptions };
     return this.config;
   }
   
   // Get current configuration
-  getConfig() {
+  getConfig(): OpenAIConfig {
     return { ...this.config };
   }
   
   // Update prompt templates
-  updatePromptTemplates(template, newTemplates) {
+  updatePromptTemplates(template: string, newTemplates: Partial<PromptTemplate>): PromptTemplate | undefined {
     if (this.promptTemplates[template]) {
       this.promptTemplates[template] = { ...this.promptTemplates[template], ...newTemplates };
     }
@@ -58,7 +98,7 @@ class OpenAIService {
   }
   
   // Get prompt templates
-  getPromptTemplates(template = null) {
+  getPromptTemplates(template: string | null = null): PromptTemplates | PromptTemplate | undefined {
     if (template) {
       return { ...this.promptTemplates[template] };
     }
@@ -66,7 +106,7 @@ class OpenAIService {
   }
   
   // Reset prompt templates to defaults
-  resetPromptTemplates(template) {
+  resetPromptTemplates(template: string): PromptTemplate | undefined {
     if (defaultPrompts[template]) {
       this.promptTemplates[template] = { ...defaultPrompts[template] };
     }
@@ -74,11 +114,19 @@ class OpenAIService {
   }
   
   // Send a prompt to OpenAI via Netlify function
-  async getCompletion(prompt, customOptions = {}) {
+  async getCompletion(prompt: string, customOptions: Partial<OpenAIConfig> = {}): Promise<CompletionResponse> {
     try {
       const options = { ...this.config, ...customOptions };
       
       console.log('Sending prompt to OpenAI via Netlify function:', prompt.substring(0, 100) + '...');
+      
+      const requestBody: OpenAIRequestBody = {
+        prompt,
+        model: options.model,
+        temperature: options.temperature,
+        max_tokens: options.max_tokens,
+        stream: options.stream
+      };
       
       // Call the Netlify function instead of OpenAI directly
       const response = await fetch('/.netlify/functions/openai', {
@@ -86,13 +134,7 @@ class OpenAIService {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          prompt: prompt,
-          model: options.model,
-          temperature: options.temperature,
-          max_tokens: options.max_tokens,
-          stream: options.stream
-        })
+        body: JSON.stringify(requestBody)
       });
       
       if (!response.ok) {
@@ -110,12 +152,16 @@ class OpenAIService {
       };
     } catch (error) {
       console.error('Error calling OpenAI API via Netlify function:', error);
-      return { completion: null, error: error.message, usage: null };
+      return { 
+        completion: null, 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        usage: null 
+      };
     }
   }
   
   // Analyze personality based on attribute scores
-  async analyzePersonality(attributes) {
+  async analyzePersonality(attributes: Record<string, number>): Promise<CompletionResponse> {
     try {
       const prompt = generateAnalysisPrompt(attributes);
       
@@ -150,16 +196,16 @@ class OpenAIService {
       console.error('Error in analyzePersonality:', error);
       return {
         completion: null,
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
         usage: null
       };
     }
   }
 
   // Parse the analysis text into sections
-  parseAnalysis(text) {
-    const sections = {};
-    let currentSection = null;
+  private parseAnalysis(text: string): Record<string, string> {
+    const sections: Record<string, string> = {};
+    let currentSection: string | null = null;
     
     text.split('\n').forEach(line => {
       const trimmedLine = line.trim();
