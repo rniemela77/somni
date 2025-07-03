@@ -94,93 +94,88 @@
   </div>
 </template>
 
-<script>
-import { ref, computed } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { useQuizStore } from '../stores/quiz';
-import { useRouter } from 'vue-router';
 
-export default {
-  name: 'QuizDetail',
-  props: {
-    id: {
-      type: String,
-      required: true
+interface Props {
+  id: string;
+}
+
+interface Question {
+  id: string;
+  points: number;
+  text: string;
+}
+
+const props = defineProps<Props>();
+const quizStore = useQuizStore();
+
+const loading = ref(true);
+const error = ref<string | null>(null);
+const quizTitle = ref<string>("");
+const questions = ref<Question[]>([]);
+const answers = ref<Record<string, string>>({});
+const message = ref<string>("");
+const isSubmitting = ref(false);
+const submissionSuccess = ref(false);
+
+const loadQuiz = async () => {
+  loading.value = true;
+  error.value = null;
+  
+  try {
+    const result = await quizStore.selectQuiz(props.id);
+    if (result.error) {
+      error.value = result.error;
+      return;
     }
-  },
-  setup(props) {
-    const router = useRouter();
-    const quizStore = useQuizStore();
-    const loading = ref(true);
-    const error = ref(null);
-    const quizTitle = ref("");
-    const questions = ref([]);
-    const answers = ref({});
-    const message = ref("");
-    const isSubmitting = ref(false);
-    const submissionSuccess = ref(false);
 
-    const loadQuiz = async () => {
-      loading.value = true;
-      error.value = null;
-      
-      try {
-        const result = await quizStore.selectQuiz(props.id);
-        if (result.error) {
-          error.value = result.error;
-          return;
-        }
+    if (!quizStore.currentQuiz) {
+      throw new Error('Quiz not found');
+    }
 
-        quizTitle.value = quizStore.currentQuiz.title;
-        questions.value = quizStore.currentQuiz.questions;
-        // Initialize all answers to 0 (neutral/sometimes)
-        answers.value = questions.value.reduce((acc, q) => {
-          acc[q.id] = "0";
-          return acc;
-        }, {});
-        message.value = "";
-      } catch (err) {
-        error.value = "Failed to load quiz. Please try again.";
-        console.error('Error loading quiz:', err);
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    const submitQuiz = async () => {
-      isSubmitting.value = true;
-      message.value = "";
-
-      const { resultId, error } = await quizStore.submitQuiz(answers.value);
-
-      if (error) {
-        message.value = "Error submitting quiz. Please try again.";
-        submissionSuccess.value = false;
-      } else {
-        message.value = "Quiz submitted successfully!";
-        submissionSuccess.value = true;
-        await quizStore.loadUserResults();
-      }
-
-      isSubmitting.value = false;
-    };
-
-    loadQuiz();
-
-    return {
-      quizStore,
-      loading,
-      error,
-      quizTitle,
-      questions,
-      answers,
-      message,
-      isSubmitting,
-      submissionSuccess,
-      submitQuiz,
-      loadQuiz
-    };
+    quizTitle.value = quizStore.currentQuiz.title || '';
+    questions.value = quizStore.currentQuiz.questions || [];
+    // Initialize all answers to 0 (neutral/sometimes)
+    answers.value = questions.value.reduce<Record<string, string>>((acc, q) => {
+      acc[q.id] = "0";
+      return acc;
+    }, {});
+    message.value = "";
+  } catch (err) {
+    error.value = "Failed to load quiz. Please try again.";
+    console.error('Error loading quiz:', err);
+  } finally {
+    loading.value = false;
   }
 };
+
+const submitQuiz = async () => {
+  isSubmitting.value = true;
+  message.value = "";
+
+  try {
+    const { error: submitError } = await quizStore.submitQuiz(answers.value);
+
+    if (submitError) {
+      message.value = "Error submitting quiz. Please try again.";
+      submissionSuccess.value = false;
+    } else {
+      message.value = "Quiz submitted successfully!";
+      submissionSuccess.value = true;
+      await quizStore.loadUserResults();
+    }
+  } catch (err) {
+    message.value = err instanceof Error ? err.message : "An error occurred";
+    submissionSuccess.value = false;
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+// Load quiz on component mount
+loadQuiz();
 </script>
 
 <style scoped>
