@@ -11,20 +11,19 @@ import {
 } from "firebase/firestore";
 
 // Define types for quiz data
-interface Quiz {
+export interface Quiz {
   id: string;
   title?: string;
   description?: string;
   questions?: any[];
-  [key: string]: any; // Allow for additional properties
 }
 
-interface QuizzesResponse {
+export interface QuizzesResponse {
   quizzes: Quiz[];
   error: string | null;
 }
 
-interface QuizResponse {
+export interface QuizResponse {
   quiz: Quiz | null;
   error: string | null;
 }

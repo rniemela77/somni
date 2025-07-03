@@ -4,7 +4,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { onMounted } from 'vue';
 import { useQuizStore } from '../stores/quiz';
 

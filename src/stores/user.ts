@@ -23,7 +23,7 @@ import {
 } from 'firebase/firestore';
 import { PERSONALITY_ANALYSIS_SECTIONS } from '../config/personalityAnalysis';
 
-interface QuizResult {
+export interface QuizResult {
   quizId: string;
   attribute: string;
   timestamp: string;
