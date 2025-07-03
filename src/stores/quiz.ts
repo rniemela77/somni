@@ -1,10 +1,25 @@
-// @ts-nocheck
 import { defineStore } from 'pinia';
 import { useUserStore } from './user';
 import { quizService } from '../services/firebase-quiz';
+import type { Quiz } from '../services/firebase-quiz';
+import type { QuizResult } from './user';
+
+interface Question {
+  id: string;
+  points: number;
+  text: string;
+}
+
+interface State {
+  currentQuiz: Quiz | null;
+  quizResults: QuizResult[];
+  availableQuizzes: Quiz[];
+  loading: boolean;
+  error: string | null;
+}
 
 export const useQuizStore = defineStore('quiz', {
-  state: () => ({
+  state: (): State => ({
     currentQuiz: null,
     quizResults: [],
     availableQuizzes: [],
@@ -13,7 +28,7 @@ export const useQuizStore = defineStore('quiz', {
   }),
   
   actions: {
-    async loadQuizzes() {
+    async loadQuizzes(): Promise<void> {
       this.loading = true;
       this.error = null;
       
@@ -23,12 +38,12 @@ export const useQuizStore = defineStore('quiz', {
           throw new Error('User must be authenticated to load quizzes');
         }
 
-        const { quizzes, error } = await quizService.getAllQuizzes();
-        if (error) {
-          throw new Error(error);
+        const response = await quizService.getAllQuizzes();
+        if (response.error) {
+          throw new Error(response.error);
         }
 
-        this.availableQuizzes = quizzes;
+        this.availableQuizzes = response.quizzes || [];
         console.log('Quizzes loaded successfully:', this.availableQuizzes);
       } catch (error) {
         this.error = error instanceof Error ? error.message : String(error);
@@ -39,21 +54,21 @@ export const useQuizStore = defineStore('quiz', {
       }
     },
 
-    async selectQuiz(quizId) {
+    async selectQuiz(quizId: string): Promise<{ error: string | null }> {
       this.loading = true;
       this.error = null;
       
       try {
-        const { quiz, error } = await quizService.getQuizById(quizId);
-        if (error) {
-          throw new Error(error);
+        const response = await quizService.getQuizById(quizId);
+        if (response.error) {
+          throw new Error(response.error);
         }
         
-        if (!quiz) {
+        if (!response.quiz) {
           throw new Error(`Quiz with ID ${quizId} not found`);
         }
         
-        this.currentQuiz = quiz;
+        this.currentQuiz = response.quiz;
         return { error: null };
       } catch (error) {
         this.error = error instanceof Error ? error.message : String(error);
@@ -64,7 +79,7 @@ export const useQuizStore = defineStore('quiz', {
       }
     },
 
-    async submitQuiz(answers) {
+    async submitQuiz(answers: Record<string, string>): Promise<{ resultId: string | null; error: string | null }> {
       this.loading = true;
       this.error = null;
       
@@ -80,7 +95,7 @@ export const useQuizStore = defineStore('quiz', {
 
         // Calculate quiz results
         const score = this.calculateScore(answers);
-        const results = {
+        const results: QuizResult = {
           quizId: this.currentQuiz.id,
           attribute: this.currentQuiz.id,
           timestamp: new Date().toISOString(),
@@ -108,12 +123,12 @@ export const useQuizStore = defineStore('quiz', {
       }
     },
 
-    calculateScore(answers) {
+    calculateScore(answers: Record<string, string>): number {
       if (!this.currentQuiz || !this.currentQuiz.questions) {
         return 0;
       }
 
-      return this.currentQuiz.questions.reduce((total, question) => {
+      return this.currentQuiz.questions.reduce((total: number, question: Question) => {
         const answer = parseFloat(answers[question.id]) || 0;
         // Normalize answer from -100 to 100 scale to -1 to 1 scale
         const normalizedAnswer = answer / 100;
@@ -122,7 +137,7 @@ export const useQuizStore = defineStore('quiz', {
       }, 0);
     },
 
-    async loadUserResults() {
+    async loadUserResults(): Promise<void> {
       this.loading = true;
       this.error = null;
       

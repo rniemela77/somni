@@ -1,6 +1,27 @@
 import personalityData from '../../data/personalityData';
 
-export const PERSONALITY_ANALYSIS_SECTIONS = {
+export interface PersonalitySection {
+  id: string;
+  title: string;
+  description: string;
+  promptInstructions: string;
+  display: {
+    order: number;
+  };
+}
+
+export interface PersonalityScale {
+  id: string;
+  displayName: string;
+  positive: string;
+  negative: string;
+}
+
+export interface PersonalityAttributes {
+  [key: string]: number;
+}
+
+export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> = {
   core: {
     id: "core",
     title: "Core Personality",
@@ -42,7 +63,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
 /**
  * Generates the OpenAI prompt based on attribute scores
  */
-export const generateAnalysisPrompt = (attributes) => {
+export const generateAnalysisPrompt = (attributes: PersonalityAttributes): string => {
   let prompt = 'Here is a personality profile based on various psychological scales. Each scale ranges from -100 to +100, where:\n\n';
   prompt += '- Negative values (-100 to -1) indicate stronger alignment with the first trait\n';
   prompt += '- Positive values (1 to 100) indicate stronger alignment with the second trait\n';
@@ -56,12 +77,13 @@ export const generateAnalysisPrompt = (attributes) => {
       prompt += `${scale.displayName}: ${value} `;
       
       const absValue = Math.abs(value);
-      let intensity;
+      let intensity: string;
       if (absValue >= 80) intensity = "extremely";
       else if (absValue >= 60) intensity = "strongly";
       else if (absValue >= 40) intensity = "moderately";
       else if (absValue >= 20) intensity = "somewhat";
       else if (absValue > 0) intensity = "slightly";
+      else intensity = "";
       
       if (value < 0) {
         prompt += `(${intensity} more ${scale.negative} than ${scale.positive})`;

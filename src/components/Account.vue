@@ -43,8 +43,8 @@
               <p class="subscription-info">
                 You have full access to all premium features. Thank you for your support!
               </p>
-              <p class="subscription-date text-muted" v-if="userStore.premiumPurchaseDate">
-                Purchased on {{ formatDate(userStore.premiumPurchaseDate.toDate()) }}
+              <p class="subscription-date text-muted" v-if="userStore.user?.metadata?.creationTime">
+                Purchased on {{ formatDate(userStore.user.metadata.creationTime) }}
               </p>
             </div>
             
@@ -105,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { useUserStore } from '../stores/user';
 import { useRoute, useRouter } from 'vue-router';
 import { computed, ref, onMounted } from 'vue';
@@ -116,9 +116,9 @@ const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_you
 const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
-const stripePromise = ref(null);
+const stripePromise = ref<Promise<Stripe | null> | null>(null);
 const isLoading = ref(false);
-const paymentError = ref(null);
+const paymentError = ref<string | null>(null);
 const paymentSuccess = ref(false);
 const paymentSuccessMessage = ref('Your premium access has been activated successfully. Enjoy all the benefits!');
 

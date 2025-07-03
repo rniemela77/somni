@@ -52,7 +52,7 @@
         <div class="card h-100">
           <div class="card-body">
             <h3 class="card-title">{{ quiz.title }}</h3>
-            <p class="card-text">{{ quiz.questions.length }} questions</p>
+            <p class="card-text">{{ quiz.questions?.length || 0 }} questions</p>
             
             <!-- Score Display -->
             <div v-if="getUserScore(quiz.id) !== null" class="mt-3 p-3 bg-light rounded">
@@ -86,20 +86,9 @@
 import { computed, onMounted, ref } from 'vue';
 import { useQuizStore } from '../stores/quiz';
 import { useUserStore } from '../stores/user';
-import { useRouter } from 'vue-router';
 import { usePersonalityTraits } from '../composables/usePersonalityTraits';
+import type { ExtendedPersonalityScale } from '../composables/usePersonalityTraits';
 
-interface Quiz {
-  id: string;
-  title: string;
-  questions: {
-    id: string;
-    text: string;
-    points: number;
-  }[];
-}
-
-const router = useRouter();
 const quizStore = useQuizStore();
 const userStore = useUserStore();
 const loading = ref(false);
@@ -124,9 +113,10 @@ const getTraitIntensityTextSafe = (score: number | null): string => {
 };
 
 // Helper function to safely get dominant trait
-const getDominantTraitSafe = (scale: any, score: number | null): string => {
-  if (score === null) return '';
-  return getDominantTrait(scale, score);
+const getDominantTraitSafe = (scale: ExtendedPersonalityScale | undefined | null, score: number | null): string => {
+  if (score === null || !scale) return '';
+  const trait = getDominantTrait(scale, score);
+  return trait || '';
 };
 
 onMounted(async () => {
@@ -138,7 +128,7 @@ onMounted(async () => {
     if (userStore.loading) {
       console.log('[QuizList] User store is loading, waiting...');
       await new Promise<void>((resolve) => {
-        const unsubscribe = userStore.$subscribe((mutation, state) => {
+        const unsubscribe = userStore.$subscribe((_mutation, state) => {
           console.log('[QuizList] User state changed:', {
             loading: state.loading,
             isAuthenticated: userStore.isAuthenticated

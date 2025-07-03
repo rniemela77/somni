@@ -1,6 +1,6 @@
 // OpenAI API service for interacting with GPT models
 // This service handles API calls to OpenAI GPT models via Netlify Functions
-import { generateAnalysisPrompt, PERSONALITY_ANALYSIS_SECTIONS } from '../config/personalityAnalysis';
+import { generateAnalysisPrompt, PERSONALITY_ANALYSIS_SECTIONS, type PersonalitySection } from '../config/personalityAnalysis';
 
 interface OpenAIConfig {
   model: string;
@@ -21,7 +21,7 @@ interface PromptTemplates {
   [key: string]: PromptTemplate;
 }
 
-interface CompletionResponse {
+export interface CompletionResponse {
   completion: Record<string, string> | null;
   error: string | null;
   usage: {
@@ -204,29 +204,19 @@ class OpenAIService {
 
   // Parse the analysis text into sections
   private parseAnalysis(text: string): Record<string, string> {
-    const sections: Record<string, string> = {};
-    let currentSection: string | null = null;
-    
-    text.split('\n').forEach(line => {
-      const trimmedLine = line.trim();
-      if (!trimmedLine) return;
-      
-      // Check if this line is a section header
-      const sectionMatch = Object.values(PERSONALITY_ANALYSIS_SECTIONS).find(
-        section => trimmedLine.startsWith(section.title + ':')
-      );
-      
-      if (sectionMatch) {
-        currentSection = sectionMatch.id;
-        sections[currentSection] = trimmedLine.substring(sectionMatch.title.length + 1).trim();
-      } else if (currentSection && trimmedLine) {
-        // Append to current section if it's a continuation
-        sections[currentSection] += ' ' + trimmedLine;
-      }
+    const sections = Object.values(PERSONALITY_ANALYSIS_SECTIONS) as PersonalitySection[];
+    const result: Record<string, string> = {};
+
+    sections.forEach((section: PersonalitySection) => {
+      const sectionTitle = section.title;
+      const regex = new RegExp(`${sectionTitle}:\\s*(.+?)(?=\\n\\n|$)`, 's');
+      const match = text.match(regex);
+      result[section.id] = match ? match[1].trim() : '';
     });
-    
-    return sections;
+
+    return result;
   }
 }
 
+// Export a singleton instance
 export const openaiService = new OpenAIService(); 
