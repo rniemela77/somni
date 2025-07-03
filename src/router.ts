@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw, NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 import SignUp from "./components/SignUp.vue";
 import SignIn from "./components/SignIn.vue";
 import Quiz from "./components/Quiz.vue";
@@ -8,7 +8,19 @@ import Dashboard from "./components/Dashboard.vue";
 import Account from "./components/Account.vue";
 import { useAuthStore } from "./stores/auth";
 
-const routes = [
+// Define custom meta types
+interface RouteMeta {
+  requiresAuth?: boolean;
+  requiresGuest?: boolean;
+}
+
+// Extend the route record type to include our custom meta
+type AppRouteRecord = RouteRecordRaw & {
+  meta?: RouteMeta;
+  children?: AppRouteRecord[];
+};
+
+const routes: AppRouteRecord[] = [
   { 
     path: "/", 
     component: Dashboard,
@@ -70,10 +82,14 @@ const router = createRouter({
   routes,
 });
 
-// Navigation guards
-router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const requiresGuest = to.matched.some(record => record.meta.requiresGuest);
+// Navigation guards with proper typing
+router.beforeEach(async (
+  to: RouteLocationNormalized,
+  from: RouteLocationNormalized,
+  next: NavigationGuardNext
+) => {
+  const requiresAuth = to.matched.some(record => record.meta?.requiresAuth);
+  const requiresGuest = to.matched.some(record => record.meta?.requiresGuest);
   
   // Use the auth store for authentication check
   const authStore = useAuthStore();
@@ -98,4 +114,4 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-export default router;
+export default router; 
