@@ -4,32 +4,32 @@
       <div v-for="scale in availableScales" :key="scale.id" class="scale-item">
         <button class="scale-header" @click="toggleScale(scale.id)">
           <div class="scale-labels">
-            <span class="negative-label" :class="{ 'label--dominant': getScoreForScale(scale, scores) < 0 }">{{ scale.negative }}</span>
-            <span class="score">{{ Math.round(getScoreForScale(scale, scores)) }}</span>
-            <span class="positive-label" :class="{ 'label--dominant': getScoreForScale(scale, scores) > 0 }">{{ scale.positive }}</span>
+            <span class="negative-label" :class="{ 'label--dominant': getScoreForScale(scale, props.scores) < 0 }">{{ scale.negative }}</span>
+            <span class="score">{{ Math.round(getScoreForScale(scale, props.scores)) }}</span>
+            <span class="positive-label" :class="{ 'label--dominant': getScoreForScale(scale, props.scores) > 0 }">{{ scale.positive }}</span>
           </div>
           <div class="scale-bar">
             <div class="scale-line"></div>
             <!-- Score line from center -->
             <div class="scale-value" 
                  :style="{ 
-                   width: Math.abs(getScoreForScale(scale, scores)) / 2 + '%',
-                   left: getScoreForScale(scale, scores) >= 0 ? '50%' : 'auto',
-                   right: getScoreForScale(scale, scores) < 0 ? '50%' : 'auto'
+                   width: Math.abs(getScoreForScale(scale, props.scores)) / 2 + '%',
+                   left: getScoreForScale(scale, props.scores) >= 0 ? '50%' : 'auto',
+                   right: getScoreForScale(scale, props.scores) < 0 ? '50%' : 'auto'
                  }">
             </div>
             <!-- Score marker -->
             <div class="scale-marker" 
-                 :style="{ left: calculatePosition(getScoreForScale(scale, scores)) + '%' }"
-                 :title="`Score: ${Math.round(getScoreForScale(scale, scores))}`">
+                 :style="{ left: calculatePosition(getScoreForScale(scale, props.scores)) + '%' }"
+                 :title="`Score: ${Math.round(getScoreForScale(scale, props.scores))}`">
             </div>
           </div>
         </button>
         <div class="scale-content" :class="{ 'scale-content-hidden': !expandedScales.has(scale.id) }">
           <div class="trait-description">
             <div class="trait-intensity">
-              <template v-if="getScoreForScale(scale, scores) < 0">
-                User {{ getTraitIntensityText(getScoreForScale(scale, scores)) }} {{ scale.negative.toLowerCase() }}
+              <template v-if="getScoreForScale(scale, props.scores) < 0">
+                User {{ getTraitIntensityText(getScoreForScale(scale, props.scores)) }} {{ scale.negative.toLowerCase() }}
               </template>
             </div>
             <h4>{{ scale.negative }}</h4>
@@ -37,8 +37,8 @@
           </div>
           <div class="trait-description">
             <div class="trait-intensity">
-              <template v-if="getScoreForScale(scale, scores) > 0">
-                User {{ getTraitIntensityText(getScoreForScale(scale, scores)) }} {{ scale.positive.toLowerCase() }}
+              <template v-if="getScoreForScale(scale, props.scores) > 0">
+                User {{ getTraitIntensityText(getScoreForScale(scale, props.scores)) }} {{ scale.positive.toLowerCase() }}
               </template>
             </div>
             <h4>{{ scale.positive }}</h4>
@@ -50,50 +50,36 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { usePersonalityTraits } from '../composables/usePersonalityTraits';
 
-export default {
-  name: 'PersonalityScales',
-  props: {
-    scores: {
-      type: Object,
-      required: true
-    }
-  },
-  setup() {
-    const {
-      getTraitIntensityText,
-      getScoreForScale,
-      getTraitDescription,
-      calculatePosition,
-      getAllScales
-    } = usePersonalityTraits();
-
-    const expandedScales = ref(new Set());
-
-    const toggleScale = (scaleId) => {
-      if (expandedScales.value.has(scaleId)) {
-        expandedScales.value.delete(scaleId);
-      } else {
-        expandedScales.value.add(scaleId);
-      }
-      // Force reactivity update since Set mutations aren't automatically tracked
-      expandedScales.value = new Set(expandedScales.value);
-    };
-
-    return {
-      availableScales: getAllScales(),
-      getTraitIntensityText,
-      getScoreForScale,
-      getTraitDescription,
-      calculatePosition,
-      toggleScale,
-      expandedScales
-    };
-  }
+interface Props {
+  scores: Record<string, number>;
 }
+
+const props = defineProps<Props>();
+
+const {
+  getTraitIntensityText,
+  getScoreForScale,
+  getTraitDescription,
+  calculatePosition,
+  getAllScales
+} = usePersonalityTraits();
+
+const expandedScales = ref<Set<string>>(new Set());
+const availableScales = getAllScales();
+
+const toggleScale = (scaleId: string) => {
+  if (expandedScales.value.has(scaleId)) {
+    expandedScales.value.delete(scaleId);
+  } else {
+    expandedScales.value.add(scaleId);
+  }
+  // Force reactivity update since Set mutations aren't automatically tracked
+  expandedScales.value = new Set(expandedScales.value);
+};
 </script>
 
 <style scoped>

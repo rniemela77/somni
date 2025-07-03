@@ -48,9 +48,9 @@ import { useUserStore } from '../stores/user';
 
 const userStore = useUserStore();
 const dashboardLoading = ref(true);
-const parsedFeeling = ref({});
+const parsedFeeling = ref<Record<string, string>>({});
 const generatingDescription = ref(false);
-const error = ref(null);
+const error = ref<string | null>(null);
 
 const loadPersonalityData = async () => {
   if (userStore.loading) {
@@ -117,10 +117,14 @@ const generateDescription = async () => {
     }
 
     // Generate personality analysis based on attributes
-    const { completion, error: analysisError, usage } = await openaiService.analyzePersonality(attributes);
+    const { completion, error: analysisError } = await openaiService.analyzePersonality(attributes);
     
     if (analysisError) {
       throw new Error(analysisError);
+    }
+
+    if (!completion) {
+      throw new Error('Failed to generate personality analysis');
     }
 
     // Update the parsedFeeling ref
