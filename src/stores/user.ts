@@ -163,7 +163,7 @@ export const useUserStore = defineStore('user', {
     },
 
     // Authentication Methods with Navigation
-    async handleAuthAction(action: () => Promise<any>, redirectPath = '/quiz') {
+    async handleAuthAction(action: () => Promise<any>) {
       if (this.isProcessing) return { success: false, error: 'Already processing' };
       
       this.isProcessing = true;
@@ -235,7 +235,7 @@ export const useUserStore = defineStore('user', {
           this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
           return { success: false, error: this.error };
         }
-      }, '/signin');
+      });
     },
 
     async resetPassword(email?: string) {
