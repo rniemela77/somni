@@ -2,10 +2,9 @@
   <div class="app">
     <!-- Auth Loading Screen -->
     <div v-if="authStore.loading" class="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <div class="spinner-border text-primary" role="status" aria-label="Loading">
       </div>
-      <p class="ms-3">Loading...</p>
+      <p class="mb-0 ms-3">Loading...</p>
     </div>
     
     <!-- Main App Content -->
