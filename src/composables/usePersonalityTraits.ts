@@ -12,7 +12,7 @@ interface TraitDescriptions {
 }
 
 // Extend PersonalityScale to include optional traitDescriptions and questions
-interface ExtendedPersonalityScale extends PersonalityScale {
+export interface ExtendedPersonalityScale extends PersonalityScale {
   traitDescriptions?: TraitDescriptions;
   questions?: Array<any>; // Replace 'any' with proper Question interface if available
 }
