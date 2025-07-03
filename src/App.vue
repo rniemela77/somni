@@ -19,11 +19,7 @@
         </router-view>
       </main>
 
-      <footer class="bg-light py-3">
-        <div class="container text-center">
-          <p class="mb-0">&copy; {{ new Date().getFullYear() }} Somni Personality Analyzer. Created by Robert Niemela - rvniemela@hotmail.com</p>
-        </div>
-      </footer>
+      <Footer />
     </template>
   </div>
 </template>
@@ -32,6 +28,7 @@
 import { onMounted } from 'vue';
 import { useUserStore } from './stores/user';
 import NavBar from './components/NavBar.vue'
+import Footer from './Footer.vue'
 
 const userStore = useUserStore();
 
