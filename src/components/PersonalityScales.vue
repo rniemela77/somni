@@ -1,5 +1,5 @@
 <template>
-  <div class="personality-scales">
+  <div>
     <div class="scales-container">
       <div v-for="scale in availableScales" :key="scale.id" class="scale-item">
         <button class="scale-header" @click="toggleScale(scale.id)">
@@ -83,9 +83,6 @@ const toggleScale = (scaleId: string) => {
 </script>
 
 <style scoped>
-.personality-scales {
-  padding: 1rem;
-}
 
 .scales-title {
   font-size: 24px;
