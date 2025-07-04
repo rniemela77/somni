@@ -9,32 +9,23 @@
 
     <div v-else>
       <h3 class="text-center mb-4">Your Personality Dashboard</h3>
-      
+
       <!-- No quizzes message -->
       <div v-if="noQuizzesCompleted" class="alert alert-warning mb-4">
         No quizzes completed yet. <router-link to="/quiz">Take a quiz now</router-link>
       </div>
-      
-      <!-- Add Scales -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <PersonalityScales 
-            :scores="attributeScores"
-          />
-        </div>
-      </div>
+
+      <PersonalityScales :scores="attributeScores" class="mb-5"/>
+
+      <h3 class="text-center">Deeper Analysis</h3>
 
       <div class="text-center mb-4">
-        <button @click="generateDescription" 
-                class="btn btn-outline-primary"
-                :disabled="buttonDisabled">
-            {{ generateButtonText }}
+        <button @click="generateDescription" class="btn btn-outline-primary" :disabled="buttonDisabled">
+          {{ generateButtonText }}
         </button>
       </div>
 
-      <PersonalityAnalysisSection 
-        :parsedFeeling="parsedFeeling"
-      />
+      <PersonalityAnalysisSection :parsedFeeling="parsedFeeling" />
     </div>
   </div>
 </template>
@@ -57,7 +48,7 @@ const loadPersonalityData = async () => {
     console.log('User store still loading, delaying loadPersonalityData');
     return;
   }
-  
+
   if (!userStore.isAuthenticated) {
     console.error("User not logged in");
     return;
@@ -89,7 +80,7 @@ onMounted(async () => {
 // Computed properties
 const attributeScores = computed(() => userStore.userAttributes || {});
 
-const generateButtonText = computed(() => 
+const generateButtonText = computed(() =>
   generatingDescription.value ? 'GENERATING...' : 'GENERATE NEW ANALYSIS'
 );
 
@@ -98,7 +89,7 @@ const noQuizzesCompleted = computed(() => {
   return !attributes || Object.keys(attributes).length === 0;
 });
 
-const buttonDisabled = computed(() => 
+const buttonDisabled = computed(() =>
   generatingDescription.value || noQuizzesCompleted.value
 );
 
@@ -110,7 +101,7 @@ const generateDescription = async () => {
   try {
     // Get the user's attribute scores
     const attributes = attributeScores.value;
-    
+
     // Check if we have any attributes to analyze
     if (Object.keys(attributes).length === 0) {
       throw new Error('No personality attributes found. Please take some quizzes first.');
@@ -118,7 +109,7 @@ const generateDescription = async () => {
 
     // Generate personality analysis based on attributes
     const { completion, error: analysisError } = await openaiService.analyzePersonality(attributes);
-    
+
     if (analysisError) {
       throw new Error(analysisError);
     }
@@ -135,7 +126,7 @@ const generateDescription = async () => {
       const { success, error: updateError } = await userStore.updatePersonalityAnalysis({
         personalityAnalysis: completion
       });
-      
+
       if (!success) {
         console.error("Error saving personality analysis:", updateError);
       }

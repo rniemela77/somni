@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div class="app-container shadow rounded-5">
     <!-- Auth Loading Screen -->
     <div v-if="userStore.loading" class="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div class="spinner-border text-primary" role="status" aria-label="Loading">
@@ -11,7 +11,7 @@
     <template v-else>
       <NavBar />
 
-      <main class="container my-5 mt-5">
+      <main>
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
@@ -22,6 +22,10 @@
       <Footer />
     </template>
   </div>
+
+  <!-- <div class="app-bg"></div> -->
+
+  <AppBackground />
 </template>
 
 <script setup lang="ts">
@@ -29,6 +33,7 @@ import { onMounted } from 'vue';
 import { useUserStore } from './stores/user';
 import NavBar from './components/NavBar.vue'
 import Footer from './Footer.vue'
+import AppBackground from './AppBackground.vue'
 
 const userStore = useUserStore();
 
@@ -37,11 +42,3 @@ onMounted(async () => {
   await userStore.init();
 });
 </script>
-
-<style>
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-</style>
