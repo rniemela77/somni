@@ -23,7 +23,6 @@
   for = "/*"
     [headers.values]
     Access-Control-Allow-Origin = "*"
-    Content-Type = "application/javascript"
 
 [[redirects]]
   from = "/*"
