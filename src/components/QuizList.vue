@@ -65,10 +65,10 @@
               </div>
             </div>
           </div>
-          <div class="card-footer text-center">
+          <div class="card-footer text-center p-0 border-0">
             <button 
               :class="[
-                'btn w-100',
+                'btn w-100 rounded-3',
                 getUserScore(quiz.id) !== null ? 'btn-link text-primary text-decoration-none' : 'btn-primary'
               ]"
               @click="$router.push({ name: 'quiz-detail', params: { id: quiz.id }})">
