@@ -57,8 +57,10 @@
                          required />
                 </div>
                 
-                <div class="slider-value text-center mt-2">
-                  <small class="text-muted">Current value: {{ answers[question.id] }}</small>
+                <div class="slider-value text-center">
+                  <div class="score-label">
+                    <strong>{{ getScoreLabel(answers[question.id]) }}</strong>
+                  </div>
                 </div>
               </div>
             </div>
@@ -174,6 +176,18 @@ const submitQuiz = async () => {
   }
 };
 
+const getScoreLabel = (score: string | number): string => {
+  const numScore = parseFloat(score.toString());
+  
+  if (numScore >= 75) return "Almost Always";
+  if (numScore >= 40) return "Frequently";
+  if (numScore >= 10) return "Often";
+  if (numScore >= -9) return "Sometimes";
+  if (numScore >= -39) return "Seldom";
+  if (numScore >= -74) return "Rarely";
+  return "Almost Never";
+};
+
 // Load quiz on component mount
 loadQuiz();
 </script>
@@ -189,7 +203,7 @@ loadQuiz();
   background: #e9ecef;
   border-radius: 16px;
   position: relative;
-  margin: 1.5rem 0;
+  margin: 0.5rem 0 1rem;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
@@ -316,25 +330,25 @@ loadQuiz();
 }
 
 .slider-value {
-  position: absolute;
-  top: -2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #4facfe;
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
   font-size: 0.875rem;
   font-weight: 500;
-  opacity: 0;
+  opacity: 1;
   transition: all 0.2s ease;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .form-range:hover + .slider-value,
 .form-range:focus + .slider-value {
   opacity: 1;
-  top: -2.5rem;
+  top: auto;
 }
 
 .slider-container::after {
@@ -347,5 +361,12 @@ loadQuiz();
   height: 32px;
   background-color: rgba(0,0,0,0.1);
   pointer-events: none;
+}
+
+.score-label {
+  color: #3B3B3B;
+  font-size: 1.1rem;
+  font-weight: 100;
+  font-style: italic;
 }
 </style> 
