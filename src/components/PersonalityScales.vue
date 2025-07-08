@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { usePersonalityTraits } from '../composables/usePersonalityTraits';
 
 interface Props {
@@ -69,7 +69,16 @@ const {
 } = usePersonalityTraits();
 
 const expandedScales = ref<Set<string>>(new Set());
-const availableScales = getAllScales();
+const allScales = getAllScales();
+
+// Sort scales by absolute score value (prominence)
+const availableScales = computed(() => {
+  return [...allScales].sort((a, b) => {
+    const scoreA = Math.abs(getScoreForScale(a, props.scores));
+    const scoreB = Math.abs(getScoreForScale(b, props.scores));
+    return scoreB - scoreA; // Sort in descending order
+  });
+});
 
 const toggleScale = (scaleId: string) => {
   if (expandedScales.value.has(scaleId)) {
@@ -127,16 +136,26 @@ const toggleScale = (scaleId: string) => {
 }
 
 .scale-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   padding: 0 1rem 1rem 1rem;
   border-top: 1px solid #e9ecef;
   background: #f8f9fa;
+  max-height: 500px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+}
+
+.scale-content > * {
+  flex: 1 1 300px;
 }
 
 .scale-content-hidden {
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  padding: 0 1rem;
 }
 
 .trait-description {

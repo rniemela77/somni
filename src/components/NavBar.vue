@@ -78,6 +78,11 @@ const handleSignOut = async (): Promise<void> => {
 	margin-left: 0.3rem;
 }
 
+.navbar-toggler {
+	height: 64px;
+	width: 64px;
+}
+
 a.active {
 	position: relative;
 	&:after {	
