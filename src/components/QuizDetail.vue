@@ -32,9 +32,9 @@
               
               <div class="slider-container">
                 <div class="slider-labels d-flex justify-content-between mb-2">
-                  <span>Almost Never (-100)</span>
-                  <span>Sometimes (0)</span>
-                  <span>Almost Always (+100)</span>
+                  <span>Almost Never</span>
+                  <span>Sometimes</span>
+                  <span>Almost Always</span>
                 </div>
                 
                 <div class="slider-track position-relative">
