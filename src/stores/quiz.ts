@@ -16,6 +16,9 @@ interface State {
   availableQuizzes: Quiz[];
   loading: boolean;
   error: string | null;
+  // Cache management
+  dataLoaded: boolean;
+  lastFetch: number | null;
 }
 
 export const useQuizStore = defineStore('quiz', {
@@ -24,11 +27,19 @@ export const useQuizStore = defineStore('quiz', {
     quizResults: [],
     availableQuizzes: [],
     loading: false,
-    error: null
+    error: null,
+    dataLoaded: false,
+    lastFetch: null,
   }),
   
   actions: {
     async loadQuizzes(): Promise<void> {
+      // Check if we already have fresh data
+      if (this.dataLoaded && this.availableQuizzes.length > 0 && !this.isDataStale()) {
+        console.log('[Quiz Store] Using cached quiz data');
+        return;
+      }
+
       this.loading = true;
       this.error = null;
       
@@ -44,14 +55,30 @@ export const useQuizStore = defineStore('quiz', {
         }
 
         this.availableQuizzes = response.quizzes || [];
-        console.log('Quizzes loaded successfully:', this.availableQuizzes);
+        this.dataLoaded = true;
+        this.lastFetch = Date.now();
+        console.log('[Quiz Store] Quizzes loaded successfully:', this.availableQuizzes);
       } catch (error) {
         this.error = error instanceof Error ? error.message : String(error);
-        console.error('Failed to load quizzes:', error);
+        console.error('[Quiz Store] Failed to load quizzes:', error);
         throw error;
       } finally {
         this.loading = false;
       }
+    },
+
+    // Check if cached data is stale (older than 5 minutes)
+    isDataStale(): boolean {
+      if (!this.lastFetch) return true;
+      const fiveMinutes = 5 * 60 * 1000;
+      return Date.now() - this.lastFetch > fiveMinutes;
+    },
+
+    // Force refresh of quiz data
+    async refreshQuizzes(): Promise<void> {
+      this.dataLoaded = false;
+      this.lastFetch = null;
+      await this.loadQuizzes();
     },
 
     async selectQuiz(quizId: string): Promise<{ error: string | null }> {

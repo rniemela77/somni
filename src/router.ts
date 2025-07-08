@@ -94,20 +94,45 @@ router.beforeEach(async (
   // Use the user store for authentication check
   const userStore = useUserStore();
   const isAuthenticated = userStore.isAuthenticated;
-  const isLoading = userStore.loading;
+  const isReady = userStore.isReady;
   
-  // If auth is still loading, prevent navigation by waiting until auth is ready
-  if (isLoading) {
-    // Allow the navigation to proceed - the loading screen in App.vue will handle the waiting
+  // If auth is still initializing, wait for it to complete
+  if (!isReady) {
+    // For protected routes, wait until auth is ready before proceeding
+    if (requiresAuth) {
+      console.log('[Router] Auth not ready, waiting for auth state...');
+      
+      // Wait for auth to be ready
+      await new Promise<void>((resolve) => {
+        const unsubscribe = userStore.$subscribe((_mutation, state) => {
+          if (state.initialized && !state.loading) {
+            unsubscribe();
+            resolve();
+          }
+        });
+      });
+      
+      // Re-check auth after waiting
+      if (userStore.isAuthenticated) {
+        next();
+      } else {
+        console.log('[Router] User not authenticated, redirecting to signin');
+        next('/signin');
+      }
+      return;
+    }
+    
+    // For non-protected routes, allow navigation but let App.vue handle loading
     next();
     return;
   }
 
-  // Normal auth flow once loading is complete
+  // Auth is ready, proceed with normal flow
   if (requiresAuth && !isAuthenticated) {
-    console.log('Redirecting to sign in page due to missing authentication');
+    console.log('[Router] Redirecting to sign in page due to missing authentication');
     next('/signin');
   } else if (requiresGuest && isAuthenticated) {
+    console.log('[Router] Authenticated user accessing guest route, redirecting to dashboard');
     next('/');
   } else {
     next();

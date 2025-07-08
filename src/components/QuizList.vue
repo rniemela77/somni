@@ -124,30 +124,14 @@ onMounted(async () => {
     loading.value = true;
     error.value = null;
 
-    // Wait for user store to be ready
-    if (userStore.loading) {
-      console.log('[QuizList] User store is loading, waiting...');
-      await new Promise<void>((resolve) => {
-        const unsubscribe = userStore.$subscribe((_mutation, state) => {
-          console.log('[QuizList] User state changed:', {
-            loading: state.loading,
-            isAuthenticated: userStore.isAuthenticated
-          });
-          if (!state.loading) {
-            unsubscribe();
-            resolve();
-          }
-        });
-      });
-    }
-
+    // Since this is a protected route, we can assume user is authenticated
     if (!userStore.isAuthenticated) {
-      console.log('[QuizList] User is not authenticated');
-      error.value = 'Please sign in to view quizzes';
+      console.log('[QuizList] User is not authenticated - this should not happen on protected route');
+      error.value = 'Authentication required';
       return;
     }
 
-    console.log('[QuizList] Auth ready, loading quizzes...');
+    console.log('[QuizList] Loading quizzes...');
     await quizStore.loadQuizzes();
     console.log('[QuizList] Quizzes loaded:', quizStore.availableQuizzes.length);
   } catch (err: unknown) {

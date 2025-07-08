@@ -1,12 +1,22 @@
 <template>
   <div class="container">
-    <!-- Personality Analysis Section for authenticated users -->
-    <div v-if="userStore.isAuthenticated" class="mb-4">
-      <PersonalityDashboard />
+    <!-- Show loading while auth state is being determined -->
+    <div v-if="!userStore.isReady" class="d-flex justify-content-center align-items-center" style="min-height: 50vh;">
+      <div class="spinner-border text-primary" role="status" aria-label="Loading">
+      </div>
+      <p class="mb-0 ms-3">Loading...</p>
     </div>
     
-    <!-- Landing Page for non-authenticated users -->
-    <LandingPage v-else />
+    <!-- Show content once auth state is ready -->
+    <template v-else>
+      <!-- Personality Analysis Section for authenticated users -->
+      <div v-if="userStore.isAuthenticated" class="mb-4">
+        <PersonalityDashboard />
+      </div>
+      
+      <!-- Landing Page for non-authenticated users -->
+      <LandingPage v-else />
+    </template>
   </div>
 </template>
 
