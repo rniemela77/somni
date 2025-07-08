@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { usePersonalityTraits } from '../composables/usePersonalityTraits';
 
 interface Props {
@@ -69,7 +69,16 @@ const {
 } = usePersonalityTraits();
 
 const expandedScales = ref<Set<string>>(new Set());
-const availableScales = getAllScales();
+const allScales = getAllScales();
+
+// Sort scales by absolute score value (prominence)
+const availableScales = computed(() => {
+  return [...allScales].sort((a, b) => {
+    const scoreA = Math.abs(getScoreForScale(a, props.scores));
+    const scoreB = Math.abs(getScoreForScale(b, props.scores));
+    return scoreB - scoreA; // Sort in descending order
+  });
+});
 
 const toggleScale = (scaleId: string) => {
   if (expandedScales.value.has(scaleId)) {
