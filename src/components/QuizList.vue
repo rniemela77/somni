@@ -11,11 +11,11 @@
       <div class="row">
         <div class="col-md-6">
           <ul class="list-unstyled">
-            <li class="mb-2 d-flex align-items-start">
+            <li class="mb-2 d-flex">
               <i class="bi bi-check text-success me-2"></i>
               <span>Choose a time when your mood is neutral - avoid taking quizzes on exceptionally good or bad days</span>
             </li>
-            <li class="mb-2 d-flex align-items-start">
+            <li class="mb-2 d-flex">
               <i class="bi bi-check text-success me-2"></i>
               <span>Find a quiet, distraction-free environment to focus on your responses</span>
             </li>
@@ -23,11 +23,11 @@
         </div>
         <div class="col-md-6">
           <ul class="list-unstyled">
-            <li class="mb-2 d-flex align-items-start">
+            <li class="mb-2 d-flex">
               <i class="bi bi-check text-success me-2"></i>
               <span>Answer based on your general tendencies, not just recent events</span>
             </li>
-            <li class="mb-2 d-flex align-items-start">
+            <li class="mb-2 d-flex">
               <i class="bi bi-check text-success me-2"></i>
               <span>Take your time - there's no rush to complete the assessment</span>
             </li>
@@ -186,6 +186,10 @@ onMounted(async () => {
 .tips-section span {
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+.tips-section i {
+  font-size: 1.5rem;
 }
 
 .score-badge {
