@@ -259,7 +259,65 @@ const personalityData = [
     id: "agreeableness_antagonism",
     displayName: "Agreeableness-Antagonism",
     positive: "Agreeableness",
-    negative: "Antagonism"
+    negative: "Antagonism",
+    title: "Social Dynamics",
+    description: "This quiz assesses your tendency toward agreeableness versus antagonism. Move the slider to indicate how each statement reflects your regular behavior.",
+    traitDescriptions: {
+      positive: "Agreeable individuals are warm, cooperative, and empathetic. They tend to be good listeners, value harmony, and are generally easy to get along with. They often prioritize the needs of others and are willing to compromise to maintain positive relationships.",
+      negative: "Antagonistic individuals are competitive, assertive, and sometimes confrontational. They tend to be more independent and value their own opinions, often prioritizing personal goals over group harmony. They may be more likely to challenge authority and express strong opinions."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I find it easy to get along with others",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I prioritize my own goals over group harmony",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I often put others' needs before my own",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I don't hesitate to challenge ideas I disagree with",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I seek compromise when conflicts arise",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I express my strong opinions even if they upset others",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I genuinely care about other people's feelings",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I compete with others rather than cooperate",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I listen carefully to understand different perspectives",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I find myself in arguments more often than most people",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "risk_safety",
