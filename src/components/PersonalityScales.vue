@@ -127,16 +127,26 @@ const toggleScale = (scaleId: string) => {
 }
 
 .scale-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   padding: 0 1rem 1rem 1rem;
   border-top: 1px solid #e9ecef;
   background: #f8f9fa;
+  max-height: 500px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+}
+
+.scale-content > * {
+  flex: 1 1 300px;
 }
 
 .scale-content-hidden {
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  padding: 0 1rem;
 }
 
 .trait-description {
