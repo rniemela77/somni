@@ -1,7 +1,7 @@
 <template>
   <div>
     <section class="text-center mb-5">
-      <h1 class="display-4 mb-4">Insight through <span class="text-primary fw-semibold">self-discovery</span></h1>
+      <h1 class="display-4 mb-4">Insight Through <span class="text-primary fw-semibold">Self-Discovery</span></h1>
       <p class="lead col-lg-8 mx-auto">
         Somni provides meaningful personality analysis through thoughtfully designed assessments.
       </p>

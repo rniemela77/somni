@@ -57,6 +57,11 @@ const handleSignOut = async (): Promise<void> => {
 </script>
 
 <style scoped>
+.navbar {    
+	box-shadow: 0 56px 56px -93px #000000a1;
+    margin-bottom: 2rem;
+}
+
 .somni-text {
 	font-weight: 900;
 	font-size: 3rem;

@@ -57,7 +57,34 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     display: {
       order: 4,
     }
-  }
+  },
+  tarotCardArchetype: {
+    id: "tarotCardArchetype",
+    title: "Tarot Card Archetype",
+    description: "A tarot card archetype that best represents the individual's personality.",
+    promptInstructions: "Identify a unique and specific tarot card archetype that best fits this person's personality. Be creative and avoid commonly chosen archetypes like The Fool or The Magician. Explain in one sentence why this card reflects their character.",
+    display: {
+      order: 5,
+    }
+  },
+  elementalAlignment: {
+    id: "elementalAlignment",
+    title: "Elemental Alignment",
+    description: "An elemental alignment that best represents the individual's personality.",
+    promptInstructions: "Identify a unique and specific elemental alignment that best fits this person's personality. Air, Earth, Fire, or Water. Explain in one sentence why this alignment reflects their character.",
+    display: {
+      order: 6,
+    }
+  },
+  heroesJourney: {
+    id: "heroesJourney",
+    title: "Heroes Journey",
+    description: "A heroes journey that best represents the individual's personality.",
+    promptInstructions: "Identify a unique and specific heroes journey that best fits this person's personality. Be creative and avoid commonly chosen journeys like The Quest or The Return. Explain in one sentence why this journey reflects their character.",
+    display: {
+      order: 7,
+    },
+  },
 };
 
 /**

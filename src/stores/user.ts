@@ -53,6 +53,11 @@ interface UserState {
   loading: boolean;
   error: string;
   isProcessing: boolean;
+  initialized: boolean;
+  lastUserDataFetch: string | null;
+  
+  // Auth listener cleanup
+  authUnsubscribe: (() => void) | null;
 }
 
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
@@ -85,14 +90,19 @@ export const useUserStore = defineStore('user', {
     // UI state
     loading: false,
     error: '',
-    isProcessing: false
+    isProcessing: false,
+    initialized: false,
+    lastUserDataFetch: null as string | null,
+    
+    // Auth listener cleanup
+    authUnsubscribe: null,
   }),
 
   getters: {
     isAuthenticated: (state: UserState) => !!state.user,
     userId: (state: UserState) => state.user?.uid,
     userEmail: (state: UserState) => state.user?.email,
-    isReady: (state: UserState) => !state.loading,
+    isReady: (state: UserState) => state.initialized && !state.loading,
     errorMessage: (state: UserState) => state.error,
     isLoading: (state: UserState) => state.loading || state.isProcessing
   },
@@ -100,32 +110,39 @@ export const useUserStore = defineStore('user', {
   actions: {
     // Auth State Management
     async setUser(firebaseUser: FirebaseUser | null) {
-      this.loading = true;
       this.error = '';
       
       try {
         if (!firebaseUser) {
           this.user = null;
           this.userAttributes = {};
+          this.lastUserDataFetch = null;
           return;
         }
 
         this.user = firebaseUser;
         
-        // Get or create user document
-        const { data, error } = await this.getOrCreateUser(firebaseUser.uid);
-        
-        if (error) {
-          this.error = error;
-          return;
-        }
+        // Only fetch user data if it's a different user or hasn't been fetched recently
+        const shouldFetchData = !this.lastUserDataFetch || 
+          this.lastUserDataFetch !== firebaseUser.uid ||
+          this.isDataStale();
 
-        if (data) {
-          // Update store state with user data
-          this.userAttributes = data.attributes || {};
-          this.isPaid = data.isPaid;
-          this.personalityAnalysis = data.personalityAnalysis || {};
-          this.results = data.results || [];
+        if (shouldFetchData) {
+          this.loading = true;
+          const { data, error } = await this.getOrCreateUser(firebaseUser.uid);
+          
+          if (error) {
+            this.error = error;
+            return;
+          }
+
+          if (data) {
+            this.userAttributes = data.attributes || {};
+            this.isPaid = data.isPaid;
+            this.personalityAnalysis = data.personalityAnalysis || {};
+            this.results = data.results || [];
+            this.lastUserDataFetch = firebaseUser.uid;
+          }
         }
         
       } catch (error) {
@@ -138,22 +155,29 @@ export const useUserStore = defineStore('user', {
 
     // Initialize auth state listener
     async init() {
+      // Prevent double initialization
+      if (this.initialized) {
+        console.log('[User Store] Already initialized, skipping');
+        return;
+      }
+
       this.loading = true;
       try {
-        // Check if there's a current user
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-          await this.setUser(currentUser);
-        } else {
-          this.user = null;
-          this.userAttributes = {};
-        }
-
-        // Set up auth state listener
-        onAuthStateChanged(auth, async (user) => {
-          console.log('[User Store] Auth state changed:', user ? 'logged in' : 'logged out');
-          await this.setUser(user);
+        // Firebase auth state restoration - wait for first auth state change
+        await new Promise<void>((resolve) => {
+          const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            console.log('[User Store] Auth state changed:', user ? 'logged in' : 'logged out');
+            
+            // Store unsubscribe function for cleanup (this is our permanent listener)
+            this.authUnsubscribe = unsubscribe;
+            
+            // Set user and resolve initialization
+            await this.setUser(user);
+            resolve();
+          });
         });
+
+        this.initialized = true;
       } catch (error) {
         console.error('[User Store] Initialization error:', error);
         this.error = error instanceof Error ? error.message : 'Unknown error';
@@ -405,6 +429,21 @@ export const useUserStore = defineStore('user', {
           success: false,
           error: error instanceof Error ? error.message : 'Unknown error'
         };
+      }
+    },
+
+    // Check if cached data is stale (e.g., older than 5 minutes)
+    isDataStale(): boolean {
+      // For now, consider data fresh for the session
+      // Could implement timestamp-based staleness checking
+      return false;
+    },
+
+    // Cleanup method
+    cleanup() {
+      if (this.authUnsubscribe) {
+        this.authUnsubscribe();
+        this.authUnsubscribe = null;
       }
     }
   }

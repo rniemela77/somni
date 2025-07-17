@@ -5,20 +5,8 @@
 </template>
 
 <script lang="ts">
-import { onMounted } from 'vue';
-import { useQuizStore } from '../stores/quiz';
-
 export default {
-    name: 'Quiz',
-    setup() {
-        const quizStore = useQuizStore();
-
-        onMounted(async () => {
-            await quizStore.loadQuizzes();
-        });
-
-        return {};
-    }
+    name: 'Quiz'
 };
 </script>
 

@@ -21,3 +21,10 @@ Idea:
 Idea:
 - "Utilize your [natural strength] to lean toward [user goal] and overcome [perceived weakness]"
 - Leans on solid foundation of user's strengths and gives purpose to overcoming their weakness by focusing on the goal/target
+
+###
+Idea:
+- Provide micro-journaling prompts tied to specific scales for guided self-reflection
+- Craft evolving “spirit-animal” allegories that adapt to user growth and setbacks
+- Generate AI-crafted immersive narratives that cast users as protagonists in personalized scenarios tied to each scale
+- Provide an AI-powered metaphor engine: distill complex score interactions into custom visual or poetic metaphors for deeper cognitive resonance
