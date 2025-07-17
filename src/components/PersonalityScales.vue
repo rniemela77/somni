@@ -3,27 +3,30 @@
     <div class="scales-container">
       <div v-for="scale in availableScales" :key="scale.id" class="scale-item">
         <button class="scale-header" @click="toggleScale(scale.id)">
-          <div class="scale-labels">
-            <span class="negative-label" :class="{ 'label--dominant': getScoreForScale(scale, props.scores) < 0 }">{{ scale.negative }}</span>
-            <span class="score">{{ Math.round(getScoreForScale(scale, props.scores)) }}</span>
-            <span class="positive-label" :class="{ 'label--dominant': getScoreForScale(scale, props.scores) > 0 }">{{ scale.positive }}</span>
-          </div>
-          <div class="scale-bar">
-            <div class="scale-line"></div>
-            <!-- Score line from center -->
-            <div class="scale-value" 
-                 :style="{ 
-                   width: Math.abs(getScoreForScale(scale, props.scores)) / 2 + '%',
-                   left: getScoreForScale(scale, props.scores) >= 0 ? '50%' : 'auto',
-                   right: getScoreForScale(scale, props.scores) < 0 ? '50%' : 'auto'
-                 }">
+          <div class="scale-header-content">
+            <div class="scale-labels">
+              <span class="negative-label" :class="{ 'label--dominant': getScoreForScale(scale, props.scores) < 0 }">{{ scale.negative }}</span>
+              <span class="score">{{ Math.round(getScoreForScale(scale, props.scores)) }}</span>
+              <span class="positive-label" :class="{ 'label--dominant': getScoreForScale(scale, props.scores) > 0 }">{{ scale.positive }}</span>
             </div>
-            <!-- Score marker -->
-            <div class="scale-marker" 
-                 :style="{ left: calculatePosition(getScoreForScale(scale, props.scores)) + '%' }"
-                 :title="`Score: ${Math.round(getScoreForScale(scale, props.scores))}`">
+            <div class="scale-bar">
+              <div class="scale-line"></div>
+              <!-- Score line from center -->
+              <div class="scale-value" 
+                   :style="{ 
+                     width: Math.abs(getScoreForScale(scale, props.scores)) / 2 + '%',
+                     left: getScoreForScale(scale, props.scores) >= 0 ? '50%' : 'auto',
+                     right: getScoreForScale(scale, props.scores) < 0 ? '50%' : 'auto'
+                   }">
+              </div>
+              <!-- Score marker -->
+              <div class="scale-marker" 
+                   :style="{ left: calculatePosition(getScoreForScale(scale, props.scores)) + '%' }"
+                   :title="`Score: ${Math.round(getScoreForScale(scale, props.scores))}`">
+              </div>
             </div>
           </div>
+          <div class="chevron" :class="{ 'chevron--expanded': expandedScales.has(scale.id) }"></div>
         </button>
         <div class="scale-content" :class="{ 'scale-content-hidden': !expandedScales.has(scale.id) }">
           <div class="trait-description">
@@ -112,14 +115,16 @@ const toggleScale = (scaleId: string) => {
   width: 100%;
   min-width: 0;
   background: white;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
+  border: 2px solid #e9ecef;
   overflow: hidden;
   transition: all 0.2s ease;
+  border-radius: 1rem;
 }
 
-.scale-item:hover {
-  border-color: #dee2e6;
+.scale-item:focus, .scale-item:focus-within, .scale-item:active, .scale-item:hover {
+  border: 2px solid #8BB4DC;
+  background: #FEFEFF;
+  border-radius: 1rem;
 }
 
 .scale-header {
@@ -129,10 +134,17 @@ const toggleScale = (scaleId: string) => {
   padding: 1rem;
   cursor: pointer;
   text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
 }
 
-.scale-header:hover {
-  background: #f8f9fa;
+.scale-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
 }
 
 .scale-content {
@@ -274,5 +286,19 @@ const toggleScale = (scaleId: string) => {
   margin-bottom: 0.5rem;
   font-style: italic;
   min-height: 1.5rem;
+}
+
+.chevron {
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid #5d5d5d;
+  border-bottom: 2px solid #5d5d5d;
+  transform: rotate(45deg);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.chevron--expanded {
+  transform: rotate(225deg);
 }
 </style> 
