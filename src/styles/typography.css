@@ -1,0 +1,29 @@
+/* Typography Styles */
+
+/* 1. Base font-size */
+html {
+  font-size: 100%; /* 16px */
+}
+
+/* 2. Body text */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1rem;       /* 16px */
+  line-height: 1.5;      /* 24px */
+}
+
+/* 3. Heading scale */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+/* Major headings */
+h1 { font-size: 2.5rem; }   /* 40px */
+h2 { font-size: 2rem;   }   /* 32px */
+h3 { font-size: 1.75rem; }  /* 28px */
+h4 { font-size: 1.5rem;  }  /* 24px */
+h5 { font-size: 1.25rem; }  /* 20px */
+h6 { font-size: 1rem;    }  /* 16px */ 

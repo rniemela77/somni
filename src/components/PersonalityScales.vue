@@ -170,9 +170,7 @@ const toggleScale = (scaleId: string) => {
 }
 
 .trait-description p {
-  font-size: 0.85rem;
-  color: #6c757d;
-  line-height: 1.5;
+  color: #44494E;
 }
 
 .scale-labels {
