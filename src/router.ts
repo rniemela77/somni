@@ -6,6 +6,7 @@ import Success from "./components/Success.vue";
 import Cancel from "./components/Cancel.vue";
 import Dashboard from "./components/Dashboard.vue";
 import Account from "./components/Account.vue";
+import PrivacyPolicy from "./components/PrivacyPolicy.vue";
 import { useUserStore } from "./stores/user";
 
 // Define custom meta types
@@ -74,6 +75,11 @@ const routes: AppRouteRecord[] = [
     component: Cancel,
     name: 'cancel',
     meta: { requiresAuth: true }
+  },
+  { 
+    path: "/privacy-policy", 
+    component: PrivacyPolicy,
+    name: 'privacy-policy'
   }
 ];
 
