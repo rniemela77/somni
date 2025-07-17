@@ -7,6 +7,7 @@ import Cancel from "./components/Cancel.vue";
 import Dashboard from "./components/Dashboard.vue";
 import Account from "./components/Account.vue";
 import PrivacyPolicy from "./components/PrivacyPolicy.vue";
+import TermsOfService from "./components/TermsOfService.vue";
 import { useUserStore } from "./stores/user";
 
 // Define custom meta types
@@ -80,6 +81,11 @@ const routes: AppRouteRecord[] = [
     path: "/privacy-policy", 
     component: PrivacyPolicy,
     name: 'privacy-policy'
+  },
+  { 
+    path: "/terms-of-service", 
+    component: TermsOfService,
+    name: 'terms-of-service'
   }
 ];
 

@@ -6,7 +6,8 @@
 				- rvniemela@hotmail.com
 			</p>
 			<p class="mb-0">
-				<router-link to="/privacy-policy" class="text-decoration-none">Privacy Policy</router-link>
+				<router-link to="/privacy-policy" class="text-decoration-none me-3">Privacy Policy</router-link>
+				<router-link to="/terms-of-service" class="text-decoration-none">Terms of Service</router-link>
 			</p>
 		</div>
 	</footer>
