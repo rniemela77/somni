@@ -8,6 +8,7 @@ export interface PersonalitySection {
   display: {
     order: number;
   };
+  icon: string;
 }
 
 export interface PersonalityScale {
@@ -29,7 +30,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     promptInstructions: "Write exactly two sentences that describe the core personality of the individual based on their quiz responses. Focus on revealing unique, non-obvious emotional patterns and psychological traits that provide genuine insight. Avoid generic descriptions that could apply to many people.",
     display: {
       order: 1,
-    }
+    },
+    icon: "brain-gear.svg"
   },
   archetype: {
     id: "archetype",
@@ -38,7 +40,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     promptInstructions: "Identify a unique and specific archetype that best fits this person. Go beyond common archetypes (like Hero, Rebel, Caregiver) and consider unusual or complex ones (like Alchemist, Shapeshifter, Divine Child, Trickster, Mystic, etc). Be creative and unexpected in your selection, while still accurately reflecting their personality.",
     display: {
       order: 2,
-    }
+    },
+    icon: "mask.svg"
   },
   spiritAnimal: {
     id: "spiritAnimal",
@@ -47,7 +50,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     promptInstructions: "Identify a distinctive spirit animal that best represents this person's personality traits. Look beyond common choices (like wolf, lion, eagle) and consider unexpected animals (including insects, marine life, or lesser-known species) that offer a more nuanced reflection. Explain in one sentence why this specific animal reflects their essence.",
     display: {
       order: 3,
-    }
+    },
+    icon: "paw-print.svg"
   },
   mythologicalFigure: {
     id: "mythologicalFigure",
@@ -56,7 +60,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     promptInstructions: "Identify a unique and specific mythological or folklore figure from ANY cultural tradition (Norse, Celtic, Egyptian, Chinese, Indian, Native American, African, etc. - not just Greek/Roman) that best matches this person's personality. Be creative and avoid commonly chosen figures like Athena, Zeus, or Apollo. Explain in one sentence why this figure reflects their character.",
     display: {
       order: 4,
-    }
+    },
+    icon: "dragon.svg"
   },
   tarotCardArchetype: {
     id: "tarotCardArchetype",
@@ -65,7 +70,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     promptInstructions: "Identify a unique and specific tarot card archetype that best fits this person's personality. Be creative and avoid commonly chosen archetypes like The Fool or The Magician. Explain in one sentence why this card reflects their character.",
     display: {
       order: 5,
-    }
+    },
+    icon: "tarot.svg"
   },
   elementalAlignment: {
     id: "elementalAlignment",
@@ -74,7 +80,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     promptInstructions: "Identify a unique and specific elemental alignment that best fits this person's personality. Air, Earth, Fire, or Water. Explain in one sentence why this alignment reflects their character.",
     display: {
       order: 6,
-    }
+    },
+    icon: "earth.svg"
   },
   heroesJourney: {
     id: "heroesJourney",
@@ -84,6 +91,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     display: {
       order: 7,
     },
+    icon: "journey.svg"
   },
 };
 
