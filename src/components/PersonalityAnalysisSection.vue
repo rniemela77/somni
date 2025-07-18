@@ -23,7 +23,7 @@
                   <template v-if="parsedFeeling[section.id]">
                     <p class="mb-0">{{ parsedFeeling[section.id] }}</p>
                   </template>
-                  <p v-else class="text-muted fst-italic mb-0">N/A</p>
+                  <p v-else class="text-muted fst-italic mb-0">No analysis yet - click the "Generate Analysis" button above to see deeper insights.</p>
                 </div>
               </div>
             </div>
