@@ -323,7 +323,65 @@ const personalityData = [
     id: "risk_safety",
     displayName: "Risk-Safety Orientation",
     positive: "Risk",
-    negative: "Safety"
+    negative: "Safety",
+    title: "Risk-Safety Orientation",
+    description: "This quiz assesses your tolerance for risk and uncertainty versus preference for safety and security. Move the slider to indicate how each statement reflects your regular behavior.",
+    traitDescriptions: {
+      positive: "Risk-oriented individuals are comfortable with uncertainty and willing to accept potential negative outcomes in pursuit of opportunities. They tend to embrace challenges where success isn't guaranteed, are willing to try new things that might not work out, and see potential setbacks as acceptable costs of exploration and growth.",
+      negative: "Safety-oriented individuals prioritize security and prefer to minimize potential harm or loss. They tend to choose proven paths, value predictability and stability, and prefer to thoroughly assess potential downsides before proceeding. They often excel at protecting resources and maintaining steady progress."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I'm willing to try activities even if there's a chance I might get hurt",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I prefer to stick with proven approaches rather than risk failure",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I invest money in opportunities that could lead to big gains or losses",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I keep my money in safe, guaranteed returns",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I speak up in situations where I might face social rejection",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I avoid situations where I might embarrass myself",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I take career opportunities even when the outcome is uncertain",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I prefer job security over potentially rewarding but risky career moves",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I enjoy the thrill of not knowing how things will turn out",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I feel anxious when I can't predict what will happen next",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "novelty_routine",
