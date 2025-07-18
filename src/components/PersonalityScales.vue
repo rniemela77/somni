@@ -153,11 +153,18 @@ const toggleScale = (scaleId: string) => {
   gap: 2rem;
   padding: 0 1rem 1rem 1rem;
   border-top: 1px solid #e9ecef;
-  background: #f8f9fa;
+  background: #FEFEFF;
   max-height: 500px;
   opacity: 1;
   overflow: hidden;
   transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+}
+
+@media (max-width: 768px) {
+  .scale-content {
+    max-height: 1000px; /* max-height is needed for accordion animation. increase max height on mobile to view all text*/
+    gap: 0;
+  }
 }
 
 .scale-content > * {
