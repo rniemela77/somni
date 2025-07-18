@@ -1,5 +1,5 @@
 <template>
-	<footer class="py-3">
+	<footer class="py-3 mt-5">
 		<div class="container text-center">
 			<p class="mb-1">
 				&copy; {{ new Date().getFullYear() }} Somni Personality Analyzer. Created by Robert Niemela
