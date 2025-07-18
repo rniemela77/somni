@@ -387,7 +387,65 @@ const personalityData = [
     id: "novelty_routine",
     displayName: "Novelty Seeking-Routine Preference",
     positive: "Novelty Seeking",
-    negative: "Routine Preference"
+    negative: "Routine Preference",
+    title: "Experience Variety",
+    description: "This quiz assesses your preference for variety and new experiences versus established routines and familiar patterns. Move the slider to indicate how each statement reflects your typical behavior.",
+    traitDescriptions: {
+      positive: "Novelty seekers crave variety and new experiences in their daily lives. They enjoy breaking up routines, trying different approaches, and exploring unfamiliar environments. They tend to get restless with repetition and are energized by change, whether in activities, places, people, or experiences.",
+      negative: "Routine preferrers find comfort and efficiency in established patterns and familiar experiences. They excel at optimizing their habits, creating reliable systems, and finding depth through repetition. They often perform better when they can predict what's coming and have mastered their environment."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I like to vary my daily routine regularly",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I follow the same patterns each day because they work for me",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I seek out new restaurants rather than returning to favorites",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I prefer to order the same dishes at places I know I like",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I enjoy taking different routes to familiar destinations",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I stick to the most efficient path I've already figured out",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I get bored doing the same activities repeatedly",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I find comfort in doing things the same way each time",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I like to rearrange my living space periodically",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I keep my belongings in the same places so I always know where they are",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "analytical_intuitive",
