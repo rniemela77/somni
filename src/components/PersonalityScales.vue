@@ -183,6 +183,7 @@ const toggleScale = (scaleId: string) => {
 
 .trait-description h4 {
   font-size: 1rem;
+  font-weight: bold;
   color: #495057;
   margin-bottom: 0.5rem;
   margin-top: 0;
