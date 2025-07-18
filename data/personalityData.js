@@ -451,7 +451,65 @@ const personalityData = [
     id: "analytical_intuitive",
     displayName: "Analytical-Intuitive Cognition",
     positive: "Analytical",
-    negative: "Intuitive"
+    negative: "Intuitive",
+    title: "Thinking Style",
+    description: "This quiz assesses your cognitive processing style when approaching problems and making decisions. Move the slider to indicate how each statement reflects your typical thinking patterns.",
+    traitDescriptions: {
+      positive: "Analytical thinkers prefer step-by-step reasoning and systematic approaches to problems. They excel at breaking down complex issues into manageable parts, following logical sequences, and making decisions based on careful evaluation of evidence. They tend to want to understand the 'why' behind things and value methodical processes.",
+      negative: "Intuitive thinkers rely on gut feelings, pattern recognition, and holistic understanding. They excel at seeing connections that aren't immediately obvious, making quick insights, and grasping the essence of situations without detailed analysis. They often 'just know' things and trust their instincts when making decisions."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I break down complex problems into smaller, manageable steps",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I often know the right answer without being able to explain how",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I want to see all the data before making important decisions",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I trust my first impression about people and situations",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I like to understand the logical reasoning behind recommendations",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I can sense when something feels 'right' or 'wrong' without analysis",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I work through problems systematically from start to finish",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I see patterns and connections that others often miss",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I prefer to have concrete evidence before drawing conclusions",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I make decisions based on gut feelings that usually turn out right",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "detail_big_picture",
