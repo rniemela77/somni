@@ -323,19 +323,193 @@ const personalityData = [
     id: "risk_safety",
     displayName: "Risk-Safety Orientation",
     positive: "Risk",
-    negative: "Safety"
+    negative: "Safety",
+    title: "Risk-Safety Orientation",
+    description: "This quiz assesses your tolerance for risk and uncertainty versus preference for safety and security. Move the slider to indicate how each statement reflects your regular behavior.",
+    traitDescriptions: {
+      positive: "Risk-oriented individuals are comfortable with uncertainty and willing to accept potential negative outcomes in pursuit of opportunities. They tend to embrace challenges where success isn't guaranteed, are willing to try new things that might not work out, and see potential setbacks as acceptable costs of exploration and growth.",
+      negative: "Safety-oriented individuals prioritize security and prefer to minimize potential harm or loss. They tend to choose proven paths, value predictability and stability, and prefer to thoroughly assess potential downsides before proceeding. They often excel at protecting resources and maintaining steady progress."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I'm willing to try activities even if there's a chance I might get hurt",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I prefer to stick with proven approaches rather than risk failure",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I invest money in opportunities that could lead to big gains or losses",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I keep my money in safe, guaranteed returns",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I speak up in situations where I might face social rejection",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I avoid situations where I might embarrass myself",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I take career opportunities even when the outcome is uncertain",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I prefer job security over potentially rewarding but risky career moves",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I enjoy the thrill of not knowing how things will turn out",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I feel anxious when I can't predict what will happen next",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "novelty_routine",
     displayName: "Novelty Seeking-Routine Preference",
     positive: "Novelty Seeking",
-    negative: "Routine Preference"
+    negative: "Routine Preference",
+    title: "Experience Variety",
+    description: "This quiz assesses your preference for variety and new experiences versus established routines and familiar patterns. Move the slider to indicate how each statement reflects your typical behavior.",
+    traitDescriptions: {
+      positive: "Novelty seekers crave variety and new experiences in their daily lives. They enjoy breaking up routines, trying different approaches, and exploring unfamiliar environments. They tend to get restless with repetition and are energized by change, whether in activities, places, people, or experiences.",
+      negative: "Routine preferrers find comfort and efficiency in established patterns and familiar experiences. They excel at optimizing their habits, creating reliable systems, and finding depth through repetition. They often perform better when they can predict what's coming and have mastered their environment."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I like to vary my daily routine regularly",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I follow the same patterns each day because they work for me",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I seek out new restaurants rather than returning to favorites",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I prefer to order the same dishes at places I know I like",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I enjoy taking different routes to familiar destinations",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I stick to the most efficient path I've already figured out",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I get bored doing the same activities repeatedly",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I find comfort in doing things the same way each time",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I like to rearrange my living space periodically",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I keep my belongings in the same places so I always know where they are",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "analytical_intuitive",
     displayName: "Analytical-Intuitive Cognition",
     positive: "Analytical",
-    negative: "Intuitive"
+    negative: "Intuitive",
+    title: "Thinking Style",
+    description: "This quiz assesses your cognitive processing style when approaching problems and making decisions. Move the slider to indicate how each statement reflects your typical thinking patterns.",
+    traitDescriptions: {
+      positive: "Analytical thinkers prefer step-by-step reasoning and systematic approaches to problems. They excel at breaking down complex issues into manageable parts, following logical sequences, and making decisions based on careful evaluation of evidence. They tend to want to understand the 'why' behind things and value methodical processes.",
+      negative: "Intuitive thinkers rely on gut feelings, pattern recognition, and holistic understanding. They excel at seeing connections that aren't immediately obvious, making quick insights, and grasping the essence of situations without detailed analysis. They often 'just know' things and trust their instincts when making decisions."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I break down complex problems into smaller, manageable steps",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I often know the right answer without being able to explain how",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I want to see all the data before making important decisions",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I trust my first impression about people and situations",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I like to understand the logical reasoning behind recommendations",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I can sense when something feels 'right' or 'wrong' without analysis",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I work through problems systematically from start to finish",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I see patterns and connections that others often miss",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I prefer to have concrete evidence before drawing conclusions",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I make decisions based on gut feelings that usually turn out right",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "detail_big_picture",
