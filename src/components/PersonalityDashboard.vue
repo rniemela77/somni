@@ -2,21 +2,21 @@
   <div>
     <h3 class="text-center mb-4">Your Personality Dashboard</h3>
 
-    <!-- No quizzes message -->
+    <!-- No assessments message -->
     <div v-if="userStore.noQuizzesCompleted" class="alert alert-warning mb-4 text-center">
-      <b>No quizzes completed yet!</b>
-      <p>Visit the quiz page to begin your personality analysis.</p>
-      <router-link to="/quiz">Visit the quiz page</router-link>
+      <b>No assessments completed yet!</b>
+      <p>Visit the assessment page to begin your personality analysis.</p>
+      <router-link to="/quiz">Visit the assessment page</router-link>
     </div>
 
     <PersonalityScales :scores="userStore.userAttributes" class="mb-5" />
 
     <h3 class="text-center">Deeper Analysis</h3>
 
-    <!-- Missing quizzes warning -->
+    <!-- Missing assessments warning -->
     <div v-if="userStore.hasIncompleteQuizzes" class="alert alert-warning text-center mb-3">
-      You have completed {{ userStore.completedQuizzesCount }} of {{ userStore.totalQuizzesCount }} quizzes.
-      For best personality analysis results, please <router-link to="/quiz">complete all quizzes</router-link>.
+      You have completed {{ userStore.completedQuizzesCount }} of {{ userStore.totalQuizzesCount }} assessments.
+      For best personality analysis results, please <router-link to="/quiz">complete all assessments</router-link>.
     </div>
 
     <!-- Generate analysis button -->
@@ -59,7 +59,7 @@ const generateDescription = async () => {
 
     // Check if we have any attributes to analyze
     if (Object.keys(attributes).length === 0) {
-      throw new Error('No personality attributes found. Please take some quizzes first.');
+      throw new Error('No personality attributes found. Please take some assessments first.');
     }
 
     // Generate personality analysis based on attributes

@@ -58,7 +58,7 @@
                   </li>
                   <li class="d-flex align-items-start mb-2">
                     <span class="benefit-icon text-success me-2">✓</span>
-                    <span>Unlimited quiz attempts and result storage</span>
+                    <span>Unlimited assessment attempts and result storage</span>
                   </li>
                 </ul>
               </div>

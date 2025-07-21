@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2 class="text-center mb-4">Select a Quiz</h2>
+    <h2 class="text-center mb-4">Select an Assessment</h2>
 
     <!-- Tips Section -->
     <div class="tips-section mb-5">
@@ -13,7 +13,7 @@
           <ul class="list-unstyled">
             <li class="mb-2 d-flex">
               <i class="bi bi-check text-success me-2"></i>
-              <span>Choose a time when your mood is neutral - avoid taking quizzes on exceptionally good or bad days</span>
+              <span>Choose a time when your mood is neutral - avoid taking assessments on exceptionally good or bad days</span>
             </li>
             <li class="mb-2 d-flex">
               <i class="bi bi-check text-success me-2"></i>
@@ -40,10 +40,10 @@
       <p>{{ error }}</p>
     </div>
     <div v-else-if="loading" class="alert alert-info text-center">
-      <p>Loading quizzes...</p>
+      <p>Loading assessments...</p>
     </div>
     <div v-else-if="availableQuizzes.length === 0" class="alert alert-warning text-center">
-      <p>No quizzes available.</p>
+      <p>No assessments available.</p>
     </div>
     <div v-else class="row row-cols-1 row-cols-md-2 g-4">
       <div v-for="quiz in availableQuizzes" 

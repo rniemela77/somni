@@ -29,7 +29,7 @@
 							<router-link to="/" class="nav-link" exact-active-class="active">Dashboard</router-link>
 						</li>
 						<li class="nav-item">
-							<router-link to="/quiz" class="nav-link" active-class="active">Analyzers</router-link>
+							<router-link to="/quiz" class="nav-link" active-class="active">Assessments</router-link>
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" 
