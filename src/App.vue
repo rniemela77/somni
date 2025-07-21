@@ -32,7 +32,7 @@
 import { onMounted } from 'vue';
 import { useUserStore } from './stores/user';
 import NavBar from './components/NavBar.vue'
-import Footer from './Footer.vue'
+import Footer from './components/layout/Footer.vue'
 import AppBackground from './components/layout/AppBackground.vue'
 
 const userStore = useUserStore();
