@@ -1,7 +1,7 @@
 <template>
   <div class="app-container shadow rounded-5">
     <!-- Auth Loading Screen -->
-    <div v-if="userStore.loading" class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div v-if="!userStore.isReady" class="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div class="spinner-border text-primary" role="status" aria-label="Loading">
       </div>
       <p class="mb-0 ms-3">Loading...</p>

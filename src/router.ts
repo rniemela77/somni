@@ -118,43 +118,23 @@ router.beforeEach(async (
   const requiresAuth = to.matched.some(record => record.meta?.requiresAuth);
   const requiresGuest = to.matched.some(record => record.meta?.requiresGuest);
   
-  // Use the user store for authentication check
   const userStore = useUserStore();
-  const isAuthenticated = userStore.isAuthenticated;
-  const isReady = userStore.isReady;
   
   // If auth is still initializing, wait for it to complete
-  if (!isReady) {
-    // For protected routes, wait until auth is ready before proceeding
-    if (requiresAuth) {
-      console.log('[Router] Auth not ready, waiting for auth state...');
-      
-      // Wait for auth to be ready
-      await new Promise<void>((resolve) => {
-        const unsubscribe = userStore.$subscribe((_mutation, state) => {
-          if (state.initialized && !state.loading) {
-            unsubscribe();
-            resolve();
-          }
-        });
-      });
-      
-      // Re-check auth after waiting
-      if (userStore.isAuthenticated) {
-        next();
-      } else {
-        console.log('[Router] User not authenticated, redirecting to signin');
-        next('/signin');
-      }
-      return;
+  if (!userStore.isReady) {
+    console.log('[Router] Auth not ready, waiting for initialization...');
+    
+    // Wait for the store to be initialized
+    while (!userStore.isReady) {
+      await new Promise(resolve => setTimeout(resolve, 50));
     }
     
-    // For non-protected routes, allow navigation but let App.vue handle loading
-    next();
-    return;
+    console.log('[Router] Auth initialization complete');
   }
 
-  // Auth is ready, proceed with normal flow
+  // Auth is ready, proceed with normal guard logic
+  const isAuthenticated = userStore.isAuthenticated;
+  
   if (requiresAuth && !isAuthenticated) {
     console.log('[Router] Redirecting to sign in page due to missing authentication');
     next('/signin');

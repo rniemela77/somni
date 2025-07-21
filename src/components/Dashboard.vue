@@ -1,41 +1,19 @@
 <template>
   <div class="container">
-    <!-- Show loading while auth state is being determined -->
-    <div v-if="!userStore.isReady" class="d-flex justify-content-center align-items-center" style="min-height: 50vh;">
-      <div class="spinner-border text-primary" role="status" aria-label="Loading">
-      </div>
-      <p class="mb-0 ms-3">Loading...</p>
-    </div>
+    <!-- Personality Analysis Section for authenticated users -->
+    <PersonalityDashboard v-if="userStore.isAuthenticated" class="mb-4" />
     
-    <!-- Show content once auth state is ready -->
-    <template v-else>
-      <!-- Personality Analysis Section for authenticated users -->
-      <div v-if="userStore.isAuthenticated" class="mb-4">
-        <PersonalityDashboard />
-      </div>
-      
-      <!-- Landing Page for non-authenticated users -->
-      <LandingPage v-else />
-    </template>
+    <!-- Landing Page for non-authenticated users -->
+    <LandingPage v-else /> 
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import { useUserStore } from '../stores/user';
 import PersonalityDashboard from './PersonalityDashboard.vue';
 import LandingPage from './features/dashboard/LandingPage.vue';
 
 const userStore = useUserStore();
-
-onMounted(() => {
-  console.log('[Dashboard] User store state:', {
-    user: userStore.user,
-    isAuthenticated: userStore.isAuthenticated,
-    userAttributes: userStore.userAttributes,
-    loading: userStore.loading
-  });
-});
 </script>
 
 <style scoped>
