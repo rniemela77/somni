@@ -18,6 +18,9 @@
 							<router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
 						</li>
 						<li class="nav-item">
+							<router-link to="/signup" class="nav-link" active-class="active">Sign Up</router-link>
+						</li>
+						<li class="nav-item">
 							<router-link to="/signin" class="btn btn-primary">Sign In</router-link>
 						</li>
 					</template>
@@ -28,11 +31,27 @@
 						<li class="nav-item">
 							<router-link to="/quiz" class="nav-link" active-class="active">Analyzers</router-link>
 						</li>
-						<li class="nav-item">
-							<router-link to="/account" class="nav-link" active-class="active">Account</router-link>
-						</li>
-						<li class="nav-item">
-							<button @click="handleSignOut" class="btn btn-outline-secondary">Sign Out</button>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" 
+							   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<div class="user-avatar me-2">
+									<i class="bi bi-person-circle"></i>
+								</div>
+								<span class="user-email">{{ userStore.user?.email || 'User' }}</span>
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+								<li>
+									<router-link to="/account" class="dropdown-item">
+										<i class="bi bi-gear me-2"></i>Account
+									</router-link>
+								</li>
+								<li><hr class="dropdown-divider"></li>
+								<li>
+									<button @click="handleSignOut" class="dropdown-item">
+										<i class="bi bi-box-arrow-right me-2"></i>Sign Out
+									</button>
+								</li>
+							</ul>
 						</li>
 					</template>
 				</ul>
@@ -42,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '../stores/user'
+import { useUserStore } from '../../stores/user'
 import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
@@ -99,5 +118,44 @@ a.active {
 		height: 2px;
 		background: black;
 	}
+}
+
+.user-avatar i {
+	font-size: 1.5rem;
+	color: #6c757d;
+}
+
+.user-email {
+	font-size: 0.9rem;
+	max-width: 150px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dropdown-menu {
+	border: none;
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+	border-radius: 0.5rem;
+	padding: 0.5rem 0;
+	min-width: 180px;
+}
+
+.dropdown-item {
+	padding: 0.5rem 1rem;
+	font-size: 0.9rem;
+	border: none;
+	background: none;
+	width: 100%;
+	text-align: left;
+}
+
+.dropdown-item:hover {
+	background-color: #f8f9fa;
+}
+
+.dropdown-item i {
+	color: #6c757d;
+	width: 16px;
 }
 </style>
