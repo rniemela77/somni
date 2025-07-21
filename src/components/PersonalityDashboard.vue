@@ -15,7 +15,7 @@
         No quizzes completed yet. <router-link to="/quiz">Take a quiz now</router-link>
       </div>
 
-      <PersonalityScales :scores="attributeScores" class="mb-5"/>
+      <PersonalityScales :scores="userStore.userAttributes" class="mb-5"/>
 
       <h3 class="text-center">Deeper Analysis</h3>
 
@@ -83,8 +83,6 @@ onMounted(async () => {
   }
 });
 
-const attributeScores = computed(() => userStore.userAttributes || {});
-
 const generateButtonText = computed(() =>
   generatingDescription.value ? 'GENERATING...' : 'GENERATE NEW ANALYSIS'
 );
@@ -99,7 +97,7 @@ const generateDescription = async () => {
 
   try {
     // Get the user's attribute scores
-    const attributes = attributeScores.value;
+    const attributes = userStore.userAttributes;
 
     // Check if we have any attributes to analyze
     if (Object.keys(attributes).length === 0) {
