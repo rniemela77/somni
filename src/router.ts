@@ -99,6 +99,14 @@ const routes: AppRouteRecord[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    // If there's a saved position (browser back/forward), use it
+    if (savedPosition) {
+      return savedPosition;
+    }
+    // Otherwise, scroll to top for new navigation
+    return { top: 0 };
+  },
 });
 
 // Navigation guards with proper typing
