@@ -18,10 +18,10 @@
 							<router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
 						</li>
 						<li class="nav-item">
-							<router-link to="/signup" class="nav-link" active-class="active">Sign Up</router-link>
+							<router-link to="/signin" class="nav-link" active-class="active">Sign In</router-link>
 						</li>
 						<li class="nav-item">
-							<router-link to="/signin" class="btn btn-primary">Sign In</router-link>
+							<router-link to="/signup" class="btn btn-primary">Sign Up</router-link>
 						</li>
 					</template>
 					<template v-else>
