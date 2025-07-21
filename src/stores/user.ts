@@ -103,6 +103,7 @@ export const useUserStore = defineStore('user', {
     isAuthenticated: (state) => !!state.user,
     isReady: (state) => state.initialized,
     isLoading: (state) => state.loading || state.isProcessing,
+    isGeneratingAnalysis: (state) => state.isProcessing,
 
     // Quiz progress getters
     completedQuizzesCount: (state) => {
@@ -368,6 +369,58 @@ export const useUserStore = defineStore('user', {
     },
 
     // Personality Analysis Methods
+    async generatePersonalityAnalysis() {
+      if (!this.userId) {
+        return { success: false, error: 'No user logged in' };
+      }
+
+      this.isProcessing = true;
+      
+      try {
+        // Get the current user's auth token
+        const currentUser = this.user;
+        if (!currentUser) {
+          throw new Error('Authentication required. Please log in again.');
+        }
+
+        const idToken = await currentUser.getIdToken();
+
+        // Call the backend function
+        const response = await fetch('/.netlify/functions/generate-personality-analysis', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `HTTP ${response.status}: Failed to generate analysis`);
+        }
+
+        const data = await response.json();
+        
+        // Update local state with the new analysis
+        this.personalityAnalysis = { ...this.personalityAnalysis, ...data.personalityAnalysis };
+
+        return { 
+          success: true, 
+          error: null,
+          data: data.personalityAnalysis
+        };
+
+      } catch (error) {
+        console.error('[User Store] Generate personality analysis error:', error);
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        };
+      } finally {
+        this.isProcessing = false;
+      }
+    },
+
     async updatePersonalityAnalysis(data: { results?: QuizResult[], personalityAnalysis?: Record<string, any> }) {
       if (!this.userId) {
         return { success: false, error: 'No user logged in' };

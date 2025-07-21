@@ -38,61 +38,34 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import PersonalityAnalysisSection from './PersonalityAnalysisSection.vue';
-import { openaiService } from '../services/openai';
 import { useUserStore } from '../stores/user';
 
 const userStore = useUserStore();
-const generatingDescription = ref(false);
 const error = ref<string | null>(null);
 
 const generateButtonText = computed(() => {
-  if (generatingDescription.value) return 'GENERATING...';
-  return userStore.personalityAnalysis ? 'REGENERATE ANALYSIS' : 'GENERATE ANALYSIS';
+  if (userStore.isGeneratingAnalysis) return 'GENERATING...';
+  return userStore.personalityAnalysis && Object.keys(userStore.personalityAnalysis).length > 0 ? 'REGENERATE ANALYSIS' : 'GENERATE ANALYSIS';
 });
 
 const buttonDisabled = computed(() =>
-  generatingDescription.value || userStore.noQuizzesCompleted
+  userStore.isGeneratingAnalysis || userStore.noQuizzesCompleted
 );
 
 const generateDescription = async () => {
-  generatingDescription.value = true;
   error.value = null;
 
   try {
-    // Get the user's attribute scores
-    const attributes = userStore.userAttributes;
+    const { success, error: analysisError } = await userStore.generatePersonalityAnalysis();
 
-    // Check if we have any attributes to analyze
-    if (Object.keys(attributes).length === 0) {
-      throw new Error('No personality attributes found. Please take some assessments first.');
+    if (!success) {
+      throw new Error(analysisError || 'Failed to generate personality analysis');
     }
 
-    // Generate personality analysis based on attributes
-    const { completion, error: analysisError } = await openaiService.analyzePersonality(attributes);
-
-    if (analysisError) {
-      throw new Error(analysisError);
-    }
-
-    if (!completion) {
-      throw new Error('Failed to generate personality analysis');
-    }
-
-    // Save the analysis using the user store
-    if (userStore.isAuthenticated) {
-      const { success, error: updateError } = await userStore.updatePersonalityAnalysis({
-        personalityAnalysis: completion
-      });
-
-      if (!success) {
-        console.error("Error saving personality analysis:", updateError);
-      }
-    }
+    // Analysis was successful and store has been updated automatically
   } catch (err) {
     console.error("Exception in generateDescription:", err);
     error.value = err instanceof Error ? err.message : String(err);
-  } finally {
-    generatingDescription.value = false;
   }
 };
 </script>

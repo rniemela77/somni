@@ -59,17 +59,7 @@ const getSortedAnalysisSections = computed(() => {
   max-width: 100%;
   position: relative;
   margin-bottom: 3rem;
-  /* min-height: 15rem; */
 }
-/* .analysis-card::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(144deg, #b6a6ff -114%, transparent 75%);
-} */
 
 .analysis-image-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba287 100%);
