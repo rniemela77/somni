@@ -30,7 +30,7 @@
       </div>
 
       <!-- Analysis Results -->
-      <PersonalityAnalysisSection :parsedFeeling="userStore.personalityAnalysis || {}" />
+      <PersonalityAnalysisSection :personalityAnalysis="userStore.personalityAnalysis || {}" />
     </div>
   </div>
 </template>
