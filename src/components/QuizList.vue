@@ -145,15 +145,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 .tips-section {
   color: #666;
 }
@@ -168,19 +159,15 @@ onMounted(async () => {
   line-height: 1.4;
 }
 
-.tips-section i {
-  font-size: 2rem;
-}
-
 .score-badge {
-  background: rgba(13, 110, 253, 0.1);
-  color: #0d6efd;
+  background: #0d6efd;
+  color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-weight: bold;
-}
-
-.bg-light {
-  background-color: rgba(13, 110, 253, 0.05) !important;
+  font-size: 0.9rem;
+  min-width: 3rem;
+  text-align: center;
+  display: inline-block;
 }
 </style> 
