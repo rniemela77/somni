@@ -88,7 +88,10 @@
             Take Another Assessment
           </button>
           <button @click="$router.push({ name: 'home' })" class="btn btn-outline-primary">
-            View Dashboard
+            View Overview
+          </button>
+          <button @click="$router.push({ name: 'insights' })" class="btn btn-outline-success">
+            View Insights
           </button>
         </div>
       </div>

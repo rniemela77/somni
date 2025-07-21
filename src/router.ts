@@ -6,6 +6,7 @@ import Success from "./components/Success.vue";
 import Cancel from "./components/Cancel.vue";
 import Dashboard from "./components/Dashboard.vue";
 import Account from "./components/Account.vue";
+import Insights from "./components/Insights.vue";
 import PrivacyPolicy from "./components/PrivacyPolicy.vue";
 import TermsOfService from "./components/TermsOfService.vue";
 import { useUserStore } from "./stores/user";
@@ -58,6 +59,12 @@ const routes: AppRouteRecord[] = [
         props: true
       }
     ]
+  },
+  { 
+    path: "/insights", 
+    component: Insights,
+    name: 'insights',
+    meta: { requiresAuth: true }
   },
   { 
     path: "/account", 

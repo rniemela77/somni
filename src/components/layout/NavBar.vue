@@ -26,10 +26,13 @@
 					</template>
 					<template v-else>
 						<li class="nav-item">
-							<router-link to="/" class="nav-link" exact-active-class="active">Dashboard</router-link>
+							<router-link to="/quiz" class="nav-link" active-class="active">Assessments</router-link>
 						</li>
 						<li class="nav-item">
-							<router-link to="/quiz" class="nav-link" active-class="active">Assessments</router-link>
+							<router-link to="/" class="nav-link" exact-active-class="active">Overview</router-link>
+						</li>
+						<li class="nav-item">
+							<router-link to="/insights" class="nav-link" active-class="active">Insights</router-link>
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" 
