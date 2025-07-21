@@ -11,13 +11,19 @@
       <h3 class="text-center mb-4">Your Personality Dashboard</h3>
 
       <!-- No quizzes message -->
-      <div v-if="noQuizzesCompleted" class="alert alert-warning mb-4">
+      <div v-if="userStore.noQuizzesCompleted" class="alert alert-warning mb-4">
         No quizzes completed yet. <router-link to="/quiz">Take a quiz now</router-link>
       </div>
 
       <PersonalityScales :scores="attributeScores" class="mb-5"/>
 
       <h3 class="text-center">Deeper Analysis</h3>
+
+      <!-- Quiz completion warning -->
+      <div v-if="userStore.hasIncompleteQuizzes" class="alert alert-warning text-center mb-3">
+        You have completed {{ userStore.completedQuizzesCount }} of {{ userStore.totalQuizzesCount }} quizzes. 
+        For best personality analysis results, please <router-link to="/quiz">complete all quizzes</router-link>.
+      </div>
 
       <div class="text-center mb-4">
         <button @click="generateDescription" class="btn btn-outline-primary" :disabled="buttonDisabled">
@@ -77,23 +83,16 @@ onMounted(async () => {
   }
 });
 
-// Computed properties
 const attributeScores = computed(() => userStore.userAttributes || {});
 
 const generateButtonText = computed(() =>
   generatingDescription.value ? 'GENERATING...' : 'GENERATE NEW ANALYSIS'
 );
 
-const noQuizzesCompleted = computed(() => {
-  const attributes = attributeScores.value;
-  return !attributes || Object.keys(attributes).length === 0;
-});
-
 const buttonDisabled = computed(() =>
-  generatingDescription.value || noQuizzesCompleted.value
+  generatingDescription.value || userStore.noQuizzesCompleted
 );
 
-// Methods
 const generateDescription = async () => {
   generatingDescription.value = true;
   error.value = null;

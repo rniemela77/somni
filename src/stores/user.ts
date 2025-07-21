@@ -88,23 +88,40 @@ export const useUserStore = defineStore('user', {
     results: [],
     
     // UI state
-    loading: false,
+    loading: true,
     error: '',
     isProcessing: false,
     initialized: false,
-    lastUserDataFetch: null as string | null,
+    lastUserDataFetch: null,
     
     // Auth listener cleanup
     authUnsubscribe: null,
   }),
 
   getters: {
-    isAuthenticated: (state: UserState) => !!state.user,
-    userId: (state: UserState) => state.user?.uid,
-    userEmail: (state: UserState) => state.user?.email,
-    isReady: (state: UserState) => state.initialized && !state.loading,
-    errorMessage: (state: UserState) => state.error,
-    isLoading: (state: UserState) => state.loading || state.isProcessing
+    userId: (state) => state.user?.uid || null,
+    isAuthenticated: (state) => !!state.user,
+    isReady: (state) => state.initialized,
+    isLoading: (state) => state.loading || state.isProcessing,
+
+    // Quiz progress getters
+    completedQuizzesCount: (state) => {
+      return Object.keys(state.userAttributes || {}).length;
+    },
+
+    noQuizzesCompleted: (state) => {
+      const attributes = state.userAttributes || {};
+      return Object.keys(attributes).length === 0;
+    },
+
+    totalQuizzesCount: () => {
+      // Total quizzes based on personality data (8 quizzes with questions)
+      return 8;
+    },
+
+    hasIncompleteQuizzes() {
+      return this.completedQuizzesCount < this.totalQuizzesCount;
+    }
   },
 
   actions: {
