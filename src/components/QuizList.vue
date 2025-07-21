@@ -8,32 +8,14 @@
         <i class="bi bi-lightbulb text-primary me-2"></i>
         Tips for Accurate Results
       </h3>
-      <div class="row">
-        <div class="col-md-6">
-          <ul class="list-unstyled">
-            <li class="mb-2 d-flex align-items-center">
-              <i class="bi bi-check text-success me-2"></i>
-              <span>Choose a time when your mood is neutral - avoid taking assessments on exceptionally good or bad days</span>
-            </li>
-            <li class="mb-2 d-flex align-items-center">
-              <i class="bi bi-check text-success me-2"></i>
-              <span>Find a quiet, distraction-free environment to focus on your responses</span>
-            </li>
-          </ul>
-        </div>
-        <div class="col-md-6">
-          <ul class="list-unstyled">
-            <li class="mb-2 d-flex align-items-center">
-              <i class="bi bi-check text-success me-2"></i>
-              <span>Answer based on your general tendencies, not just recent events</span>
-            </li>
-            <li class="mb-2 d-flex align-items-center">
-              <i class="bi bi-check text-success me-2"></i>
-              <span>Take your time - there's no rush to complete the assessment</span>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <ul class="list-unstyled">
+        <li v-for="(tip, index) in tips" 
+            :key="index"
+            class="d-flex align-items-center">
+          <i class="bi bi-check text-success me-1"></i>
+          <span>{{ tip }}</span>
+        </li>
+      </ul>
     </div>
 
     <div v-if="error" class="alert alert-danger text-center">
@@ -94,6 +76,14 @@ const userStore = useUserStore();
 const loading = ref(false);
 const error = ref<string | null>(null);
 const availableQuizzes = computed(() => quizStore.availableQuizzes);
+
+// Tips data
+const tips = ref([
+  "Choose a time when your mood is neutral - avoid taking assessments on exceptionally good or bad days",
+  "Find a quiet, distraction-free environment to focus on your responses",
+  "Answer based on your general tendencies, not just recent events",
+  "Take your time - there's no rush to complete the assessment"
+]);
 
 const {
   getTraitIntensityText,
@@ -157,6 +147,10 @@ onMounted(async () => {
 .tips-section span {
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+.tips-section i {
+  font-size: 2rem;
 }
 
 .score-badge {
