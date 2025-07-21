@@ -2,15 +2,6 @@
   <div class="container">
     <h2 class="mb-4 fw-bold position-relative">Your Account</h2>
 
-    <!-- Auth Status Message (temporary for debugging) -->
-    <div v-if="userStore.loading" class="alert alert-warning d-flex align-items-center">
-      <div class="warning-icon me-2">!</div>
-      <div class="warning-message">
-        <h3>Authentication in progress...</h3>
-        <p>Please wait while we restore your session.</p>
-      </div>
-    </div>
-
     <div class="row">
       <!-- User Information Section -->
       <div class="col-md-6 mb-4">
