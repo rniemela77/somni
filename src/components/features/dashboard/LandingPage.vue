@@ -1,13 +1,13 @@
 <template>
   <div>
     <section class="text-center mb-5">
-      <h1 class="display-4 mb-4">Discover Your <span class="text-primary fw-semibold">True Self</span></h1>
+      <h1 class="display-4 mb-4">Discover Deep <span class="text-primary fw-semibold">Personality Insights</span></h1>
       <p class="lead col-lg-8 mx-auto">
         Discover your unique personality profile across dozens of different traits and dimensions.
       </p>
       <div class="d-flex justify-content-center gap-3 mt-4">
-        <router-link to="/signup" class="btn btn-primary btn-lg px-4">Create Account</router-link>
         <router-link to="/signin" class="btn btn-outline-primary btn-lg px-4">Sign In</router-link>
+        <router-link to="/signup" class="btn btn-primary btn-lg px-4">Sign Up</router-link>
       </div>
     </section>
 

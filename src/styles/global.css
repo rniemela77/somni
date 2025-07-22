@@ -54,3 +54,13 @@ body {
 .fade-leave-to {
   opacity: 0;
 }
+
+/* Fade-in animation for components */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

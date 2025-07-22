@@ -2,13 +2,34 @@
   <div class="container">
     <h2 class="mb-4 fw-bold position-relative">Your Account</h2>
 
-    <!-- Auth Status Message (temporary for debugging) -->
-    <div v-if="userStore.loading" class="alert alert-warning d-flex align-items-center">
-      <div class="warning-icon me-2">!</div>
-      <div class="warning-message">
-        <h3>Authentication in progress...</h3>
-        <p>Please wait while we restore your session.</p>
+    <!-- Payment Success Banner -->
+    <div v-if="paymentSuccess" class="alert alert-success d-flex align-items-center my-4 payment-success-banner">
+      <div class="success-icon me-3">🎉</div>
+      <div class="success-message flex-grow-1">
+        <h3 class="mb-2">Payment Successful!</h3>
+        <p class="mb-0">{{ paymentSuccessMessage }}</p>
       </div>
+      <button @click="dismissAllMessages" class="btn-close ms-auto" aria-label="Close"></button>
+    </div>
+
+    <!-- Payment Error Banner -->
+    <div v-if="paymentError" class="alert alert-danger d-flex align-items-center my-4">
+      <div class="error-icon me-3">✗</div>
+      <div class="error-message flex-grow-1">
+        <h3 class="mb-2">Payment Error</h3>
+        <p class="mb-0">{{ paymentError }}</p>
+      </div>
+      <button @click="dismissAllMessages" class="btn-close ms-auto" aria-label="Close"></button>
+    </div>
+
+    <!-- Payment Canceled Banner -->
+    <div v-if="paymentCanceled" class="alert alert-warning d-flex align-items-center my-4 payment-canceled-banner">
+      <div class="warning-icon me-3">⚠️</div>
+      <div class="warning-message flex-grow-1">
+        <h3 class="mb-2">Payment Canceled</h3>
+        <p class="mb-0">{{ paymentCanceledMessage }}</p>
+      </div>
+      <button @click="dismissAllMessages" class="btn-close ms-auto" aria-label="Close"></button>
     </div>
 
     <div class="row">
@@ -58,7 +79,7 @@
                   </li>
                   <li class="d-flex align-items-start mb-2">
                     <span class="benefit-icon text-success me-2">✓</span>
-                    <span>Unlimited quiz attempts and result storage</span>
+                    <span>Unlimited assessment attempts and result storage</span>
                   </li>
                 </ul>
               </div>
@@ -82,25 +103,6 @@
       </div>
     </div>
 
-    <!-- Payment Success Banner -->
-    <div v-if="paymentSuccess" class="alert alert-success d-flex align-items-center mt-4">
-      <div class="success-icon me-2">✓</div>
-      <div class="success-message">
-        <h3>Payment Successful!</h3>
-        <p>{{ paymentSuccessMessage }}</p>
-      </div>
-      <button @click="dismissSuccessMessage" class="btn-close ms-auto" aria-label="Close"></button>
-    </div>
-
-    <!-- Payment Error Banner -->
-    <div v-if="paymentError" class="alert alert-danger d-flex align-items-center mt-4">
-      <div class="error-icon me-2">✗</div>
-      <div class="error-message">
-        <h3>Payment Error</h3>
-        <p>{{ paymentError }}</p>
-      </div>
-      <button @click="dismissSuccessMessage" class="btn-close ms-auto" aria-label="Close"></button>
-    </div>
   </div>
 </template>
 
@@ -121,6 +123,8 @@ const isLoading = ref(false);
 const paymentError = ref<string | null>(null);
 const paymentSuccess = ref(false);
 const paymentSuccessMessage = ref('Your premium access has been activated successfully. Enjoy all the benefits!');
+const paymentCanceled = ref(false);
+const paymentCanceledMessage = ref('Your payment was canceled. No charges were made to your account.');
 
 // Computed properties for user data
 const userInfo = computed(() => ({
@@ -139,12 +143,16 @@ onMounted(async () => {
     if (route.query.payment_status === 'success') {
       console.log('Payment success detected in URL parameters');
       paymentSuccess.value = true;
+      paymentError.value = null;
+      paymentCanceled.value = false;
       
       // Clear query parameters to avoid showing success message on refresh
       router.replace({ query: {} });
     } else if (route.query.payment_status === 'canceled') {
       console.log('Payment cancellation detected in URL parameters');
-      paymentError.value = 'Payment was canceled. Please try again.';
+      paymentCanceled.value = true;
+      paymentError.value = null;
+      paymentSuccess.value = false;
       router.replace({ query: {} });
     }
   }
@@ -171,6 +179,8 @@ const startCheckout = async () => {
     
     isLoading.value = true;
     paymentError.value = null;
+    paymentSuccess.value = false;
+    paymentCanceled.value = false;
     
     // Get the current user
     const currentUser = userStore.user;
@@ -225,11 +235,69 @@ const startCheckout = async () => {
   }
 };
 
-const dismissSuccessMessage = () => {
+const dismissAllMessages = () => {
   paymentSuccess.value = false;
   paymentError.value = null;
+  paymentCanceled.value = false;
 };
 </script>
 
 <style scoped>
+.payment-success-banner {
+  border: 2px solid #d4edda;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  animation: slideInDown 0.5s ease-out;
+}
+
+.payment-canceled-banner {
+  border: 2px solid #fff3cd;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  animation: slideInDown 0.5s ease-out;
+}
+
+.success-icon {
+  font-size: 2rem;
+  animation: bounce 2s infinite;
+}
+
+.warning-icon {
+  font-size: 2rem;
+}
+
+.error-icon {
+  font-size: 2rem;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    transform: translate3d(0,0,0);
+  }
+  40%, 43% {
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
 </style>

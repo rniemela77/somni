@@ -1,0 +1,154 @@
+import { initializeFirebase } from './utils/firebase.js';
+import { success, error as errorResponse, handleOptions } from './utils/response.js';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+
+// Import the frontend configuration to ensure consistency
+import { PERSONALITY_ANALYSIS_SECTIONS, generateAnalysisPrompt } from '../../src/config/personalityAnalysis.js';
+
+/**
+ * Parse the OpenAI analysis text into sections using the same logic as frontend
+ */
+const parseAnalysis = (text) => {
+  const sections = Object.values(PERSONALITY_ANALYSIS_SECTIONS);
+  const result = {};
+
+  sections.forEach((section) => {
+    const sectionTitle = section.title;
+    const regex = new RegExp(`${sectionTitle}:\\s*(.+?)(?=\\n\\n|$)`, 's');
+    const match = text.match(regex);
+    result[section.id] = match ? match[1].trim() : '';
+  });
+
+  return result;
+};
+
+/**
+ * Call OpenAI API for personality analysis using the existing openai function
+ */
+const callOpenAI = async (prompt) => {
+  try {
+    // Call the existing openai function internally
+    const response = await fetch(`${process.env.URL || 'http://localhost:8888'}/.netlify/functions/openai`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        model: 'gpt-4',
+        temperature: 0.7,
+        max_tokens: 1000
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `OpenAI service error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.completion) {
+      throw new Error('Invalid response from OpenAI service');
+    }
+
+    return data.completion;
+  } catch (error) {
+    console.error('Error calling OpenAI service:', error);
+    throw new Error(`OpenAI analysis failed: ${error.message}`);
+  }
+};
+
+/**
+ * Netlify function to generate personality analysis
+ */
+export async function handler(event, context) {
+  console.log('🧠 Personality analysis generation requested:', event.httpMethod, new Date().toISOString());
+
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return handleOptions();
+  }
+
+  // Only allow POST requests
+  if (event.httpMethod !== 'POST') {
+    console.log('⚠️ Request rejected: Not a POST request');
+    return errorResponse('Method not allowed', 405);
+  }
+
+  try {
+    // Initialize Firebase
+    await initializeFirebase();
+    const db = getFirestore();
+    console.log('🔥 Firebase initialized for personality analysis');
+
+    // Authenticate user
+    const authHeader = event.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return errorResponse('Unauthorized. Missing or invalid token.', 401);
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
+    const decodedToken = await getAuth().verifyIdToken(idToken);
+    const userId = decodedToken.uid;
+    console.log('👤 Authenticated user:', userId);
+
+    // Get user data from Firestore
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return errorResponse('User not found', 404);
+    }
+
+    const userData = userDoc.data();
+    const attributes = userData.attributes || {};
+
+    // Validate that user has completed assessments
+    if (Object.keys(attributes).length === 0) {
+      return errorResponse('No personality attributes found. Please complete some assessments first.', 400);
+    }
+
+    console.log(`📊 Found ${Object.keys(attributes).length} personality attributes for analysis`);
+
+    // Generate the analysis prompt
+    const prompt = generateAnalysisPrompt(attributes);
+    
+    // Call OpenAI API
+    console.log('🤖 Calling OpenAI for personality analysis...');
+    const rawAnalysis = await callOpenAI(prompt);
+    
+    // Parse the analysis into sections
+    const parsedAnalysis = parseAnalysis(rawAnalysis);
+    console.log('✅ Analysis generated and parsed successfully');
+
+    // Save the analysis back to Firestore
+    await userRef.update({
+      personalityAnalysis: parsedAnalysis,
+      updatedAt: FieldValue.serverTimestamp(),
+      lastAnalysisGenerated: FieldValue.serverTimestamp()
+    });
+
+    console.log('💾 Analysis saved to user document');
+
+    // Return the parsed analysis
+    return success({
+      personalityAnalysis: parsedAnalysis,
+      attributesAnalyzed: Object.keys(attributes).length,
+      generatedAt: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error(`❌ Error generating personality analysis: ${error.message}`);
+    
+    // Return appropriate error based on type
+    if (error.message.includes('token')) {
+      return errorResponse('Authentication failed', 401);
+    } else if (error.message.includes('OpenAI')) {
+      return errorResponse('AI analysis service temporarily unavailable', 503);
+    } else {
+      return errorResponse(`Failed to generate personality analysis: ${error.message}`, 500);
+    }
+  }
+} 

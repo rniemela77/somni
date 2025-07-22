@@ -2,10 +2,9 @@ import { createRouter, createWebHistory, RouteRecordRaw, NavigationGuardNext, Ro
 import SignUp from "./components/SignUp.vue";
 import SignIn from "./components/SignIn.vue";
 import Quiz from "./components/Quiz.vue";
-import Success from "./components/Success.vue";
-import Cancel from "./components/Cancel.vue";
 import Dashboard from "./components/Dashboard.vue";
 import Account from "./components/Account.vue";
+import Insights from "./components/Insights.vue";
 import PrivacyPolicy from "./components/PrivacyPolicy.vue";
 import TermsOfService from "./components/TermsOfService.vue";
 import { useUserStore } from "./stores/user";
@@ -60,21 +59,15 @@ const routes: AppRouteRecord[] = [
     ]
   },
   { 
+    path: "/insights", 
+    component: Insights,
+    name: 'insights',
+    meta: { requiresAuth: true }
+  },
+  { 
     path: "/account", 
     component: Account,
     name: 'account',
-    meta: { requiresAuth: true }
-  },
-  { 
-    path: "/success", 
-    component: Success,
-    name: 'success',
-    meta: { requiresAuth: true }
-  },
-  { 
-    path: "/cancel", 
-    component: Cancel,
-    name: 'cancel',
     meta: { requiresAuth: true }
   },
   { 
@@ -92,6 +85,14 @@ const routes: AppRouteRecord[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    // If there's a saved position (browser back/forward), use it
+    if (savedPosition) {
+      return savedPosition;
+    }
+    // Otherwise, scroll to top for new navigation
+    return { top: 0 };
+  },
 });
 
 // Navigation guards with proper typing
@@ -103,43 +104,23 @@ router.beforeEach(async (
   const requiresAuth = to.matched.some(record => record.meta?.requiresAuth);
   const requiresGuest = to.matched.some(record => record.meta?.requiresGuest);
   
-  // Use the user store for authentication check
   const userStore = useUserStore();
-  const isAuthenticated = userStore.isAuthenticated;
-  const isReady = userStore.isReady;
   
   // If auth is still initializing, wait for it to complete
-  if (!isReady) {
-    // For protected routes, wait until auth is ready before proceeding
-    if (requiresAuth) {
-      console.log('[Router] Auth not ready, waiting for auth state...');
-      
-      // Wait for auth to be ready
-      await new Promise<void>((resolve) => {
-        const unsubscribe = userStore.$subscribe((_mutation, state) => {
-          if (state.initialized && !state.loading) {
-            unsubscribe();
-            resolve();
-          }
-        });
-      });
-      
-      // Re-check auth after waiting
-      if (userStore.isAuthenticated) {
-        next();
-      } else {
-        console.log('[Router] User not authenticated, redirecting to signin');
-        next('/signin');
-      }
-      return;
+  if (!userStore.isReady) {
+    console.log('[Router] Auth not ready, waiting for initialization...');
+    
+    // Wait for the store to be initialized
+    while (!userStore.isReady) {
+      await new Promise(resolve => setTimeout(resolve, 50));
     }
     
-    // For non-protected routes, allow navigation but let App.vue handle loading
-    next();
-    return;
+    console.log('[Router] Auth initialization complete');
   }
 
-  // Auth is ready, proceed with normal flow
+  // Auth is ready, proceed with normal guard logic
+  const isAuthenticated = userStore.isAuthenticated;
+  
   if (requiresAuth && !isAuthenticated) {
     console.log('[Router] Redirecting to sign in page due to missing authentication');
     next('/signin');

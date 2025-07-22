@@ -4,12 +4,12 @@
     <div v-if="!submissionSuccess" class="d-flex justify-content-between align-items-center mb-4">
       <h2>{{ quizTitle }}</h2>
       <button class="btn btn-outline-secondary" @click="$router.push({ name: 'quiz-list' })">
-        ← Back to Quiz Selection
+        ← Back to Assessment Selection
       </button>
     </div>
 
     <div v-if="loading" class="text-center">
-      <p>Loading quiz...</p>
+      <p>Loading assessment...</p>
     </div>
     <div v-else-if="error" class="alert alert-danger">
       <p>{{ error }}</p>
@@ -70,7 +70,7 @@
             <button type="submit" 
                     class="btn btn-primary w-100"
                     :disabled="isSubmitting">
-              {{ isSubmitting ? 'Submitting...' : 'Submit Quiz' }}
+              {{ isSubmitting ? 'Submitting...' : 'Submit Assessment' }}
             </button>
           </div>
         </form>
@@ -81,14 +81,17 @@
         <div class="success-icon mb-4">
           <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
         </div>
-        <h2 class="mb-4">Quiz Submitted Successfully!</h2>
+        <h2 class="mb-4">Assessment Submitted Successfully!</h2>
         <p class="text-muted mb-4">Your responses have been recorded and your personality profile has been updated.</p>
-        <div class="d-flex justify-content-center gap-3">
+        <div class="d-flex flex-wrap justify-content-center gap-3">
           <button @click="$router.push({ name: 'quiz-list' })" class="btn btn-primary">
-            Take Another Quiz
+            Take Another Assessment
           </button>
           <button @click="$router.push({ name: 'home' })" class="btn btn-outline-primary">
-            View Dashboard
+            View Overview
+          </button>
+          <button @click="$router.push({ name: 'insights' })" class="btn btn-outline-success">
+            View Insights
           </button>
         </div>
       </div>

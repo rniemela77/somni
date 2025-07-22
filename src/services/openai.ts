@@ -1,6 +1,5 @@
 // OpenAI API service for interacting with GPT models
 // This service handles API calls to OpenAI GPT models via Netlify Functions
-import { generateAnalysisPrompt, PERSONALITY_ANALYSIS_SECTIONS, type PersonalitySection } from '../config/personalityAnalysis';
 
 interface OpenAIConfig {
   model: string;
@@ -22,7 +21,7 @@ interface PromptTemplates {
 }
 
 export interface CompletionResponse {
-  completion: Record<string, string> | null;
+  completion: string | null;
   error: string | null;
   usage: {
     prompt_tokens?: number;
@@ -158,63 +157,6 @@ class OpenAIService {
         usage: null 
       };
     }
-  }
-  
-  // Analyze personality based on attribute scores
-  async analyzePersonality(attributes: Record<string, number>): Promise<CompletionResponse> {
-    try {
-      const prompt = generateAnalysisPrompt(attributes);
-      
-      const response = await fetch('/.netlify/functions/openai', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt,
-          ...this.config
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      // The Netlify function returns data.completion directly
-      return {
-        completion: this.parseAnalysis(data.completion),
-        error: null,
-        usage: data.usage
-      };
-    } catch (error) {
-      console.error('Error in analyzePersonality:', error);
-      return {
-        completion: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        usage: null
-      };
-    }
-  }
-
-  // Parse the analysis text into sections
-  private parseAnalysis(text: string): Record<string, string> {
-    const sections = Object.values(PERSONALITY_ANALYSIS_SECTIONS) as PersonalitySection[];
-    const result: Record<string, string> = {};
-
-    sections.forEach((section: PersonalitySection) => {
-      const sectionTitle = section.title;
-      const regex = new RegExp(`${sectionTitle}:\\s*(.+?)(?=\\n\\n|$)`, 's');
-      const match = text.match(regex);
-      result[section.id] = match ? match[1].trim() : '';
-    });
-
-    return result;
   }
 }
 

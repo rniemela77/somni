@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2 class="text-center mb-4">Select a Quiz</h2>
+    <h2 class="text-center mb-4">Select an Assessment</h2>
 
     <!-- Tips Section -->
     <div class="tips-section mb-5">
@@ -8,42 +8,24 @@
         <i class="bi bi-lightbulb text-primary me-2"></i>
         Tips for Accurate Results
       </h3>
-      <div class="row">
-        <div class="col-md-6">
-          <ul class="list-unstyled">
-            <li class="mb-2 d-flex">
-              <i class="bi bi-check text-success me-2"></i>
-              <span>Choose a time when your mood is neutral - avoid taking quizzes on exceptionally good or bad days</span>
-            </li>
-            <li class="mb-2 d-flex">
-              <i class="bi bi-check text-success me-2"></i>
-              <span>Find a quiet, distraction-free environment to focus on your responses</span>
-            </li>
-          </ul>
-        </div>
-        <div class="col-md-6">
-          <ul class="list-unstyled">
-            <li class="mb-2 d-flex">
-              <i class="bi bi-check text-success me-2"></i>
-              <span>Answer based on your general tendencies, not just recent events</span>
-            </li>
-            <li class="mb-2 d-flex">
-              <i class="bi bi-check text-success me-2"></i>
-              <span>Take your time - there's no rush to complete the assessment</span>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <ul class="list-unstyled">
+        <li v-for="(tip, index) in tips" 
+            :key="index"
+            class="d-flex align-items-center">
+          <i class="bi bi-check text-success me-1"></i>
+          <span>{{ tip }}</span>
+        </li>
+      </ul>
     </div>
 
     <div v-if="error" class="alert alert-danger text-center">
       <p>{{ error }}</p>
     </div>
     <div v-else-if="loading" class="alert alert-info text-center">
-      <p>Loading quizzes...</p>
+      <p>Loading assessments...</p>
     </div>
     <div v-else-if="availableQuizzes.length === 0" class="alert alert-warning text-center">
-      <p>No quizzes available.</p>
+      <p>No assessments available.</p>
     </div>
     <div v-else class="row row-cols-1 row-cols-md-2 g-4">
       <div v-for="quiz in availableQuizzes" 
@@ -95,6 +77,14 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const availableQuizzes = computed(() => quizStore.availableQuizzes);
 
+// Tips data
+const tips = ref([
+  "Choose a time when your mood is neutral - avoid taking assessments on exceptionally good or bad days",
+  "Find a quiet, distraction-free environment to focus on your responses",
+  "Answer based on your general tendencies, not just recent events",
+  "Take your time - there's no rush to complete the assessment"
+]);
+
 const {
   getTraitIntensityText,
   getDominantTrait,
@@ -145,15 +135,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 .tips-section {
   color: #666;
 }
@@ -163,28 +144,24 @@ onMounted(async () => {
   font-weight: 500;
 }
 
-.tips-section i {
-  font-size: 0.9rem;
-}
-
 .tips-section span {
   font-size: 0.9rem;
   line-height: 1.4;
 }
 
 .tips-section i {
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
 .score-badge {
-  background: rgba(13, 110, 253, 0.1);
-  color: #0d6efd;
+  background: #0d6efd;
+  color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-weight: bold;
-}
-
-.bg-light {
-  background-color: rgba(13, 110, 253, 0.05) !important;
+  font-size: 0.9rem;
+  min-width: 3rem;
+  text-align: center;
+  display: inline-block;
 }
 </style> 
