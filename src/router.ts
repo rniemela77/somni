@@ -2,8 +2,6 @@ import { createRouter, createWebHistory, RouteRecordRaw, NavigationGuardNext, Ro
 import SignUp from "./components/SignUp.vue";
 import SignIn from "./components/SignIn.vue";
 import Quiz from "./components/Quiz.vue";
-import Success from "./components/Success.vue";
-import Cancel from "./components/Cancel.vue";
 import Dashboard from "./components/Dashboard.vue";
 import Account from "./components/Account.vue";
 import Insights from "./components/Insights.vue";
@@ -70,18 +68,6 @@ const routes: AppRouteRecord[] = [
     path: "/account", 
     component: Account,
     name: 'account',
-    meta: { requiresAuth: true }
-  },
-  { 
-    path: "/success", 
-    component: Success,
-    name: 'success',
-    meta: { requiresAuth: true }
-  },
-  { 
-    path: "/cancel", 
-    component: Cancel,
-    name: 'cancel',
     meta: { requiresAuth: true }
   },
   { 

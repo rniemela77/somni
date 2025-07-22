@@ -76,8 +76,8 @@ export async function handler(event, context) {
       customer_email: userEmail,
       client_reference_id: userId, // Store user ID for reference
       mode: 'payment',
-      success_url: `${event.headers.origin || process.env.FRONTEND_URL}/profile?payment_status=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${event.headers.origin || process.env.FRONTEND_URL}/profile?payment_status=canceled`,
+      success_url: `${event.headers.origin || process.env.FRONTEND_URL}/account?payment_status=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${event.headers.origin || process.env.FRONTEND_URL}/account?payment_status=canceled`,
       metadata: {
         userId: userId
       }
