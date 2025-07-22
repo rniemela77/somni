@@ -83,7 +83,7 @@
         </div>
         <h2 class="mb-4">Assessment Submitted Successfully!</h2>
         <p class="text-muted mb-4">Your responses have been recorded and your personality profile has been updated.</p>
-        <div class="d-flex justify-content-center gap-3">
+        <div class="d-flex flex-wrap justify-content-center gap-3">
           <button @click="$router.push({ name: 'quiz-list' })" class="btn btn-primary">
             Take Another Assessment
           </button>
