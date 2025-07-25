@@ -13,6 +13,8 @@ interface TraitDescriptions {
 
 // Extend PersonalityScale to include optional traitDescriptions and questions
 export interface ExtendedPersonalityScale extends PersonalityScale {
+  title?: string;
+  description?: string;
   traitDescriptions?: TraitDescriptions;
   questions?: Array<any>; // Replace 'any' with proper Question interface if available
 }
@@ -33,6 +35,11 @@ export function usePersonalityTraits() {
   const getDominantTrait = (scale: ExtendedPersonalityScale | null, score: number): string | null => {
     if (!scale) return null;
     return score > 0 ? scale.positive : scale.negative;
+  };
+
+  const getWeakerTrait = (scale: ExtendedPersonalityScale | null, score: number): string | null => {
+    if (!scale) return null;
+    return score < 0 ? scale.positive : scale.negative;
   };
 
   const getTraitDescription = (scale: ExtendedPersonalityScale | null, type: string): string => {
@@ -56,6 +63,7 @@ export function usePersonalityTraits() {
     getTraitIntensityText,
     getScoreForScale,
     getDominantTrait,
+    getWeakerTrait,
     getTraitDescription,
     calculatePosition,
     getScaleById,

@@ -38,7 +38,7 @@
 import { computed } from 'vue';
 import { 
   PERSONALITY_ANALYSIS_SECTIONS 
-} from '../config/personalityAnalysis';
+} from '../../config/personalityAnalysis';
 
 interface Props {
   personalityAnalysis: Record<string, string>;
@@ -62,7 +62,7 @@ const getSortedAnalysisSections = computed(() => {
 }
 
 .analysis-image-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba287 100%);
+  background: var(--card-fancy-img-bg);
 }
 
 .analysis-icon-container {
@@ -110,7 +110,7 @@ const getSortedAnalysisSections = computed(() => {
 }
 
 .analysis-content-section {
-  background: linear-gradient(144deg, #b6a6ff70 -114%, transparent 75%);
+  background: var(--card-fancy-bg-color);
   display: flex;
   align-items: center;
 }

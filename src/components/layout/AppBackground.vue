@@ -25,11 +25,7 @@
 }
 
 .app-bg::before {
-	background-image: radial-gradient(circle at 15% 25%,
-			#FFFDE6 0%,
-			transparent 70%),
-			radial-gradient(circle at 50% 50%, #E1F7FF 0%, transparent 70%),
-			radial-gradient(circle at 75% 75%, #EBF1FF 0%, transparent 90%);
+	background-image: var(--app-bg-gradient);
 }
 
 .app-bg::after {

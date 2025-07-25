@@ -515,25 +515,257 @@ const personalityData = [
     id: "detail_big_picture",
     displayName: "Detail Focus-Big-Picture Focus",
     positive: "Detail Focus",
-    negative: "Big-Picture Focus"
+    negative: "Big-Picture Focus",
+    title: "Attention to Detail",
+    description: "This quiz assesses whether you naturally focus on specific details versus broad patterns and overall themes. Move the slider to indicate how each statement reflects your typical approach.",
+    traitDescriptions: {
+      positive: "Detail-focused individuals naturally notice specifics, precision, and particulars. They excel at careful analysis, thorough examination, and ensuring accuracy in their work. They tend to be methodical, catch errors others miss, and prefer to understand all the components before seeing the whole picture.",
+      negative: "Big-picture focused individuals naturally see overall patterns, themes, and general concepts. They excel at understanding systems, recognizing broader implications, and grasping the essence of complex situations. They tend to think strategically, see how parts connect to the whole, and prefer to understand the forest before examining individual trees."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I notice small errors that others tend to miss",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I focus on the overall theme rather than specific details",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I prefer to examine each component thoroughly before moving on",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I grasp the general concept quickly without needing all the specifics",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I double-check my work for accuracy and precision",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I see how different ideas connect to form larger patterns",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I focus on getting the facts exactly right",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I think about implications and broader consequences",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I pay attention to specific wording and precise language",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I understand complex situations by looking at the big picture first",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "temporal_orientation",
     displayName: "Temporal Orientation",
     positive: "Future Focus",
-    negative: "Past Focus"
+    negative: "Past Focus",
+    title: "Time Perspective",
+    description: "This quiz assesses whether you naturally orient toward the future or draw more from past experiences. Move the slider to indicate how each statement reflects your typical perspective.",
+    traitDescriptions: {
+      positive: "Future-focused individuals are oriented toward what's coming next and what could be. They tend to be goal-oriented, plan ahead, and are motivated by potential outcomes and possibilities. They often think about improvements, innovations, and how things could be different or better in the time ahead.",
+      negative: "Past-focused individuals draw wisdom and guidance from previous experiences and established knowledge. They tend to value traditions, learn from history, and use past patterns to inform current decisions. They often appreciate proven methods, honor legacy, and find meaning in continuity and lessons learned."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I spend more time thinking about upcoming goals than reflecting on past achievements",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I often draw on past experiences to guide my current decisions",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I'm more excited about future possibilities than nostalgic about the past",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I find wisdom in traditional ways of doing things",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I focus on what I want to accomplish rather than what I've already done",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I often think about 'the good old days' and how things used to be",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I prefer to plan for tomorrow rather than reminisce about yesterday",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I believe we can learn important lessons from history",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I'm motivated by visions of what could be rather than memories of what was",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I value preserving traditions and maintaining connections to the past",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "sensation_seeking",
     displayName: "Sensation Seeking-Sensation Avoidance",
     positive: "Sensation Seeking",
-    negative: "Sensation Avoidance"
+    negative: "Sensation Avoidance",
+    title: "Stimulation Preferences",
+    description: "This quiz assesses your preference for intense, varied, and stimulating experiences versus calm, predictable environments. Move the slider to indicate how each statement reflects your typical preferences.",
+    traitDescriptions: {
+      positive: "Sensation seekers crave intense, varied, and novel experiences. They enjoy high stimulation environments, seek out thrilling activities, and are drawn to situations that provide strong sensory input. They often enjoy loud music, bright lights, exciting adventures, and activities that provide adrenaline rushes or intense emotional experiences.",
+      negative: "Sensation avoiders prefer calm, peaceful, and low-stimulation environments. They tend to be sensitive to overwhelming sensory input and find comfort in quiet, predictable settings. They often prefer gentle activities, soft sounds, muted lighting, and environments that allow for relaxation and tranquility."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I enjoy loud, energetic music and lively atmospheres",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I prefer quiet, peaceful environments where I can think clearly",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I seek out thrilling activities like roller coasters or extreme sports",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I avoid activities that might be too intense or overwhelming",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I'm drawn to bright lights, vivid colors, and bold visual experiences",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I find comfort in soft lighting and muted, calming colors",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I enjoy the rush of adrenaline from exciting experiences",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I get overstimulated easily in busy, chaotic environments",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I like parties and events with lots of energy and activity",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I prefer gentle, low-key activities that don't overwhelm my senses",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "authority_orientation",
     displayName: "Authority Acceptance-Authority Rejection",
     positive: "Authority Acceptance",
-    negative: "Authority Rejection"
+    negative: "Authority Rejection",
+    title: "Authority Orientation",
+    description: "This quiz assesses your relationship with authority figures and hierarchical structures. Move the slider to indicate how each statement reflects your typical attitudes and behaviors.",
+    traitDescriptions: {
+      positive: "Authority accepters tend to respect hierarchical structures and value the guidance of established leaders. They generally follow rules and procedures, appreciate clear chains of command, and believe that authority figures often have valuable expertise and perspective. They work well within structured systems and value order and stability.",
+      negative: "Authority rejecters tend to question hierarchical structures and prefer more egalitarian approaches. They value independent thinking, often challenge established rules when they seem unfair, and believe that good ideas can come from anyone regardless of position. They prefer collaborative decision-making and may resist top-down directives."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I generally follow rules and procedures without questioning them",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I often challenge decisions made by people in authority positions",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I respect the experience and expertise that comes with leadership positions",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I believe good ideas can come from anyone, regardless of their rank",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I feel comfortable working within established hierarchies",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I prefer collaborative decision-making over top-down directives",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I believe that clear chains of command make organizations work better",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I question authority when I think they're making poor decisions",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I defer to supervisors and leaders when they give direction",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I think everyone should have an equal say in important decisions",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "competitive_cooperative",

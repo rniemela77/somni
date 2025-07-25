@@ -127,7 +127,7 @@ export const useQuizStore = defineStore('quiz', {
           attribute: this.currentQuiz.id,
           timestamp: new Date().toISOString(),
           answers,
-          score: score * 100 // Convert from -1..1 to -100..100 scale
+          score: Math.round(score * 100) // Convert from -1..1 to -100..100 scale and round
         };
 
         // Submit quiz results using the user store

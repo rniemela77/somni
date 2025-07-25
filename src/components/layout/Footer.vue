@@ -14,15 +14,6 @@
 </template>
 
 <style scoped>
-footer a {
-	color: var(--bs-secondary, #6c757d);
-	font-size: 0.9rem;
-}
-
-footer a:hover {
-	color: var(--bs-primary, #0d6efd);
-}
-
 footer {
 	box-shadow: 0 -37px 17px -48px #0009dd70;
 }

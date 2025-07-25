@@ -1,7 +1,6 @@
 <template>
   <div>
-    <div class="card mx-auto" style="max-width: 400px;">
-      <div class="card-body">
+    <Card class="mx-auto" style="max-width: 400px;" shadow="dark">
         <h2 class="card-title text-center">Create Account</h2>
         <p class="text-center text-muted">Join our community of learners</p>
         
@@ -14,6 +13,7 @@
               type="email" 
               class="form-control"
               placeholder="Enter your email"
+              autocomplete="email"
               required
               :disabled="userStore.isLoading"
             />
@@ -83,16 +83,16 @@
           <p>Already have an account? 
             <router-link to="/signin" class="text-primary">Sign In</router-link>
           </p>
-        </div>
       </div>
-    </div>
+    </Card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useUserStore } from '../stores/user';
+import { useUserStore } from '../../stores/user';
 import { useRouter } from 'vue-router';
+import Card from '../ui/Card.vue';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -110,14 +110,14 @@ const handleSignUp = async (): Promise<void> => {
   
   const { success } = await userStore.signUp();
   if (success) {
-    router.push('/quiz');
+    router.push('/');
   }
 };
 
 const handleGoogleSignIn = async (): Promise<void> => {
   const { success } = await userStore.signInWithGoogle();
   if (success) {
-    router.push('/quiz');
+    router.push('/');
   }
 };
 </script>
