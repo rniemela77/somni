@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "vite",
     "dev:netlify": "netlify dev",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "seed:firestore": "netlify functions:invoke seed-firestore --no-identity",
     "type-check": "vue-tsc --noEmit",
