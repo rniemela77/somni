@@ -93,6 +93,16 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     },
     icon: "journey.svg"
   },
+  myersBriggs: {
+    id: "myersBriggs",
+    title: "Myers-Briggs Type Indicator (MBTI)",
+    description: "A Myers-Briggs personality type that best represents the individual's personality.",
+    promptInstructions: "Identify this person's Myers-Briggs personality type out of the options: ISTJ, ISFJ, INFJ, INTJ, ISTP, ISFP, INFP, INTP, ESTP, ESFP, ENFP, ENTP, ESTJ, ESFJ, ENFJ, ENTJ. Explain in one sentence why this type reflects their character.",
+    display: {
+      order: 8,
+    },
+    icon: "myers-briggs.svg"
+  }
 };
 
 /**

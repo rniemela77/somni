@@ -41,7 +41,6 @@ export const quizService = {
         error: null,
       };
     } catch (error: any) {
-      console.error("Error loading quizzes:", error);
       return { quizzes: [], error: error.message };
     }
   },
@@ -63,7 +62,6 @@ export const quizService = {
         error: null,
       };
     } catch (error: any) {
-      console.error("Error fetching quiz:", error);
       return { quiz: null, error: error.message };
     }
   },

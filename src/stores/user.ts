@@ -22,6 +22,7 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 import { PERSONALITY_ANALYSIS_SECTIONS } from '../config/personalityAnalysis';
+import { useQuizStore } from './quiz';
 
 export interface QuizResult {
   quizId: string;
@@ -116,8 +117,8 @@ export const useUserStore = defineStore('user', {
     },
 
     totalQuizzesCount: () => {
-      // Total quizzes based on personality data (8 quizzes with questions)
-      return 8;
+      const quizStore = useQuizStore();
+      return quizStore.availableQuizzes.length;
     },
 
     hasIncompleteQuizzes() {
@@ -139,57 +140,63 @@ export const useUserStore = defineStore('user', {
         }
 
         this.user = firebaseUser;
-        
-        // Only fetch user data if it's a different user or hasn't been fetched recently
-        const shouldFetchData = !this.lastUserDataFetch || 
-          this.lastUserDataFetch !== firebaseUser.uid ||
-          this.isDataStale();
-
-        if (shouldFetchData) {
-          this.loading = true;
-          const { data, error } = await this.getOrCreateUser(firebaseUser.uid);
-          
-          if (error) {
-            this.error = error;
-            return;
-          }
-
-          if (data) {
-            this.userAttributes = data.attributes || {};
-            this.isPaid = data.isPaid;
-            this.personalityAnalysis = data.personalityAnalysis || {};
-            this.results = data.results || [];
-            this.lastUserDataFetch = firebaseUser.uid;
-          }
-        }
+        await this.loadUserData(firebaseUser);
+        await this.loadQuizData();
         
       } catch (error) {
-        console.error('[User Store] Error setting user:', error);
         this.error = error instanceof Error ? error.message : 'Unknown error';
-      } finally {
-        this.loading = false;
+      }
+    },
+
+    // Load user data from Firestore
+    async loadUserData(firebaseUser: FirebaseUser) {
+      const shouldFetchData = !this.lastUserDataFetch || 
+        this.lastUserDataFetch !== firebaseUser.uid ||
+        this.isDataStale();
+
+      if (shouldFetchData) {
+        this.loading = true;
+        const { data, error } = await this.getOrCreateUser(firebaseUser.uid);
+        
+        if (error) {
+          this.error = error;
+          return;
+        }
+
+        if (data) {
+          this.userAttributes = data.attributes || {};
+          this.isPaid = data.isPaid;
+          this.personalityAnalysis = data.personalityAnalysis || {};
+          this.results = data.results || [];
+          this.lastUserDataFetch = firebaseUser.uid;
+        }
+      }
+    },
+
+    // Load quiz data for authenticated users
+    async loadQuizData() {
+      if (!this.user) return;
+
+      try {
+        const { useQuizStore } = await import('./quiz');
+        const quizStore = useQuizStore();
+        if (!quizStore.dataLoaded) {
+          await quizStore.loadQuizzes();
+        }
+      } catch (error) {
+        // Quiz loading failure is not critical
       }
     },
 
     // Initialize auth state listener
     async init() {
-      // Prevent double initialization
-      if (this.initialized) {
-        console.log('[User Store] Already initialized, skipping');
-        return;
-      }
+      if (this.initialized) return;
 
       this.loading = true;
       try {
-        // Firebase auth state restoration - wait for first auth state change
         await new Promise<void>((resolve) => {
           const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            console.log('[User Store] Auth state changed:', user ? 'logged in' : 'logged out');
-            
-            // Store unsubscribe function for cleanup (this is our permanent listener)
             this.authUnsubscribe = unsubscribe;
-            
-            // Set user and resolve initialization
             await this.setUser(user);
             resolve();
           });
@@ -197,7 +204,6 @@ export const useUserStore = defineStore('user', {
 
         this.initialized = true;
       } catch (error) {
-        console.error('[User Store] Initialization error:', error);
         this.error = error instanceof Error ? error.message : 'Unknown error';
       } finally {
         this.loading = false;
@@ -226,7 +232,6 @@ export const useUserStore = defineStore('user', {
           await this.setUser(userCredential.user);
           return { success: true, error: null };
         } catch (error) {
-          console.error('[User Store] Sign in error:', error);
           const authError = error as AuthError;
           this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
           return { success: false, error: this.error };
@@ -242,7 +247,6 @@ export const useUserStore = defineStore('user', {
           await this.setUser(userCredential.user);
           return { success: true, error: null };
         } catch (error) {
-          console.error('[User Store] Google sign in error:', error);
           const authError = error as AuthError;
           this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
           return { success: false, error: this.error };
@@ -257,7 +261,6 @@ export const useUserStore = defineStore('user', {
           await this.setUser(userCredential.user);
           return { success: true, error: null };
         } catch (error) {
-          console.error('[User Store] Sign up error:', error);
           const authError = error as AuthError;
           this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
           return { success: false, error: this.error };
@@ -272,7 +275,6 @@ export const useUserStore = defineStore('user', {
           await this.setUser(null);
           return { success: true, error: null };
         } catch (error) {
-          console.error('[User Store] Sign out error:', error);
           const authError = error as AuthError;
           this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
           return { success: false, error: this.error };
@@ -286,7 +288,6 @@ export const useUserStore = defineStore('user', {
           await sendPasswordResetEmail(auth, email || this.email);
           return { success: true, error: null };
         } catch (error) {
-          console.error('[User Store] Password reset error:', error);
           const authError = error as AuthError;
           this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
           return { success: false, error: this.error };
@@ -318,7 +319,6 @@ export const useUserStore = defineStore('user', {
         await setDoc(userRef, newUser);
         return { data: newUser, error: null };
       } catch (error) {
-        console.error('[User Store] Get/Create user error:', error);
         return { 
           data: null, 
           error: error instanceof Error ? error.message : 'Unknown error' 
@@ -345,7 +345,6 @@ export const useUserStore = defineStore('user', {
         
         return { success: true, error: null };
       } catch (error) {
-        console.error('[User Store] Update user error:', error);
         return { 
           success: false, 
           error: error instanceof Error ? error.message : 'Unknown error' 
@@ -363,7 +362,6 @@ export const useUserStore = defineStore('user', {
         const userDoc = await getDoc(userRef);
         return userDoc.exists() ? userDoc.data().isPaid : false;
       } catch (error) {
-        console.error('[User Store] Check paid status error:', error);
         return false;
       }
     },
@@ -411,7 +409,6 @@ export const useUserStore = defineStore('user', {
         };
 
       } catch (error) {
-        console.error('[User Store] Generate personality analysis error:', error);
         return {
           success: false,
           error: error instanceof Error ? error.message : 'Unknown error'
@@ -456,7 +453,6 @@ export const useUserStore = defineStore('user', {
 
         return { success: true, error: null };
       } catch (error) {
-        console.error('[User Store] Update personality analysis error:', error);
         return {
           success: false,
           error: error instanceof Error ? error.message : 'Unknown error'
@@ -494,7 +490,6 @@ export const useUserStore = defineStore('user', {
 
         return { success: true, error: null };
       } catch (error) {
-        console.error('[User Store] Submit quiz result error:', error);
         return {
           success: false,
           error: error instanceof Error ? error.message : 'Unknown error'

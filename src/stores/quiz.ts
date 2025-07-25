@@ -3,6 +3,7 @@ import { useUserStore } from './user';
 import { quizService } from '../services/firebase-quiz';
 import type { Quiz } from '../services/firebase-quiz';
 import type { QuizResult } from './user';
+import { isDataStale, STALENESS_CONFIGS } from '../utils/dataUtils';
 
 interface Question {
   id: string;
@@ -28,6 +29,7 @@ export const useQuizStore = defineStore('quiz', {
     availableQuizzes: [],
     loading: false,
     error: null,
+    // Cache management
     dataLoaded: false,
     lastFetch: null,
   }),
@@ -36,7 +38,6 @@ export const useQuizStore = defineStore('quiz', {
     async loadQuizzes(): Promise<void> {
       // Check if we already have fresh data
       if (this.dataLoaded && this.availableQuizzes.length > 0 && !this.isDataStale()) {
-        console.log('[Quiz Store] Using cached quiz data');
         return;
       }
 
@@ -50,6 +51,7 @@ export const useQuizStore = defineStore('quiz', {
         }
 
         const response = await quizService.getAllQuizzes();
+
         if (response.error) {
           throw new Error(response.error);
         }
@@ -57,10 +59,9 @@ export const useQuizStore = defineStore('quiz', {
         this.availableQuizzes = response.quizzes || [];
         this.dataLoaded = true;
         this.lastFetch = Date.now();
-        console.log('[Quiz Store] Quizzes loaded successfully:', this.availableQuizzes);
       } catch (error) {
         this.error = error instanceof Error ? error.message : String(error);
-        console.error('[Quiz Store] Failed to load quizzes:', error);
+        this.dataLoaded = false;
         throw error;
       } finally {
         this.loading = false;
@@ -69,16 +70,10 @@ export const useQuizStore = defineStore('quiz', {
 
     // Check if cached data is stale (older than 5 minutes)
     isDataStale(): boolean {
-      if (!this.lastFetch) return true;
-      const fiveMinutes = 5 * 60 * 1000;
-      return Date.now() - this.lastFetch > fiveMinutes;
-    },
-
-    // Force refresh of quiz data
-    async refreshQuizzes(): Promise<void> {
-      this.dataLoaded = false;
-      this.lastFetch = null;
-      await this.loadQuizzes();
+      return isDataStale({
+        maxAgeMs: STALENESS_CONFIGS.QUIZ_DATA.maxAgeMs,
+        lastFetch: this.lastFetch
+      });
     },
 
     async selectQuiz(quizId: string): Promise<{ error: string | null }> {
@@ -99,7 +94,6 @@ export const useQuizStore = defineStore('quiz', {
         return { error: null };
       } catch (error) {
         this.error = error instanceof Error ? error.message : String(error);
-        console.error('Failed to select quiz:', error);
         return { error: this.error };
       } finally {
         this.loading = false;
@@ -143,7 +137,6 @@ export const useQuizStore = defineStore('quiz', {
         return { resultId: results.timestamp, error: null };
       } catch (error) {
         this.error = error instanceof Error ? error.message : String(error);
-        console.error('Failed to submit quiz:', error);
         return { resultId: null, error: this.error };
       } finally {
         this.loading = false;
@@ -178,7 +171,6 @@ export const useQuizStore = defineStore('quiz', {
         this.quizResults = userStore.results || [];
       } catch (error) {
         this.error = error instanceof Error ? error.message : String(error);
-        console.error('Failed to load user results:', error);
       } finally {
         this.loading = false;
       }

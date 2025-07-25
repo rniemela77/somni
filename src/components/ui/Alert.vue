@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" :class="['alert', alertClass, 'd-flex', 'align-items-center', 'my-3']">
+  <div v-if="visible" :class="['alert', alertClass, 'd-flex', 'align-items-center', 'mb-3']">
     <span v-if="icon" class="me-2">{{ icon }}</span>
     <div class="flex-grow-1">
       <slot>{{ message }}</slot>
@@ -94,5 +94,9 @@ function handleClose() {
   position: absolute;
   top: 0;
   right: 0;
+  &:hover {
+    color: var(--text-primary);
+    background: var(--card-bg-color);
+  }
 }
 </style> 

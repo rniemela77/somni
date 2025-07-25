@@ -79,15 +79,10 @@ p {
 }
 
 strong~p {
-  font-size: 1.1rem;
   font-weight: 700;
   background-color: var(--card-bg-color);
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 0.25rem;
-}
-
-.text-primary {
-  color: var(--text-primary)!important;
 }
 
 .result-description {

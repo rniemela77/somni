@@ -79,7 +79,6 @@
 <script setup lang="ts">
 import { useUserStore } from '../../stores/user'
 import { useRouter } from 'vue-router'
-import DarkModeToggle from './DarkModeToggle.vue'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -108,7 +107,7 @@ const { isDark } = useDarkMode();
 	font-size: 3rem;
 	text-transform: uppercase;
 	letter-spacing: -2px;
-	color: var(--primary-color);
+	color: var(--text-primary);
 }
 
 .somni-text~* {

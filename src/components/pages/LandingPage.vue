@@ -145,10 +145,6 @@ const processSteps = [
   font-weight: 600;
 }
 
-.text-primary {
-  color: var(--text-primary);
-}
-
 .text-muted,
 .section-text {
   color: var(--body-text-color-medium);

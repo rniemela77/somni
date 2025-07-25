@@ -13,7 +13,8 @@
 
       <ul class="list-unstyled m-0">
         <li v-for="(tip, index) in tips" :key="index" class="d-flex mb-1">
-          <i class="bi bi-check text-success me-2" style="height: 1.4rem; width: 1.4rem; font-size: 1.4rem; transform: translateY(-4px)"></i>
+          <i class="bi bi-check text-success me-2"
+            style="height: 1.4rem; width: 1.4rem; font-size: 1.4rem; transform: translateY(-4px)"></i>
           <span>{{ tip }}</span>
         </li>
       </ul>
@@ -46,6 +47,13 @@
             <div>
               <p class="fw-bold">Question {{ index + 1 }}</p>
               <p class="mb-4">{{ question.text }}</p>
+
+              <div class="slider-value text-center">
+                <div class="score-label">
+                  <strong>{{ getScoreLabel(quizAnswers[question.id] || '0') }}</strong>
+                </div>
+              </div>
+
               <div class="slider-container">
                 <div class="slider-labels d-flex justify-content-between mb-2">
                   <span>Almost Never</span>
@@ -65,11 +73,6 @@
                   }"></div>
                   <input type="range" class="form-range" v-model="quizAnswers[question.id]" min="-100" max="100"
                     :disabled="isSubmittingQuiz" required />
-                </div>
-                <div class="slider-value text-center">
-                  <div class="score-label">
-                    <strong>{{ getScoreLabel(quizAnswers[question.id] || '0') }}</strong>
-                  </div>
                 </div>
               </div>
             </div>
@@ -103,11 +106,13 @@ const quizStore = useQuizStore();
 const userStore = useUserStore();
 
 const currentQuiz = ref<any>(null);
-const quizLoading = ref(false);
-const quizError = ref<string | null>(null);
 const quizAnswers = ref<Record<string, string>>({});
 const isSubmittingQuiz = ref(false);
 const assessmentSubmitted = ref(false);
+
+// Use quiz store's loading and error states
+const quizLoading = computed(() => quizStore.loading);
+const quizError = computed(() => quizStore.error);
 
 const tips = ref([
   "Choose a time when your mood is neutral - avoid taking assessments on exceptionally good or bad days",
@@ -130,17 +135,13 @@ watch(scaleId, (newScaleId) => {
 });
 
 onMounted(() => {
-  console.log('Assessment mounted');
   loadQuiz(scaleId.value);
 });
 
 const loadQuiz = async (scaleId: string) => {
-  quizLoading.value = true;
-  quizError.value = null;
   try {
     const result = await quizStore.selectQuiz(scaleId);
     if (result.error) {
-      quizError.value = result.error;
       return;
     }
     if (!quizStore.currentQuiz) {
@@ -152,16 +153,12 @@ const loadQuiz = async (scaleId: string) => {
       return acc;
     }, {});
   } catch (err) {
-    quizError.value = "Failed to load assessment. Please try again.";
     console.error('Error loading quiz:', err);
-  } finally {
-    quizLoading.value = false;
   }
 };
 
 const resetState = () => {
   currentQuiz.value = null;
-  quizError.value = null;
   assessmentSubmitted.value = false;
   quizAnswers.value = {};
 };
@@ -178,7 +175,6 @@ const submitAssessment = async () => {
   try {
     const { error: submitError } = await quizStore.submitQuiz(quizAnswers.value);
     if (submitError) {
-      quizError.value = "Error submitting assessment. Please try again.";
       assessmentSubmitted.value = false;
     } else {
       assessmentSubmitted.value = true;
@@ -188,7 +184,6 @@ const submitAssessment = async () => {
       return;
     }
   } catch (err) {
-    quizError.value = err instanceof Error ? err.message : "An error occurred";
     assessmentSubmitted.value = false;
   } finally {
     isSubmittingQuiz.value = false;
@@ -219,7 +214,7 @@ const getScoreLabel = (score: string | number): string => {
 }
 
 .slider-track {
-  height: 32px;
+  height: 3rem;
   background: var(--card-inset-bg-color);
   border-radius: 16px;
   position: relative;
@@ -237,15 +232,13 @@ const getScoreLabel = (score: string | number): string => {
 }
 
 .slider-fill.negative {
-  background: var(--primary-color);
+  background: linear-gradient(to right, var(--primary-color) 50%, transparent);
   border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
-  /* border-top-left-radius: 0!important; */
-  /* border-bottom-left-radius: 0!important; */
 }
 
 .slider-fill.positive {
-  background: var(--primary-color);
+  background: linear-gradient(to left, var(--primary-color) 50%, transparent);
   border-radius: 16px;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
@@ -253,7 +246,7 @@ const getScoreLabel = (score: string | number): string => {
 
 .form-range {
   width: 100%;
-  height: 32px;
+  height: 3rem;
   padding: 0;
   margin: 0;
   background-color: transparent;
@@ -269,9 +262,9 @@ const getScoreLabel = (score: string | number): string => {
 
 /* Shared thumb styles through CSS variables */
 .form-range {
-  --thumb-width: 32px;
-  --thumb-height: 32px;
-  --thumb-radius: 16px;
+  --thumb-width: 3rem;
+  --thumb-height: 3rem;
+  --thumb-radius: 50%;
   --thumb-bg: white;
   --thumb-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
@@ -294,7 +287,7 @@ const getScoreLabel = (score: string | number): string => {
 
 .form-range::-webkit-slider-runnable-track {
   width: 100%;
-  height: 32px;
+  height: 3rem;
   background: transparent;
   border-radius: 16px;
   cursor: pointer;
@@ -370,18 +363,6 @@ const getScoreLabel = (score: string | number): string => {
 .form-range:focus+.slider-value {
   opacity: 1;
   top: auto;
-}
-
-.slider-container::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 2px;
-  height: 32px;
-  background-color: rgba(0, 0, 0, 0.1);
-  pointer-events: none;
 }
 
 .score-label {
