@@ -1,0 +1,13 @@
+/* TEAM */
+    Developer: Robert Niemela
+    Contact: rvniemela@hotmail.com
+    From: United States
+
+/* SITE */
+    Last update: 2024/01/01
+    Language: English
+    Doctype: HTML5
+    IDE: VS Code
+    Standards: HTML5, CSS3, JavaScript ES6+
+    Components: Vue.js 3, Vite, Bootstrap 5
+    Software: Node.js, Firebase, Netlify 

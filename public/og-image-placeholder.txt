@@ -1,0 +1,11 @@
+This file is a placeholder for the Open Graph image.
+
+You need to create an og-image.jpg file (1200x630px recommended) for social media sharing.
+
+The image should include:
+- Somni logo/branding
+- "In-Depth Personality Analysis" text
+- "Hero's Journey Archetype Discovery" subtitle
+- Clean, modern design with the brand colors (#6366f1, #8b5cf6)
+
+Place the actual og-image.jpg file in the public directory to replace this placeholder. 

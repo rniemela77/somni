@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://somni.netlify.app/sitemap.xml
+
+# Disallow admin or private areas (if any exist in the future)
+# Disallow: /admin/
+# Disallow: /private/
+
+# Crawl delay (optional - be respectful to the server)
+Crawl-delay: 1 
