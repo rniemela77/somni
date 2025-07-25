@@ -118,7 +118,7 @@
 }
 
 h1 {
-    color: var(--bs-primary, #0d6efd);
+    color: var(--text-primary);
 }
 
 .card {
@@ -135,13 +135,12 @@ li {
 }
 
 h3 {
-    color: var(--bs-dark, #212529);
+    color: var(--text-primary);
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
 
 h4 {
-    color: var(--bs-secondary, #6c757d);
     margin-top: 1rem;
     margin-bottom: 0.5rem;
 }

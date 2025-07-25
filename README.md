@@ -1,4 +1,10 @@
-# Somni - Personality Quiz App
+# Somni - Personality Analysis App
+## About
+- Somni is an in-depth personality analysis app that examines both micro and macro aspects of your personality. At the micro level, it measures specific traits like Agreeableness. At the macro level, it identifies larger patterns, such as which Hero's Journey archetype your life story may follow.
+
+- The app's goal is to help users understand their unique traits in a new light, showing them how to transform their statistically-uncommon qualities into practical, real-world strengths.
+
+Creator: Robert Niemela
 
 ## Website URL
 
@@ -40,10 +46,12 @@ https://somni.netlify.app/
    ```
 
 
-## Quiz questions
+## Updating Assessments
+1. Make changes to `/data/personalityData.js`
 
-- Questions are located in /quizData.js
-- Seed the database with questions with `npm run seed`
+   ```
+   npm run seed:firestore
+   ```
 
 ## Database
 Firebase.google.com
@@ -63,12 +71,3 @@ Firebase:
 - allows you to connect your frontend to a database
 - is an alternative to a traditional database
 - offers authentication, realtime database, storage, and more
-
-## How the app works
-- quiz questions are stored in /quizData.js, and seeded into the firebase database using `npm run seed`
-- user authentication is handled by firebase
-- frontend fetches quiz questions from the firebase database
-- home/dashboard has a button to generate a personality report
-- the personality report instructions are in `config/personalityAnalysis.js`
-- the personality report api call is in `netlify/functions/openai.js`
-- the personality report is displayed on the dashboard

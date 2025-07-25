@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory, RouteRecordRaw, NavigationGuardNext, RouteLocationNormalized } from "vue-router";
-import SignUp from "./components/SignUp.vue";
-import SignIn from "./components/SignIn.vue";
-import Quiz from "./components/Quiz.vue";
-import Dashboard from "./components/Dashboard.vue";
-import Account from "./components/Account.vue";
-import Insights from "./components/Insights.vue";
-import PrivacyPolicy from "./components/PrivacyPolicy.vue";
-import TermsOfService from "./components/TermsOfService.vue";
+import SignUp from "./components/pages/SignUp.vue";
+import SignIn from "./components/pages/SignIn.vue";
+import Dashboard from "./components/pages/Dashboard.vue";
+import Account from "./components/pages/Account.vue";
+import Insights from "./components/pages/Insights.vue";
+import PrivacyPolicy from "./components/pages/PrivacyPolicy.vue";
+import TermsOfService from "./components/pages/TermsOfService.vue";
+import AssessmentView from './components/pages/Assessment.vue';
 import { useUserStore } from "./stores/user";
 
 // Define custom meta types
@@ -39,24 +39,11 @@ const routes: AppRouteRecord[] = [
     name: 'signin',
     meta: { requiresGuest: true }
   },
-  { 
-    path: "/quiz", 
-    component: Quiz,
-    name: 'quiz',
-    meta: { requiresAuth: true },
-    children: [
-      {
-        path: "",
-        name: "quiz-list",
-        component: () => import("./components/QuizList.vue")
-      },
-      {
-        path: ":id",
-        name: "quiz-detail",
-        component: () => import("./components/QuizDetail.vue"),
-        props: true
-      }
-    ]
+  {
+    path: "/assessment/:scaleId",
+    component: AssessmentView,
+    name: 'assessment',
+    meta: { requiresAuth: true }
   },
   { 
     path: "/insights", 

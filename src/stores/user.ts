@@ -509,7 +509,7 @@ export const useUserStore = defineStore('user', {
       return false;
     },
 
-    // Cleanup method
+    // Cleanup method: removes the Firebase auth listener to prevent memory leaks or duplicate listeners
     cleanup() {
       if (this.authUnsubscribe) {
         this.authUnsubscribe();
