@@ -28,10 +28,10 @@ const props = defineProps({
 });
 
 const paddingClasses = computed(() => ({
-    'p-3 p-xl-4': props.padding === 'sm',
-    'p-4 p-xl-5': props.padding === 'md',
-    'p-5 p-xl-6': props.padding === 'lg',
-    'p-6 p-xl-7': props.padding === 'xl',
+    'p-2 p-sm-3 p-xl-4': props.padding === 'sm',
+    'p-3 p-sm-4 p-xl-5': props.padding === 'md',
+    'p-4 p-sm-5 p-xl-6': props.padding === 'lg',
+    'p-5 p-sm-6 p-xl-7': props.padding === 'xl',
     'p-0': props.padding === '0'
 }));
 

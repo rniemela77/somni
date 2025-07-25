@@ -1,17 +1,17 @@
 import { computed } from 'vue';
 import { useUserStore } from '../stores/user';
-import { usePersonalityTraits } from './usePersonalityTraits';
+import { useQuizStore } from '../stores/quiz';
 
 export function useNextAssessment() {
   const userStore = useUserStore();
-  const { getAllScales } = usePersonalityTraits();
+  const quizStore = useQuizStore();
 
-  const allScales = computed(() => getAllScales());
-  const incompleteScales = computed(() =>
-    allScales.value.filter(scale => userStore.userAttributes[scale.id] === undefined)
+  const availableQuizzes = computed(() => quizStore.availableQuizzes);
+  const incompleteQuizzes = computed(() =>
+    availableQuizzes.value.filter(quiz => userStore.userAttributes[quiz.id] === undefined)
   );
   const firstIncomplete = computed(() =>
-    incompleteScales.value.length > 0 ? incompleteScales.value[0] : null
+    incompleteQuizzes.value.length > 0 ? incompleteQuizzes.value[0] : null
   );
 
   return {

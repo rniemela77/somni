@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container shadow rounded-5" style="position: relative;">
+  <div class="app-container px-1 px-md-3" style="position: relative;">
     <!-- Main App Content -->
     <NavBar />
 

@@ -35,15 +35,12 @@ import AssessmentResult from '../dashboard/AssessmentResult.vue';
 import WelcomeCard from '../dashboard/WelcomeCard.vue';
 import LandingPage from './LandingPage.vue';
 import { useRoute } from 'vue-router';
+import { useNextAssessment } from '../../composables/useNextAssessment';
+import InsightsCard from '../dashboard/InsightsCard.vue';
 
 const userStore = useUserStore();
-import { useNextAssessment } from '../../composables/useNextAssessment';
 const { firstIncompleteAssessment } = useNextAssessment();
-
 const route = useRoute();
-const router = useRouter();
-import { useRouter } from 'vue-router';
-import InsightsCard from '../dashboard/InsightsCard.vue';
 </script>
 
 <style scoped></style>
