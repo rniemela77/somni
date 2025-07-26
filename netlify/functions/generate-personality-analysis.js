@@ -104,10 +104,18 @@ export async function handler(event, context) {
 
     const userData = userDoc.data();
     const attributes = userData.attributes || {};
+    const openaiApiCalls = userData.openai_api_calls || 0;
+    const isPaid = userData.isPaid || false;
 
     // Validate that user has completed assessments
     if (Object.keys(attributes).length === 0) {
       return errorResponse('No personality attributes found. Please complete some assessments first.', 400);
+    }
+
+    // Check if user has reached the API call limit
+    const callLimit = isPaid ? 30 : 3;
+    if (openaiApiCalls >= callLimit) {
+      return errorResponse(`You have reached your AI analysis limit (${callLimit} requests). Please contact support for additional access.`, 403);
     }
 
     console.log(`📊 Found ${Object.keys(attributes).length} personality attributes for analysis`);
@@ -126,6 +134,7 @@ export async function handler(event, context) {
     // Save the analysis back to Firestore
     await userRef.update({
       personalityAnalysis: parsedAnalysis,
+      openai_api_calls: FieldValue.increment(1),
       updatedAt: FieldValue.serverTimestamp(),
       lastAnalysisGenerated: FieldValue.serverTimestamp()
     });
@@ -151,4 +160,4 @@ export async function handler(event, context) {
       return errorResponse(`Failed to generate personality analysis: ${error.message}`, 500);
     }
   }
-} 
+}

@@ -1,7 +1,7 @@
 {
   "name": "Somni - Personality Analysis",
   "short_name": "Somni",
-  "description": "In-depth personality analysis and Hero's Journey archetype discovery",
+  "description": "In-depth personality analysis discovery app",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
