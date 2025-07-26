@@ -24,6 +24,10 @@ import {
 import { PERSONALITY_ANALYSIS_SECTIONS } from '../config/personalityAnalysis';
 import { useQuizStore } from './quiz';
 
+// Constants
+const FREE_OPENAI_CALLS_LIMIT = 3;
+const PAID_OPENAI_CALLS_LIMIT = 30;
+
 export interface QuizResult {
   quizId: string;
   attribute: string;
@@ -49,6 +53,7 @@ interface UserState {
   isPaid: boolean;
   personalityAnalysis: Record<string, any>;
   results: QuizResult[];
+  openaiApiCalls: number;
   
   // UI state
   loading: boolean;
@@ -87,6 +92,7 @@ export const useUserStore = defineStore('user', {
     isPaid: false,
     personalityAnalysis: {},
     results: [],
+    openaiApiCalls: 0,
     
     // UI state
     loading: true,
@@ -123,6 +129,11 @@ export const useUserStore = defineStore('user', {
 
     hasIncompleteQuizzes() {
       return this.completedQuizzesCount < this.totalQuizzesCount;
+    },
+
+    // OpenAI API calls remaining
+    openaiApiCallsRemaining: (state) => {
+      return state.isPaid ? PAID_OPENAI_CALLS_LIMIT - state.openaiApiCalls : FREE_OPENAI_CALLS_LIMIT - state.openaiApiCalls;
     }
   },
 
@@ -135,6 +146,7 @@ export const useUserStore = defineStore('user', {
         if (!firebaseUser) {
           this.user = null;
           this.userAttributes = {};
+          this.openaiApiCalls = 0;
           this.lastUserDataFetch = null;
           return;
         }
@@ -168,6 +180,7 @@ export const useUserStore = defineStore('user', {
           this.isPaid = data.isPaid;
           this.personalityAnalysis = data.personalityAnalysis || {};
           this.results = data.results || [];
+          this.openaiApiCalls = data.openaiApiCalls || 0;
           this.lastUserDataFetch = firebaseUser.uid;
         }
       }
@@ -312,6 +325,7 @@ export const useUserStore = defineStore('user', {
           attributes: {},
           personalityAnalysis: {},
           results: [],
+          openaiApiCalls: 0,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         };
@@ -372,6 +386,15 @@ export const useUserStore = defineStore('user', {
         return { success: false, error: 'No user logged in' };
       }
 
+      // Check if user has remaining free API calls
+      if (this.openaiApiCallsRemaining <= 0) {
+        const limit = this.isPaid ? PAID_OPENAI_CALLS_LIMIT : FREE_OPENAI_CALLS_LIMIT;
+        return { 
+          success: false, 
+          error: `You have reached your AI analysis limit (${limit} requests). Please contact support for additional access.` 
+        };
+      }
+
       this.isProcessing = true;
       
       try {
@@ -401,6 +424,14 @@ export const useUserStore = defineStore('user', {
         
         // Update local state with the new analysis
         this.personalityAnalysis = { ...this.personalityAnalysis, ...data.personalityAnalysis };
+
+        // Increment OpenAI API calls counter
+        this.openaiApiCalls += 1;
+        
+        // Update the counter in Firebase
+        await this.updateUser({
+          openaiApiCalls: this.openaiApiCalls
+        });
 
         return { 
           success: true, 

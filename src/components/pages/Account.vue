@@ -46,6 +46,20 @@
               <span class="label fw-bold me-2">Account Created:</span>
               <span class="value">{{ formatDate(userInfo.createdAt) }}</span>
             </div>
+            <div class="detail-item d-flex">
+              <span class="label fw-bold me-2">AI Analysis Generated:</span>
+              <span class="value">{{ userStore.openaiApiCalls }}</span>
+            </div>
+            <div class="detail-item d-flex">
+              <span class="label fw-bold me-2">AI Analysis Requests Remaining:</span>
+              <span class="value" :class="{
+                'text-danger': userStore.openaiApiCallsRemaining <= 0,
+                'text-warning': userStore.openaiApiCallsRemaining === 1 && !userStore.isPaid,
+                'text-success': userStore.isPaid && userStore.openaiApiCallsRemaining > 5
+              }">
+                {{ userStore.isPaid ? `${userStore.openaiApiCallsRemaining} remaining` : userStore.openaiApiCallsRemaining }}
+              </span>
+            </div>
           </div>
           <div v-else class="loading-message text-muted fst-italic">
             Loading account information...
@@ -77,6 +91,10 @@
                 <li class="d-flex align-items-start mb-2">
                   <span class="benefit-icon text-success me-2">✓</span>
                   <span>Unlimited assessment attempts and result storage</span>
+                </li>
+                <li class="d-flex align-items-start mb-2">
+                  <span class="benefit-icon text-success me-2">✓</span>
+                  <span>30 AI personality analysis requests</span>
                 </li>
               </ul>
             </div>
