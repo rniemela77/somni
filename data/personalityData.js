@@ -771,25 +771,257 @@ const personalityData = [
     id: "competitive_cooperative",
     displayName: "Competitive-Cooperative Drive",
     positive: "Competitive",
-    negative: "Cooperative"
+    negative: "Cooperative",
+    title: "Achievement Style",
+    description: "This quiz assesses your natural tendency toward competitive achievement versus cooperative collaboration. Move the slider to indicate how each statement reflects your typical approach to goals and success.",
+    traitDescriptions: {
+      positive: "Competitive individuals are driven by personal achievement and outperforming others. They excel in environments where they can measure their success against others, set ambitious personal goals, and push themselves to be the best. They often thrive on challenges and are motivated by recognition and winning.",
+      negative: "Cooperative individuals are driven by collective success and working together toward shared goals. They excel in collaborative environments where they can contribute to team achievements, build consensus, and help others succeed. They often prioritize group harmony and are motivated by mutual support and shared accomplishments."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I'm motivated by the chance to outperform others",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I prefer working together toward shared goals",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I set personal records and try to beat them",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I find satisfaction in helping others succeed",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I enjoy competitions and contests",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I prioritize team success over individual recognition",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I compare my performance to others' achievements",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I share credit and resources with others willingly",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I'm driven by the desire to be the best",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I believe we accomplish more when we work together",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "social_boldness",
     displayName: "Social Boldness-Social Reserve",
     positive: "Social Boldness",
-    negative: "Social Reserve"
+    negative: "Social Reserve",
+    title: "Social Confidence",
+    description: "This quiz assesses your comfort level with social visibility and taking social risks. Move the slider to indicate how each statement reflects your typical social behavior and comfort level.",
+    traitDescriptions: {
+      positive: "Socially bold individuals are comfortable being the center of attention and taking social risks. They tend to speak up confidently in groups, volunteer for public roles, and aren't afraid to express controversial opinions. They often enjoy leadership positions and are comfortable with social visibility.",
+      negative: "Socially reserved individuals prefer to avoid the spotlight and are more cautious in social situations. They tend to observe before participating, prefer behind-the-scenes roles, and are careful about what they share publicly. They often excel at listening and providing thoughtful, considered input."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I'm comfortable being the center of attention",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I prefer to observe social situations before participating",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I volunteer to speak in front of groups",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I think carefully before sharing my opinions publicly",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I enjoy taking on leadership roles in social settings",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I prefer to work behind the scenes rather than be in the spotlight",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I'm not afraid to express controversial opinions",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I'm cautious about how others might perceive my actions",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I feel energized by social visibility and recognition",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I prefer to let others take the lead in social situations",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "empathy_detachment",
     displayName: "Empathy-Emotional Detachment",
     positive: "Empathy",
-    negative: "Emotional Detachment"
+    negative: "Emotional Detachment",
+    title: "Emotional Connection",
+    description: "This quiz assesses your tendency to connect with and respond to others' emotions versus maintaining emotional distance. Move the slider to indicate how each statement reflects your typical emotional responses to others.",
+    traitDescriptions: {
+      positive: "Empathetic individuals naturally connect with and respond to others' emotions. They tend to feel what others are feeling, are moved by others' experiences, and often prioritize emotional understanding in their relationships. They excel at providing emotional support and understanding different perspectives.",
+      negative: "Emotionally detached individuals maintain emotional distance and are less affected by others' emotional states. They tend to approach situations objectively, make decisions based on logic rather than feelings, and are less likely to be overwhelmed by others' emotions. They often excel at remaining calm in emotionally charged situations."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I can easily sense when someone is upset, even if they don't say anything",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I make decisions based on facts rather than feelings",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I feel affected by other people's emotional states",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I can remain objective even in emotionally charged situations",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I often feel what others are feeling",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I prefer to analyze situations logically rather than emotionally",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I'm moved by stories of other people's experiences",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I can separate my emotions from the emotions of others",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I prioritize understanding how others feel in conflicts",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I prefer to focus on solutions rather than emotional support",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "assertiveness_passivity",
     displayName: "Assertiveness-Passivity",
     positive: "Assertiveness",
-    negative: "Passivity"
+    negative: "Passivity",
+    title: "Communication Style",
+    description: "This quiz assesses your tendency to express your needs and opinions directly versus avoiding conflict and deferring to others. Move the slider to indicate how each statement reflects your typical communication approach.",
+    traitDescriptions: {
+      positive: "Assertive individuals confidently express their needs, opinions, and boundaries. They tend to speak up for themselves, ask for what they want, and address conflicts directly. They often take initiative in situations and are comfortable advocating for their interests while respecting others.",
+      negative: "Passive individuals tend to avoid conflict and defer to others' preferences. They often put others' needs before their own, hesitate to express their true feelings, and may go along with things they don't want to avoid confrontation. They often excel at maintaining harmony and being accommodating."
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I confidently express my needs and wants",
+        points: 0.1
+      },
+      {
+        id: 2,
+        text: "I often go along with others' preferences to avoid conflict",
+        points: -0.1
+      },
+      {
+        id: 3,
+        text: "I speak up when I disagree with something",
+        points: 0.1
+      },
+      {
+        id: 4,
+        text: "I hesitate to ask for what I want",
+        points: -0.1
+      },
+      {
+        id: 5,
+        text: "I address conflicts directly rather than avoiding them",
+        points: 0.1
+      },
+      {
+        id: 6,
+        text: "I put others' needs before my own",
+        points: -0.1
+      },
+      {
+        id: 7,
+        text: "I take initiative in group situations",
+        points: 0.1
+      },
+      {
+        id: 8,
+        text: "I prefer to let others make decisions",
+        points: -0.1
+      },
+      {
+        id: 9,
+        text: "I advocate for my interests when necessary",
+        points: 0.1
+      },
+      {
+        id: 10,
+        text: "I avoid expressing opinions that might upset others",
+        points: -0.1
+      }
+    ]
   },
   {
     id: "work_leisure",
