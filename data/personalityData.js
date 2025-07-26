@@ -5,7 +5,7 @@ const personalityData = [
     positive: "Extraversion",
     negative: "Introversion",
     title: "Social Dynamics",
-    description: "This quiz assesses your tendency toward introversion or extraversion. Move the slider to indicate how each statement reflects your regular behavior.",
+    description: "This quiz assesses your tendency toward introversion or extraversion.",
     traitDescriptions: {
       positive: "Extraverts draw energy from social interaction and external stimulation. They tend to think out loud, seek out group activities, and feel energized by being around others. They often process experiences by discussing them and prefer active engagement with the world around them.",
       negative: "Introverts gain energy from solitude and internal reflection. They prefer deep one-on-one conversations, need quiet time to recharge, and process experiences internally before sharing. They often have rich inner lives and value meaningful, intimate connections over broad social networks."
@@ -69,7 +69,7 @@ const personalityData = [
     positive: "Emotional Stability",
     negative: "Neuroticism",
     title: "Emotional Landscape",
-    description: "This quiz explores your level of emotional stability versus neurotic tendencies. Move the slider to indicate how each statement reflects your experience.",
+    description: "This quiz explores your level of emotional stability versus neurotic tendencies.",
     traitDescriptions: {
       positive: "Emotionally stable individuals maintain steady emotional states and recover quickly from setbacks. They tend to stay calm under pressure, adapt well to change, and maintain perspective in challenging situations. They generally experience less anxiety and are more resilient to stress.",
       negative: "Neurotic individuals experience emotions more intensely and are more sensitive to environmental changes. They tend to be more self-aware and perceptive of subtle emotional shifts, though this can lead to overthinking and anxiety. They often feel things deeply and may need more time to process emotional experiences."
@@ -133,7 +133,7 @@ const personalityData = [
     positive: "Openness",
     negative: "Closedness",
     title: "Experience Spectrum",
-    description: "This quiz assesses your openness to new ideas versus preference for familiar approaches. Move the slider to indicate how each statement reflects your typical behavior.",
+    description: "This quiz assesses your openness to new ideas versus preference for familiar approaches.",
     traitDescriptions: {
       positive: "Those high in openness actively seek out new experiences and ideas. They tend to be curious, creative, and willing to challenge conventional wisdom. They often enjoy abstract thinking, appreciate art and beauty, and are drawn to exploring different perspectives and possibilities.",
       negative: "Those who prefer closedness value consistency and reliability in their experiences. They excel at maintaining stable routines, mastering established skills, and finding depth in familiar territory. They often have strong practical judgment and prefer concrete, proven solutions."
@@ -197,7 +197,7 @@ const personalityData = [
     positive: "Conscientiousness",
     negative: "Impulsivity",
     title: "Planning and Action Style",
-    description: "This quiz evaluates your tendency toward careful planning versus spontaneous action. Move the slider to indicate how each statement reflects your typical behavior.",
+    description: "This quiz evaluates your tendency toward careful planning versus spontaneous action.",
     traitDescriptions: {
       positive: "Conscientious individuals are organized, methodical, and detail-oriented. They excel at long-term planning, maintaining order, and following through on commitments. They often have strong self-discipline and prefer structured approaches to achieving goals.",
       negative: "Impulsive individuals are spontaneous, flexible, and quick to act on opportunities. They excel at thinking on their feet, adapting to the moment, and bringing fresh energy to situations. They often have a natural ability to seize the moment and think creatively under pressure."
@@ -261,7 +261,7 @@ const personalityData = [
     positive: "Agreeableness",
     negative: "Antagonism",
     title: "Social Dynamics",
-    description: "This quiz assesses your tendency toward agreeableness versus antagonism. Move the slider to indicate how each statement reflects your regular behavior.",
+    description: "This quiz assesses your tendency toward agreeableness versus antagonism.",
     traitDescriptions: {
       positive: "Agreeable individuals are warm, cooperative, and empathetic. They tend to be good listeners, value harmony, and are generally easy to get along with. They often prioritize the needs of others and are willing to compromise to maintain positive relationships.",
       negative: "Antagonistic individuals are competitive, assertive, and sometimes confrontational. They tend to be more independent and value their own opinions, often prioritizing personal goals over group harmony. They may be more likely to challenge authority and express strong opinions."
@@ -325,7 +325,7 @@ const personalityData = [
     positive: "Risk",
     negative: "Safety",
     title: "Risk-Safety Orientation",
-    description: "This quiz assesses your tolerance for risk and uncertainty versus preference for safety and security. Move the slider to indicate how each statement reflects your regular behavior.",
+    description: "This quiz assesses your tolerance for risk and uncertainty versus preference for safety and security.",
     traitDescriptions: {
       positive: "Risk-oriented individuals are comfortable with uncertainty and willing to accept potential negative outcomes in pursuit of opportunities. They tend to embrace challenges where success isn't guaranteed, are willing to try new things that might not work out, and see potential setbacks as acceptable costs of exploration and growth.",
       negative: "Safety-oriented individuals prioritize security and prefer to minimize potential harm or loss. They tend to choose proven paths, value predictability and stability, and prefer to thoroughly assess potential downsides before proceeding. They often excel at protecting resources and maintaining steady progress."
@@ -389,7 +389,7 @@ const personalityData = [
     positive: "Novelty Seeking",
     negative: "Routine Preference",
     title: "Experience Variety",
-    description: "This quiz assesses your preference for variety and new experiences versus established routines and familiar patterns. Move the slider to indicate how each statement reflects your typical behavior.",
+    description: "This quiz assesses your preference for variety and new experiences versus established routines and familiar patterns.",
     traitDescriptions: {
       positive: "Novelty seekers crave variety and new experiences in their daily lives. They enjoy breaking up routines, trying different approaches, and exploring unfamiliar environments. They tend to get restless with repetition and are energized by change, whether in activities, places, people, or experiences.",
       negative: "Routine preferrers find comfort and efficiency in established patterns and familiar experiences. They excel at optimizing their habits, creating reliable systems, and finding depth through repetition. They often perform better when they can predict what's coming and have mastered their environment."
@@ -453,7 +453,7 @@ const personalityData = [
     positive: "Analytical",
     negative: "Intuitive",
     title: "Thinking Style",
-    description: "This quiz assesses your cognitive processing style when approaching problems and making decisions. Move the slider to indicate how each statement reflects your typical thinking patterns.",
+    description: "This quiz assesses your cognitive processing style when approaching problems and making decisions.",
     traitDescriptions: {
       positive: "Analytical thinkers prefer step-by-step reasoning and systematic approaches to problems. They excel at breaking down complex issues into manageable parts, following logical sequences, and making decisions based on careful evaluation of evidence. They tend to want to understand the 'why' behind things and value methodical processes.",
       negative: "Intuitive thinkers rely on gut feelings, pattern recognition, and holistic understanding. They excel at seeing connections that aren't immediately obvious, making quick insights, and grasping the essence of situations without detailed analysis. They often 'just know' things and trust their instincts when making decisions."
@@ -517,7 +517,7 @@ const personalityData = [
     positive: "Detail Focus",
     negative: "Big-Picture Focus",
     title: "Attention to Detail",
-    description: "This quiz assesses whether you naturally focus on specific details versus broad patterns and overall themes. Move the slider to indicate how each statement reflects your typical approach.",
+    description: "This quiz assesses whether you naturally focus on specific details versus broad patterns and overall themes.",
     traitDescriptions: {
       positive: "Detail-focused individuals naturally notice specifics, precision, and particulars. They excel at careful analysis, thorough examination, and ensuring accuracy in their work. They tend to be methodical, catch errors others miss, and prefer to understand all the components before seeing the whole picture.",
       negative: "Big-picture focused individuals naturally see overall patterns, themes, and general concepts. They excel at understanding systems, recognizing broader implications, and grasping the essence of complex situations. They tend to think strategically, see how parts connect to the whole, and prefer to understand the forest before examining individual trees."
@@ -581,7 +581,7 @@ const personalityData = [
     positive: "Future Focus",
     negative: "Past Focus",
     title: "Time Perspective",
-    description: "This quiz assesses whether you naturally orient toward the future or draw more from past experiences. Move the slider to indicate how each statement reflects your typical perspective.",
+    description: "This quiz assesses whether you naturally orient toward the future or draw more from past experiences.",
     traitDescriptions: {
       positive: "Future-focused individuals are oriented toward what's coming next and what could be. They tend to be goal-oriented, plan ahead, and are motivated by potential outcomes and possibilities. They often think about improvements, innovations, and how things could be different or better in the time ahead.",
       negative: "Past-focused individuals draw wisdom and guidance from previous experiences and established knowledge. They tend to value traditions, learn from history, and use past patterns to inform current decisions. They often appreciate proven methods, honor legacy, and find meaning in continuity and lessons learned."
@@ -645,7 +645,7 @@ const personalityData = [
     positive: "Sensation Seeking",
     negative: "Sensation Avoidance",
     title: "Stimulation Preferences",
-    description: "This quiz assesses your preference for intense, varied, and stimulating experiences versus calm, predictable environments. Move the slider to indicate how each statement reflects your typical preferences.",
+    description: "This quiz assesses your preference for intense, varied, and stimulating experiences versus calm, predictable environments.",
     traitDescriptions: {
       positive: "Sensation seekers crave intense, varied, and novel experiences. They enjoy high stimulation environments, seek out thrilling activities, and are drawn to situations that provide strong sensory input. They often enjoy loud music, bright lights, exciting adventures, and activities that provide adrenaline rushes or intense emotional experiences.",
       negative: "Sensation avoiders prefer calm, peaceful, and low-stimulation environments. They tend to be sensitive to overwhelming sensory input and find comfort in quiet, predictable settings. They often prefer gentle activities, soft sounds, muted lighting, and environments that allow for relaxation and tranquility."
@@ -709,7 +709,7 @@ const personalityData = [
     positive: "Authority Acceptance",
     negative: "Authority Rejection",
     title: "Authority Orientation",
-    description: "This quiz assesses your relationship with authority figures and hierarchical structures. Move the slider to indicate how each statement reflects your typical attitudes and behaviors.",
+    description: "This quiz assesses your relationship with authority figures and hierarchical structures.",
     traitDescriptions: {
       positive: "Authority accepters tend to respect hierarchical structures and value the guidance of established leaders. They generally follow rules and procedures, appreciate clear chains of command, and believe that authority figures often have valuable expertise and perspective. They work well within structured systems and value order and stability.",
       negative: "Authority rejecters tend to question hierarchical structures and prefer more egalitarian approaches. They value independent thinking, often challenge established rules when they seem unfair, and believe that good ideas can come from anyone regardless of position. They prefer collaborative decision-making and may resist top-down directives."
@@ -773,7 +773,7 @@ const personalityData = [
     positive: "Competitive",
     negative: "Cooperative",
     title: "Achievement Style",
-    description: "This quiz assesses your natural tendency toward competitive achievement versus cooperative collaboration. Move the slider to indicate how each statement reflects your typical approach to goals and success.",
+    description: "This quiz assesses your natural tendency toward competitive achievement versus cooperative collaboration.",
     traitDescriptions: {
       positive: "Competitive individuals are driven by personal achievement and outperforming others. They excel in environments where they can measure their success against others, set ambitious personal goals, and push themselves to be the best. They often thrive on challenges and are motivated by recognition and winning.",
       negative: "Cooperative individuals are driven by collective success and working together toward shared goals. They excel in collaborative environments where they can contribute to team achievements, build consensus, and help others succeed. They often prioritize group harmony and are motivated by mutual support and shared accomplishments."
@@ -837,7 +837,7 @@ const personalityData = [
     positive: "Social Boldness",
     negative: "Social Reserve",
     title: "Social Confidence",
-    description: "This quiz assesses your comfort level with social visibility and taking social risks. Move the slider to indicate how each statement reflects your typical social behavior and comfort level.",
+    description: "This quiz assesses your comfort level with social visibility and taking social risks.",
     traitDescriptions: {
       positive: "Socially bold individuals are comfortable being the center of attention and taking social risks. They tend to speak up confidently in groups, volunteer for public roles, and aren't afraid to express controversial opinions. They often enjoy leadership positions and are comfortable with social visibility.",
       negative: "Socially reserved individuals prefer to avoid the spotlight and are more cautious in social situations. They tend to observe before participating, prefer behind-the-scenes roles, and are careful about what they share publicly. They often excel at listening and providing thoughtful, considered input."
@@ -901,7 +901,7 @@ const personalityData = [
     positive: "Empathy",
     negative: "Emotional Detachment",
     title: "Emotional Connection",
-    description: "This quiz assesses your tendency to connect with and respond to others' emotions versus maintaining emotional distance. Move the slider to indicate how each statement reflects your typical emotional responses to others.",
+    description: "This quiz assesses your tendency to connect with and respond to others' emotions versus maintaining emotional distance.",
     traitDescriptions: {
       positive: "Empathetic individuals naturally connect with and respond to others' emotions. They tend to feel what others are feeling, are moved by others' experiences, and often prioritize emotional understanding in their relationships. They excel at providing emotional support and understanding different perspectives.",
       negative: "Emotionally detached individuals maintain emotional distance and are less affected by others' emotional states. They tend to approach situations objectively, make decisions based on logic rather than feelings, and are less likely to be overwhelmed by others' emotions. They often excel at remaining calm in emotionally charged situations."
@@ -965,7 +965,7 @@ const personalityData = [
     positive: "Assertiveness",
     negative: "Passivity",
     title: "Communication Style",
-    description: "This quiz assesses your tendency to express your needs and opinions directly versus avoiding conflict and deferring to others. Move the slider to indicate how each statement reflects your typical communication approach.",
+    description: "This quiz assesses your tendency to express your needs and opinions directly versus avoiding conflict and deferring to others.",
     traitDescriptions: {
       positive: "Assertive individuals confidently express their needs, opinions, and boundaries. They tend to speak up for themselves, ask for what they want, and address conflicts directly. They often take initiative in situations and are comfortable advocating for their interests while respecting others.",
       negative: "Passive individuals tend to avoid conflict and defer to others' preferences. They often put others' needs before their own, hesitate to express their true feelings, and may go along with things they don't want to avoid confrontation. They often excel at maintaining harmony and being accommodating."
