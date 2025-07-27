@@ -24,6 +24,7 @@ import {
 import { PERSONALITY_ANALYSIS_SECTIONS } from '../config/personalityAnalysis';
 import { API_LIMITS } from '../config/limits';
 import { useQuizStore } from './quiz';
+import { PersonalityAnalysis } from '../types/personality';
 
 export interface QuizResult {
   quizId: string;
@@ -48,7 +49,7 @@ interface UserState {
   // User data
   userAttributes: Record<string, number>;
   isPaid: boolean;
-  personalityAnalysis: Record<string, any>;
+  personalityAnalysis: PersonalityAnalysis;
   results: QuizResult[];
   openaiApiCalls: number;
   
@@ -446,7 +447,7 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async updatePersonalityAnalysis(data: { results?: QuizResult[], personalityAnalysis?: Record<string, any> }) {
+    async updatePersonalityAnalysis(data: { results?: QuizResult[], personalityAnalysis?: PersonalityAnalysis }) {
       if (!this.userId) {
         return { success: false, error: 'No user logged in' };
       }

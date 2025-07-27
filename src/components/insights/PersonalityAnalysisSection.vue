@@ -1,56 +1,62 @@
 <template>
-  <div>
-    <div class="personality-analysis-list">
-      <template v-for="section in getSortedAnalysisSections" :key="section.id">
-        <div class="analysis-card rounded-3 shadow-sm overflow-hidden">
-          <div class="card h-100">
-            <div class="card-body p-0">
-              <div class="d-flex flex-column flex-md-row">
-                <!-- Left side: Image/Icon area with title -->
-                <div class="analysis-image-section d-flex align-items-center justify-content-center col-12 col-md-4">
-                  <div class="analysis-icon-container">
-                    <!-- Background icon -->
-                    <div class="analysis-icon-background">
-                      <img :src="`/svg/${section.icon}`" alt="Section Icon" />
-                    </div>
-                    <!-- Overlayed title text -->
-                    <h5 class="analysis-title text-white fw-bold">{{ section.title }}</h5>
-                  </div>
-                </div>
-                
-                <!-- Right side: Content area -->
-                <div class="analysis-content-section p-5 col-12 col-md-8">
-                  <template v-if="personalityAnalysis[section.id]">
-                    <p class="mb-0">{{ personalityAnalysis[section.id] }}</p>
-                  </template>
-                  <p v-else class="text-muted fst-italic mb-0">No analysis yet - click the "Generate Analysis" button above to see deeper insights.</p>
-                </div>
-              </div>
+  <div class="analysis-card rounded-3 shadow-sm overflow-hidden">
+    <div class="d-flex flex-column flex-md-row">
+      <!-- Left side: Image/Icon area with title -->
+      <div class="analysis-image-section d-flex align-items-center justify-content-center col-12 col-md-4">
+        <div class="analysis-icon-container">
+          <!-- Background icon -->
+          <div class="analysis-icon-background">
+            <img :src="`/svg/${icon}`" alt="Section Icon" />
+          </div>
+          <!-- Overlayed title text -->
+          <h3 class="analysis-title text-white fw-bold">{{ title }}</h3>
+        </div>
+      </div>
+
+      <!-- Right side: Content area -->
+      <div class="analysis-content-section p-3 p-md-5 col-12 col-md-8">
+        <template v-if="hasAnalysis">
+          <div class="analysis-content">
+            <div class="analysis-header mb-3">
+              <h4 class="fw-bold text-primary mb-2">{{ name }}</h4>
+              <p class="lead mb-0">{{ description }}</p>
+            </div>
+
+            <div class="key-insights mb-2 text-primary border-start border-primary ps-3">
+              <p class="mb-0">{{ keyInsights }}</p>
+            </div>
+
+            <div class="quote-maxim py-3">
+              <p class="mb-0">
+                {{ quoteMaxim }}
+              </p>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
+        <p v-else class="text-muted fst-italic mb-0">No analysis yet - click the "Generate Analysis" button above to see
+          deeper
+          insights.</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { 
-  PERSONALITY_ANALYSIS_SECTIONS 
-} from '../../config/personalityAnalysis';
 
 interface Props {
-  personalityAnalysis: Record<string, string>;
+  title: string;
+  icon: string;
+  name?: string;
+  description?: string;
+  keyInsights?: string;
+  quoteMaxim?: string;
 }
 
 const props = defineProps<Props>();
 
-const personalityAnalysisSections = PERSONALITY_ANALYSIS_SECTIONS;
-
-const getSortedAnalysisSections = computed(() => {
-  return Object.values(personalityAnalysisSections)
-    .sort((a, b) => a.display.order - b.display.order);
+const hasAnalysis = computed(() => {
+  return props.name && props.description && props.keyInsights && props.quoteMaxim;
 });
 </script>
 
@@ -80,8 +86,8 @@ const getSortedAnalysisSections = computed(() => {
   top: 50%;
   left: 50%;
   transform: translate(-71%, -50%) rotate(15deg);
-  width: 75%;
-  height: 75%;
+  width: 100%;
+  height: 100%;
   transform-origin: center;
   opacity: 0.1;
   display: flex;
@@ -90,7 +96,7 @@ const getSortedAnalysisSections = computed(() => {
 }
 
 .analysis-icon-background img {
-  filter:invert(1);
+  filter: invert(1);
 }
 
 .analysis-icon-background svg {
@@ -120,13 +126,23 @@ const getSortedAnalysisSections = computed(() => {
   font-size: 1.05rem;
 }
 
-.card {
-  border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+.analysis-header h4 {
+  color: var(--bs-primary);
+  font-size: 2rem;
 }
 
-.card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+.analysis-header .lead {
+  font-size: 1.1rem;
+}
+
+.quote-maxim {
+  color: var(--body-text-color-medium);
+  font-style: italic;
+  text-shadow: 0 2px 8px var(--text-primary-bg);
+  letter-spacing: 0.03em;
+}
+
+.card {
+  border: none;
 }
 </style>

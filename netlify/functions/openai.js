@@ -46,11 +46,6 @@ exports.handler = async function(event, context) {
       max_tokens: max_tokens || 1000
     };
 
-    // Stream is not well-supported in Netlify functions, so we'll ignore it for now
-    
-    console.log('Sending prompt to OpenAI:', prompt.substring(0, 100) + '...');
-    console.log('Request options:', JSON.stringify(options));
-
     // Make the request to OpenAI API
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -62,7 +57,6 @@ exports.handler = async function(event, context) {
     });
 
     const responseData = await response.text();
-    console.log('Raw response:', responseData);
 
     if (!response.ok) {
       let errorMessage = 'Failed to get completion from OpenAI';
@@ -76,7 +70,6 @@ exports.handler = async function(event, context) {
     }
 
     const data = JSON.parse(responseData);
-    console.log('Parsed OpenAI response successfully');
     
     if (!data.choices?.[0]?.message?.content) {
       throw new Error('Invalid response format from OpenAI');

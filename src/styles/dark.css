@@ -29,13 +29,8 @@ body.dark {
   --card-bg-color: rgba(255, 255, 255, 0.08);
   --card-inset-bg-color: rgba(0, 0, 0, 0.09);
 
-  --card-fancy-bg-color: linear-gradient(
-      144deg,
-      #160c3d52 -114%,
-      transparent 75%
-    ),
-    #333;
-  --card-fancy-img-bg: linear-gradient(135deg, #3f344a 0%, #1f222b 100%);
+  --card-fancy-bg-color: linear-gradient(144deg, #44309287 -114%, transparent 75%), #3333336e;
+    --card-fancy-img-bg: linear-gradient(135deg, #3f344af2 0%, #1d1d1d78 100%);
 
   --bs-body-color: var(--body-text-color);
   --bs-secondary-color: var(--neutral-color-light);
