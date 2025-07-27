@@ -5,6 +5,7 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
 // Import the frontend configuration to ensure consistency
 import { PERSONALITY_ANALYSIS_SECTIONS, generateAnalysisPrompt } from '../../src/config/personalityAnalysis.js';
+import { API_LIMITS } from '../../src/config/limits.js';
 
 /**
  * Parse the OpenAI analysis text into sections using the same logic as frontend
@@ -113,7 +114,7 @@ export async function handler(event, context) {
     }
 
     // Check if user has reached the API call limit
-    const callLimit = isPaid ? 30 : 3;
+    const callLimit = isPaid ? API_LIMITS.PAID_OPENAI_CALLS_LIMIT : API_LIMITS.FREE_OPENAI_CALLS_LIMIT;
     if (openaiApiCalls >= callLimit) {
       return errorResponse(`You have reached your AI analysis limit (${callLimit} requests). Please contact support for additional access.`, 403);
     }
