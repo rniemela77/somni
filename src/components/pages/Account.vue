@@ -86,14 +86,6 @@
               <ul class="list-unstyled">
                 <li class="d-flex align-items-start mb-2">
                   <span class="benefit-icon text-success me-2">✓</span>
-                  <span>Deeper personality insights and analytics</span>
-                </li>
-                <li class="d-flex align-items-start mb-2">
-                  <span class="benefit-icon text-success me-2">✓</span>
-                  <span>Unlimited assessment attempts and result storage</span>
-                </li>
-                <li class="d-flex align-items-start mb-2">
-                  <span class="benefit-icon text-success me-2">✓</span>
                   <span>{{ API_LIMITS.PAID_OPENAI_CALLS_LIMIT }} AI personality analysis requests</span>
                 </li>
               </ul>
