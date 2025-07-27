@@ -47,7 +47,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
     id: "spiritAnimal",
     title: "Spirit Animal",
     description: "An animal that embodies the essence of the individual's personality traits, strengths, and natural tendencies.",
-    promptInstructions: "Identify a distinctive spirit animal that best represents this person's personality traits. Look beyond common choices (like wolf, lion, eagle) and consider unexpected animals (including insects, marine life, or lesser-known species) that offer a more nuanced reflection. Explain in one sentence why this specific animal reflects their essence.",
+    promptInstructions: "Identify a distinctive, unexpected spirit animal (consider insects, marine life, reptiles, lesser-known mammals, etc) that metaphorically captures the complexity, emotional essence, and interesting contradictions in this personality profile. Focus on animal behavior and personality traits.",
     display: {
       order: 3,
     },
@@ -109,45 +109,54 @@ export const PERSONALITY_ANALYSIS_SECTIONS: Record<string, PersonalitySection> =
  * Generates the OpenAI prompt based on attribute scores
  */
 export const generateAnalysisPrompt = (attributes: PersonalityAttributes): string => {
-  let prompt = 'Here is a personality profile based on various psychological scales. Each scale ranges from -100 to +100, where:\n\n';
-  prompt += '- Negative values (-100 to -1) indicate stronger alignment with the first trait\n';
-  prompt += '- Positive values (1 to 100) indicate stronger alignment with the second trait\n';
-  prompt += '- The magnitude indicates the strength of the tendency\n\n';
-  prompt += 'Here are the individual\'s scores on each scale:\n\n';
+  let prompt = "Given the user's personality traits below:\n\n";
 
   // Add the attribute scores in a formatted way
   Object.entries(attributes).forEach(([key, value]) => {
-    const scale = personalityData.find(scale => scale.id === key.toLowerCase().replace(/-/g, '_'));
+    const scale = personalityData.find(
+      (scale) => scale.id === key.toLowerCase().replace(/-/g, "_")
+    );
     if (scale) {
-      prompt += `${scale.displayName}: ${value} `;
-      
+      prompt += `- ${scale.positive} vs. ${scale.negative}: ${value} `;
+
       const absValue = Math.abs(value);
-      let intensity: string;
+      let intensity = "";
       if (absValue >= 80) intensity = "extremely";
       else if (absValue >= 60) intensity = "strongly";
       else if (absValue >= 40) intensity = "moderately";
       else if (absValue >= 20) intensity = "somewhat";
       else if (absValue > 0) intensity = "slightly";
       else intensity = "";
-      
+
       if (value < 0) {
-        prompt += `(${intensity} more ${scale.negative} than ${scale.positive})`;
+        prompt += `(${intensity} more ${scale.negative})`;
       } else if (value > 0) {
-        prompt += `(${intensity} more ${scale.positive} than ${scale.negative})`;
+        prompt += `(${intensity} more ${scale.positive})`;
       } else {
-        prompt += '(perfectly balanced between the two)';
+        prompt += "(perfectly balanced)";
       }
-      prompt += '\n';
+      prompt += "\n";
     }
   });
-  prompt += '\nBased on these attribute scores, please provide a comprehensive personality analysis. ';
-  prompt += 'Consider how different attributes interact and influence each other. ';
-  prompt += 'Look for unique patterns and combinations that reveal deeper insights about the individual.\n\n';
-  
-  // Add section instructions
-  Object.values(PERSONALITY_ANALYSIS_SECTIONS).forEach(section => {
-    prompt += `${section.title}: ${section.promptInstructions}\n\n`;
+
+  prompt += `\n\nProvide your response clearly using layman's terms, without too many references to personality terms, and in this format: \n\n`;
+  prompt += `{\n`;
+
+  // Add instructions for all uncommented personality analysis sections
+  Object.values(PERSONALITY_ANALYSIS_SECTIONS).forEach((section, index) => {
+    prompt += `"${section.title}": {\n`;
+    prompt += `"Name": "<Name>",\n`;
+    prompt += `"Description": "<${section.promptInstructions} Provide one concise, vivid sentence explaining the symbolic match.>",\n`;
+    prompt += `"Key Insights": "<Provide some key insights that will help the user in their daily life. Focus on the practical application of the insights.>",\n`;
+    prompt += `"Quote/Maxim": "<A quote/maxim that the user can use to reflect on the previous sentences. Attribute the quote to the source.>"\n`;
+    prompt += `}`;
+
+    if (index < Object.values(PERSONALITY_ANALYSIS_SECTIONS).length - 1) {
+      prompt += `,\n`;
+    }
   });
+
+  prompt += `\n}`;
   
   return prompt;
 };

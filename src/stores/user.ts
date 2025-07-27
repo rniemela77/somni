@@ -22,11 +22,9 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 import { PERSONALITY_ANALYSIS_SECTIONS } from '../config/personalityAnalysis';
+import { API_LIMITS } from '../config/limits';
 import { useQuizStore } from './quiz';
-
-// Constants
-const FREE_OPENAI_CALLS_LIMIT = 3;
-const PAID_OPENAI_CALLS_LIMIT = 30;
+import { PersonalityAnalysis } from '../types/personality';
 
 export interface QuizResult {
   quizId: string;
@@ -51,7 +49,7 @@ interface UserState {
   // User data
   userAttributes: Record<string, number>;
   isPaid: boolean;
-  personalityAnalysis: Record<string, any>;
+  personalityAnalysis: PersonalityAnalysis;
   results: QuizResult[];
   openaiApiCalls: number;
   
@@ -133,7 +131,7 @@ export const useUserStore = defineStore('user', {
 
     // OpenAI API calls remaining
     openaiApiCallsRemaining: (state) => {
-      return state.isPaid ? PAID_OPENAI_CALLS_LIMIT - state.openaiApiCalls : FREE_OPENAI_CALLS_LIMIT - state.openaiApiCalls;
+      return state.isPaid ? API_LIMITS.PAID_OPENAI_CALLS_LIMIT - state.openaiApiCalls : API_LIMITS.FREE_OPENAI_CALLS_LIMIT - state.openaiApiCalls;
     }
   },
 
@@ -388,7 +386,7 @@ export const useUserStore = defineStore('user', {
 
       // Check if user has remaining free API calls
       if (this.openaiApiCallsRemaining <= 0) {
-        const limit = this.isPaid ? PAID_OPENAI_CALLS_LIMIT : FREE_OPENAI_CALLS_LIMIT;
+        const limit = this.isPaid ? API_LIMITS.PAID_OPENAI_CALLS_LIMIT : API_LIMITS.FREE_OPENAI_CALLS_LIMIT;
         return { 
           success: false, 
           error: `You have reached your AI analysis limit (${limit} requests). Please contact support for additional access.` 
@@ -449,7 +447,7 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async updatePersonalityAnalysis(data: { results?: QuizResult[], personalityAnalysis?: Record<string, any> }) {
+    async updatePersonalityAnalysis(data: { results?: QuizResult[], personalityAnalysis?: PersonalityAnalysis }) {
       if (!this.userId) {
         return { success: false, error: 'No user logged in' };
       }

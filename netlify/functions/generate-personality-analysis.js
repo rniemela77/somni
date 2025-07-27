@@ -5,11 +5,49 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
 // Import the frontend configuration to ensure consistency
 import { PERSONALITY_ANALYSIS_SECTIONS, generateAnalysisPrompt } from '../../src/config/personalityAnalysis.js';
+import { API_LIMITS } from '../../src/config/limits.js';
 
 /**
  * Parse the OpenAI analysis text into sections using the same logic as frontend
  */
 const parseAnalysis = (text) => {
+  try {
+    // Try to parse as JSON first (new format)
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonText = jsonMatch[0];
+      const parsed = JSON.parse(jsonText);
+      
+      // Transform the parsed JSON to match the expected structure
+      const result = {};
+      Object.keys(PERSONALITY_ANALYSIS_SECTIONS).forEach(sectionKey => {
+        const section = PERSONALITY_ANALYSIS_SECTIONS[sectionKey];
+        const sectionData = parsed[section.title];
+        
+        if (sectionData && typeof sectionData === 'object') {
+          // New format with nested object
+          result[section.id] = {
+            name: sectionData.Name || '',
+            description: sectionData.Description || '',
+            keyInsights: sectionData['Key Insights'] || '',
+            quoteMaxim: sectionData['Quote/Maxim'] || ''
+          };
+        } else if (sectionData && typeof sectionData === 'string') {
+          // Fallback to old format (just a string)
+          result[section.id] = sectionData;
+        } else {
+          // No data found for this section
+          result[section.id] = '';
+        }
+      });
+      
+      return result;
+    }
+  } catch (error) {
+    console.log('Failed to parse as JSON, falling back to regex parsing:', error.message);
+  }
+
+  // Fallback to old regex parsing method
   const sections = Object.values(PERSONALITY_ANALYSIS_SECTIONS);
   const result = {};
 
@@ -36,7 +74,7 @@ const callOpenAI = async (prompt) => {
       },
       body: JSON.stringify({
         prompt: prompt,
-        model: 'gpt-4',
+        model: 'gpt-3.5-turbo',
         temperature: 0.7,
         max_tokens: 1000
       })
@@ -113,7 +151,7 @@ export async function handler(event, context) {
     }
 
     // Check if user has reached the API call limit
-    const callLimit = isPaid ? 30 : 3;
+    const callLimit = isPaid ? API_LIMITS.PAID_OPENAI_CALLS_LIMIT : API_LIMITS.FREE_OPENAI_CALLS_LIMIT;
     if (openaiApiCalls >= callLimit) {
       return errorResponse(`You have reached your AI analysis limit (${callLimit} requests). Please contact support for additional access.`, 403);
     }
@@ -129,6 +167,7 @@ export async function handler(event, context) {
     
     // Parse the analysis into sections
     const parsedAnalysis = parseAnalysis(rawAnalysis);
+
     console.log('✅ Analysis generated and parsed successfully');
 
     // Save the analysis back to Firestore

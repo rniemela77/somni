@@ -94,7 +94,7 @@
                 </li>
                 <li class="d-flex align-items-start mb-2">
                   <span class="benefit-icon text-success me-2">✓</span>
-                  <span>30 AI personality analysis requests</span>
+                  <span>{{ API_LIMITS.PAID_OPENAI_CALLS_LIMIT }} AI personality analysis requests</span>
                 </li>
               </ul>
             </div>
@@ -126,6 +126,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { computed, ref, onMounted } from 'vue';
 import Card from '../ui/Card.vue';
 import Alert from '../ui/Alert.vue';
+import { API_LIMITS } from '../../config/limits';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '/.netlify/functions';
 const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_your_stripe_key_here';
