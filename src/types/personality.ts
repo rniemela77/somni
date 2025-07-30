@@ -1,8 +1,9 @@
 export interface AnalysisData {
-  name: string;
-  description: string;
-  keyInsights: string;
-  quoteMaxim: string;
+  "Name": string;
+  "Description": string;
+  "Key Insights": string;
+  "Quote/Maxim": string;
+  "Quote/Maxim Source": string;
 }
 
 export interface PersonalityAnalysis {

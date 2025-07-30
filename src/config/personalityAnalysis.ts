@@ -148,7 +148,8 @@ export const generateAnalysisPrompt = (attributes: PersonalityAttributes): strin
     prompt += `"Name": "<Name>",\n`;
     prompt += `"Description": "<${section.promptInstructions} Provide one concise, vivid sentence explaining the symbolic match.>",\n`;
     prompt += `"Key Insights": "<Provide some key insights that will help the user in their daily life. Focus on the practical application of the insights.>",\n`;
-    prompt += `"Quote/Maxim": "<A quote/maxim that the user can use to reflect on the previous sentences. Attribute the quote to the source.>"\n`;
+    prompt += `"Quote/Maxim": "<A quote/maxim that the user can use to reflect on the previous sentences.>,"\n`;
+    prompt += `"Quote/Maxim Source": "<The source of the quote/maxim.>"\n`;
     prompt += `}`;
 
     if (index < Object.values(PERSONALITY_ANALYSIS_SECTIONS).length - 1) {

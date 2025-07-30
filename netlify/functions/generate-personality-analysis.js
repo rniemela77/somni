@@ -25,13 +25,7 @@ const parseAnalysis = (text) => {
         const sectionData = parsed[section.title];
         
         if (sectionData && typeof sectionData === 'object') {
-          // New format with nested object
-          result[section.id] = {
-            name: sectionData.Name || '',
-            description: sectionData.Description || '',
-            keyInsights: sectionData['Key Insights'] || '',
-            quoteMaxim: sectionData['Quote/Maxim'] || ''
-          };
+          result[section.id] = sectionData
         } else if (sectionData && typeof sectionData === 'string') {
           // Fallback to old format (just a string)
           result[section.id] = sectionData;
@@ -169,6 +163,11 @@ export async function handler(event, context) {
     const parsedAnalysis = parseAnalysis(rawAnalysis);
 
     console.log('✅ Analysis generated and parsed successfully');
+    console.log('🔍 Backend: Parsed analysis structure:', {
+      hasData: Object.keys(parsedAnalysis).length > 0,
+      keys: Object.keys(parsedAnalysis),
+      sampleSection: parsedAnalysis[Object.keys(parsedAnalysis)[0]]
+    });
 
     // Save the analysis back to Firestore
     await userRef.update({
