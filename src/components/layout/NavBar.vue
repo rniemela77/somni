@@ -1,5 +1,5 @@
 <template>
-	<nav class="navbar navbar-expand-lg navbar-light mb-sm-3">
+	<nav class="navbar navbar-expand-sm navbar-light mb-sm-3">
 		<div class="container">
 			<router-link to="/" class="navbar-brand">
 				<h1 class="h3 mb-0 d-flex flex-column justify-content-center">
@@ -12,7 +12,7 @@
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="navbarNav">
-				<ul class="navbar-nav ms-auto mb-2 gap-3 mb-lg-0 align-items-center">
+				<ul class="navbar-nav ms-auto mb-2 gap-3 mb-sm-0 align-items-end align-items-sm-center">
 					<template v-if="!userStore.isAuthenticated">
 						<li class="nav-item">
 							<router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
@@ -31,13 +31,20 @@
 					</template>
 					<template v-else>
 						<li class="nav-item">
-							<router-link to="/" class="nav-link" exact-active-class="active">Assessments</router-link>
+							<router-link to="/" class="nav-link" exact-active-class="active">
+								<i class="bi bi-house-door me-2"></i>
+								Dashboard
+							</router-link>
 						</li>
 						<li class="nav-item">
-							<router-link to="/insights" class="nav-link" active-class="active">Insights</router-link>
+							<router-link to="/insights" class="nav-link" active-class="active">
+								<i class="bi bi-lightbulb me-2"></i>
+								Insights
+							</router-link>
 						</li>
 
-						<li class="nav-item dropdown">
+						<!-- Desktop dropdown (hidden on mobile) -->
+						<li class="nav-item dropdown d-none d-sm-block">
 							<a class="btn btn-outline-secondary nav-link dropdown-toggle d-flex align-items-center justify-content-center"
 								href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
 								aria-expanded="false">
@@ -68,6 +75,25 @@
 									</button>
 								</li>
 							</ul>
+						</li>
+
+						<!-- Mobile nav items (hidden on desktop) -->
+						<li class="nav-item d-sm-none">
+							<router-link to="/account" class="nav-link">
+								<i class="bi bi-gear me-2"></i>Account
+							</router-link>
+						</li>
+						<li class="nav-item d-sm-none">
+							<button class="nav-link" @click="isDark = !isDark">
+								<span class="me-2" :class="{ 'bi-moon-fill': !isDark, 'bi-sun-fill': isDark }"></span>
+								<span v-if="isDark">Light Mode</span>
+								<span v-else>Dark Mode</span>
+							</button>
+						</li>
+						<li class="nav-item d-sm-none">
+							<button @click="handleSignOut" class="nav-link">
+								<i class="bi bi-box-arrow-right me-2"></i>Sign Out
+							</button>
 						</li>
 					</template>
 				</ul>
