@@ -28,7 +28,13 @@
 
             <div class="quote-maxim py-3">
               <p class="mb-0">
-                {{ quoteMaxim }}
+                <span>"</span>
+                <span class="glow-text">
+                  {{ quoteMaxim }}
+                </span>
+                <span>"</span>
+                <br />
+                <span class="text-muted ps-5">— {{ quoteMaximAuthor }}</span>
               </p>
             </div>
           </div>
@@ -47,10 +53,11 @@ import { computed } from 'vue';
 interface Props {
   title: string;
   icon: string;
-  name?: string;
-  description?: string;
-  keyInsights?: string;
-  quoteMaxim?: string;
+  name: string;
+  description: string;
+  keyInsights: string;
+  quoteMaxim: string;
+  quoteMaximAuthor: string;
 }
 
 const props = defineProps<Props>();
@@ -138,8 +145,11 @@ const hasAnalysis = computed(() => {
 .quote-maxim {
   color: var(--body-text-color-medium);
   font-style: italic;
-  text-shadow: 0 2px 8px var(--text-primary-bg);
   letter-spacing: 0.03em;
+}
+
+.glow-text {
+  text-shadow: 0 2px 8px var(--text-primary-bg);
 }
 
 .card {

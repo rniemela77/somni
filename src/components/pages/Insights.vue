@@ -12,7 +12,7 @@
         <!-- API Calls Info -->
         <div class="mb-3 d-flex flex-column align-items-start rounded">
           <span class="fw-bold">AI Analysis Requests:
-              {{ `${userStore.openaiApiCallsRemaining} remaining` }}
+            {{ `${userStore.openaiApiCallsRemaining} remaining` }}
           </span>
 
           <small class="text-muted">
@@ -38,28 +38,38 @@
       <Alert v-if="error" type="error" class="text-center mb-4" :message="error" />
 
       <!-- Analysis Results -->
-      <PersonalityAnalysisList :personality-analysis="userStore.personalityAnalysis || {}" />
+      <div class="personality-analysis-list">
+        <PersonalityAnalysisSection v-for="section in sortedSections" :key="section.id" :title="section.title"
+          :icon="section.icon" :name="userStore.personalityAnalysis[section.id]['Name'] || ''"
+          :description="userStore.personalityAnalysis[section.id]['Description'] || ''"
+          :key-insights="userStore.personalityAnalysis[section.id]['Key Insights'] || ''"
+          :quote-maxim="userStore.personalityAnalysis[section.id]['Quote/Maxim'] || ''"
+          :quote-maxim-author="userStore.personalityAnalysis[section.id]['Quote/Maxim Source'] || ''" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import PersonalityAnalysisList from '../insights/PersonalityAnalysisList.vue';
 import { useUserStore } from '../../stores/user';
 import Alert from '../ui/Alert.vue';
 import { useInsightsProgress } from '../../composables/useInsightsProgress';
 import { API_LIMITS } from '../../config/limits';
+import { PERSONALITY_ANALYSIS_SECTIONS } from '../../config/personalityAnalysis';
+import PersonalityAnalysisSection from '../insights/PersonalityAnalysisSection.vue';
 
 const userStore = useUserStore();
 const error = ref<string | null>(null);
 const {
   isUnlocked,
   quizzesLeft,
-  requiredToUnlock,
-  completedQuizzes,
-  totalQuizzes
 } = useInsightsProgress();
+
+const sortedSections = computed(() => {
+  return Object.values(PERSONALITY_ANALYSIS_SECTIONS)
+    .sort((a, b) => a.display.order - b.display.order);
+});
 
 const generateButtonText = computed(() => {
   if (!isUnlocked.value) {
@@ -98,8 +108,6 @@ const generateDescription = async () => {
     if (!success) {
       throw new Error(analysisError || 'Failed to generate personality analysis');
     }
-
-    // Analysis was successful and store has been updated automatically
   } catch (err) {
     console.error("Exception in generateDescription:", err);
     error.value = err instanceof Error ? err.message : String(err);
