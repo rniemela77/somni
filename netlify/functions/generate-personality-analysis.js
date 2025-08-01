@@ -70,7 +70,7 @@ const callOpenAI = async (prompt) => {
         prompt: prompt,
         model: 'gpt-3.5-turbo',
         temperature: 0.7,
-        max_tokens: 1000
+        max_tokens: 1500
       })
     });
 
