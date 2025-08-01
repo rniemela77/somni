@@ -15,7 +15,7 @@
 
       <!-- Right side: Content area -->
       <div class="analysis-content-section p-3 p-md-5 col-12 col-md-8">
-        <template v-if="hasAnalysis">
+        <template v-if="hasAnalysis && !loading">
           <div class="analysis-content">
             <div class="analysis-header mb-3">
               <h4 class="fw-bold text-primary mb-2">{{ name }}</h4>
@@ -39,6 +39,16 @@
             </div>
           </div>
         </template>
+
+        <div v-else-if="loading">
+          <div class="analysis-content loading-content">
+            <div class="analysis-header mb-3">
+              <h4 class="fw-bold text-primary mb-2">Loading...</h4>
+              <p class="lead mb-0">This may take a few moments...</p>
+            </div>
+          </div>
+        </div>
+
         <p v-else class="text-muted fst-italic mb-0">No analysis yet - click the "Generate Analysis" button above to see
           deeper
           insights.</p>
@@ -58,6 +68,7 @@ interface Props {
   keyInsights: string;
   quoteMaxim: string;
   quoteMaximAuthor: string;
+  loading: boolean;
 }
 
 const props = defineProps<Props>();
@@ -154,5 +165,22 @@ const hasAnalysis = computed(() => {
 
 .card {
   border: none;
+}
+
+.loading-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 </style>

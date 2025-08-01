@@ -40,11 +40,13 @@
       <!-- Analysis Results -->
       <div class="personality-analysis-list">
         <PersonalityAnalysisSection v-for="section in sortedSections" :key="section.id" :title="section.title"
-          :icon="section.icon" :name="userStore.personalityAnalysis[section.id]['Name'] || ''"
-          :description="userStore.personalityAnalysis[section.id]['Description'] || ''"
-          :key-insights="userStore.personalityAnalysis[section.id]['Key Insights'] || ''"
-          :quote-maxim="userStore.personalityAnalysis[section.id]['Quote/Maxim'] || ''"
-          :quote-maxim-author="userStore.personalityAnalysis[section.id]['Quote/Maxim Source'] || ''" />
+          :icon="section.icon" :name="userStore?.personalityAnalysis?.[section.id]?.['Name'] || ''"
+          :description="userStore?.personalityAnalysis?.[section.id]?.['Description'] || ''"
+          :key-insights="userStore?.personalityAnalysis?.[section.id]?.['Key Insights'] || ''"
+          :quote-maxim="userStore?.personalityAnalysis?.[section.id]?.['Quote/Maxim'] || ''"
+          :quote-maxim-author="userStore?.personalityAnalysis?.[section.id]?.['Quote/Maxim Source'] || ''"
+          :loading="userStore.isGeneratingAnalysis"
+           />
       </div>
     </div>
   </div>
