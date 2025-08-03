@@ -172,13 +172,7 @@ const formatDate = (dateString: string | undefined) => {
 };
 
 const startCheckout = async () => {
-  console.log('Starting checkout');
-
   try {
-    if (!userInfo.value) {
-      throw new Error('User must be logged in to make a purchase');
-    }
-
     isLoading.value = true;
     paymentError.value = null;
     paymentSuccess.value = false;

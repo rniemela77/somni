@@ -21,7 +21,6 @@ try {
 } catch (err) {
   // Final fallback - just use the project root
   serviceAccountPath = path.resolve(process.cwd(), 'serviceAccountKey.json');
-  console.log('Using fallback service account path:', serviceAccountPath);
 }
 
 let adminApp;
@@ -37,7 +36,6 @@ export const initializeFirebase = async () => {
         adminApp = admin.initializeApp({
           credential: admin.credential.cert(serviceAccount)
         });
-        console.log('Firebase Admin initialized successfully using environment variable');
       } else {
         // Fall back to file-based approach (for local development)
         try {
@@ -45,7 +43,6 @@ export const initializeFirebase = async () => {
           adminApp = admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
           });
-          console.log('Firebase Admin initialized successfully using service account file');
         } catch (fileError) {
           console.error('Error reading service account file:', fileError);
           console.error('Service account path tried:', serviceAccountPath);

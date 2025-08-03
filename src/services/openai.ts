@@ -117,40 +117,32 @@ class OpenAIService {
     try {
       const options = { ...this.config, ...customOptions };
       
-      console.log('Sending prompt to OpenAI via Netlify function:', prompt.substring(0, 100) + '...');
-      
-      const requestBody: OpenAIRequestBody = {
-        prompt,
-        model: options.model,
-        temperature: options.temperature,
-        max_tokens: options.max_tokens,
-        stream: options.stream
-      };
-      
-      // Call the Netlify function instead of OpenAI directly
       const response = await fetch('/.netlify/functions/openai', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify({
+          prompt,
+          model: options.model,
+          temperature: options.temperature,
+          max_tokens: options.max_tokens
+        })
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to get completion from OpenAI');
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
-      console.log('Received response from Netlify function');
-      
       return { 
         completion: data.completion, 
         error: null,
         usage: data.usage
       };
     } catch (error) {
-      console.error('Error calling OpenAI API via Netlify function:', error);
+      console.error('OpenAI API error:', error);
       return { 
         completion: null, 
         error: error instanceof Error ? error.message : 'Unknown error',

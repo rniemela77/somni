@@ -32,11 +32,6 @@ Output: Title followed immediately by the story text. Do not include any comment
  * Netlify function to generate personalized story
  */
 export async function handler(event, context) {
-  console.log(
-    "📖 Story generation requested:",
-    event.httpMethod,
-    new Date().toISOString()
-  );
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -45,7 +40,6 @@ export async function handler(event, context) {
 
   // Only allow POST requests
   if (event.httpMethod !== "POST") {
-    console.log("⚠️ Request rejected: Not a POST request");
     return errorResponse("Method not allowed", 405);
   }
 
@@ -57,15 +51,10 @@ export async function handler(event, context) {
     // Validate that user has completed some assessments
     validateUserAttributes(userAttributes);
 
-    console.log("👤 Authenticated user:", userData.id);
-    console.log("🔥 Firebase initialized for story generation");
-
     // Generate the story prompt
     const prompt = generateStoryPrompt(userAttributes);
-    console.log("🔍 Story prompt:", prompt);
 
     // Call OpenAI API
-    console.log("🤖 Calling OpenAI for story generation...");
     const story = await callOpenAI(prompt, {
       model: "gpt-4",
       temperature: 0.8,
@@ -76,8 +65,6 @@ export async function handler(event, context) {
       throw new Error("No story generated from OpenAI");
     }
 
-    console.log("✅ Story generated successfully");
-
     // Save the story to Firestore
     await userRef.update({
       lastStoryGenerated: FieldValue.serverTimestamp(),
@@ -85,8 +72,6 @@ export async function handler(event, context) {
       currentStory: story,
       storyGeneratedAt: new Date().toISOString(),
     });
-
-    console.log("💾 Story metadata saved to user document");
 
     // Return the story
     return success({

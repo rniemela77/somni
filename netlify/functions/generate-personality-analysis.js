@@ -37,7 +37,6 @@ const parseAnalysis = (text) => {
       return result;
     }
   } catch (error) {
-    console.log('Failed to parse as JSON, falling back to regex parsing:', error.message);
   }
 
   // Fallback to old regex parsing method
@@ -58,8 +57,6 @@ const parseAnalysis = (text) => {
  * Netlify function to generate personality analysis
  */
 export async function handler(event, context) {
-  console.log('🧠 Personality analysis generation requested:', event.httpMethod, new Date().toISOString());
-
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return handleOptions();
@@ -67,7 +64,6 @@ export async function handler(event, context) {
 
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
-    console.log('⚠️ Request rejected: Not a POST request');
     return errorResponse('Method not allowed', 405);
   }
 
@@ -78,22 +74,16 @@ export async function handler(event, context) {
     const openaiApiCalls = userData.openai_api_calls || 0;
     const isPaid = userData.isPaid || false;
 
-    console.log('👤 Authenticated user:', userData.id);
-    console.log('🔥 Firebase initialized for personality analysis');
-
     // Validate that user has completed assessments
     validateUserAttributes(attributes);
 
     // Check if user has reached the API call limit
     checkApiCallLimit(userData, API_LIMITS);
 
-    console.log(`📊 Found ${Object.keys(attributes).length} personality attributes for analysis`);
-
     // Generate the analysis prompt
     const prompt = generateAnalysisPrompt(attributes);
     
     // Call OpenAI API
-    console.log('🤖 Calling OpenAI for personality analysis...');
     const rawAnalysis = await callOpenAI(prompt, {
       model: 'gpt-3.5-turbo',
       temperature: 0.7,
@@ -103,13 +93,6 @@ export async function handler(event, context) {
     // Parse the analysis into sections
     const parsedAnalysis = parseAnalysis(rawAnalysis);
 
-    console.log('✅ Analysis generated and parsed successfully');
-    console.log('🔍 Backend: Parsed analysis structure:', {
-      hasData: Object.keys(parsedAnalysis).length > 0,
-      keys: Object.keys(parsedAnalysis),
-      sampleSection: parsedAnalysis[Object.keys(parsedAnalysis)[0]]
-    });
-
     // Save the analysis back to Firestore
     await userRef.update({
       personalityAnalysis: parsedAnalysis,
@@ -117,8 +100,6 @@ export async function handler(event, context) {
       updatedAt: FieldValue.serverTimestamp(),
       lastAnalysisGenerated: FieldValue.serverTimestamp()
     });
-
-    console.log('💾 Analysis saved to user document');
 
     // Return the parsed analysis
     return success({

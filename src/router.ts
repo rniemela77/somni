@@ -8,6 +8,7 @@ import PrivacyPolicy from "./components/pages/PrivacyPolicy.vue";
 import TermsOfService from "./components/pages/TermsOfService.vue";
 import AssessmentView from './components/pages/Assessment.vue';
 import { useUserStore } from "./stores/user";
+import { watch } from "vue";
 
 // Define custom meta types
 interface RouteMeta {
@@ -88,35 +89,36 @@ router.beforeEach(async (
   _from: RouteLocationNormalized,
   next: NavigationGuardNext
 ) => {
-  const requiresAuth = to.matched.some(record => record.meta?.requiresAuth);
-  const requiresGuest = to.matched.some(record => record.meta?.requiresGuest);
-  
   const userStore = useUserStore();
   
-  // If auth is still initializing, wait for it to complete
+  // Wait for auth to be ready
   if (!userStore.isReady) {
-    console.log('[Router] Auth not ready, waiting for initialization...');
-    
-    // Wait for the store to be initialized
-    while (!userStore.isReady) {
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
-    
-    console.log('[Router] Auth initialization complete');
+    await new Promise<void>((resolve) => {
+      const unwatch = watch(() => userStore.isReady, (ready) => {
+        if (ready) {
+          unwatch();
+          resolve();
+        }
+      });
+    });
   }
 
-  // Auth is ready, proceed with normal guard logic
+  // Check if user is authenticated
   const isAuthenticated = userStore.isAuthenticated;
-  
-  if (requiresAuth && !isAuthenticated) {
-    console.log('[Router] Redirecting to sign in page due to missing authentication');
-    next('/signin');
-  } else if (requiresGuest && isAuthenticated) {
-    console.log('[Router] Authenticated user accessing guest route, redirecting to dashboard');
-    next('/');
-  } else {
-    next();
+
+  // Handle guest routes (sign in, sign up, landing)
+  if (to.meta.requiresGuest) {
+    if (isAuthenticated) {
+      return { name: 'dashboard' };
+    }
+    return;
   }
+
+  // Handle protected routes
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    return { name: 'signin' };
+  }
+  next();
 });
 
 export default router; 
