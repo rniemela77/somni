@@ -17,7 +17,12 @@ export interface PersonalityScale {
 export const formatPersonalityAttributes = (attributes: PersonalityAttributes): string => {
   let formatted = '';
 
-  Object.entries(attributes).forEach(([key, value]) => {
+  // Sort attributes by absolute value in descending order
+  const sortedEntries = Object.entries(attributes).sort(([, a], [, b]) => {
+    return Math.abs(b) - Math.abs(a);
+  });
+
+  sortedEntries.forEach(([key, value]) => {
     const scale = personalityData.find(
       (scale: PersonalityScale) => scale.id === key.toLowerCase().replace(/-/g, "_")
     );

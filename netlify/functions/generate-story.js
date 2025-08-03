@@ -13,16 +13,18 @@ const generateStoryPrompt = (attributes) => {
   // Add the attribute scores in a formatted way
   prompt += formatPersonalityAttributes(attributes);
 
-  prompt += `\n\nIdentify the three metrics with the largest absolute values. Write a single narrative about an animal whose temperament, choices, and environment subtly reflect those dominant traits without naming them. The story must:
+  prompt += `\n\nWrite a single narrative about an animal whose temperament, choices, and environment subtly reflect those dominant traits without naming them. The story must:
 
-1. Name a specific animal protagonist and show its daily world.  
-2. Pose a realistic obstacle that invokes those three dominant drives.  
-3. Reveal how the animal's behavior, internal perceptions, and sensory details embody those traits in solving the problem.  
-4. Emphasize the constructive edge of traits often undervalued.  
-5. Use clear, straightforward language accessible to a broad adult audience at a Grade 8-10 reading level.  
-6. Conclude with a positive, earned resolution.
+1. Introduce a specific animal species and individual as the protagonist.  
+2. Present a realistic, meaningful obstacle or challenge.  
+3. Demonstrate how the dominant traits directly informs the animal's decisions, actions, and problem-solving strategies.  
+4. Highlight the constructive advantages of traits that are often undervalued or misjudged (for example, showing how introversion can foster insight).  
+5. Maintain a mature, non-judgmental tone—avoid childlike language, overt moralizing, or bias.  
+6. Conclude with a positive resolution that feels earned and uplifting.
+7. Use clear, straightforward language accessible to a broad adult audience at a Grade 8-10 reading level.
+8. Do not use fairy-tale clichés (no “Once upon a time”).
 
-Length: 350-450 words.  
+Length: Roughly 300 words.  
 Output: Title followed immediately by the story text. Do not include any commentary or trait analysis—only the narrative itself.`;
 
   return prompt;
@@ -56,7 +58,7 @@ export async function handler(event, context) {
 
     // Call OpenAI API
     const story = await callOpenAI(prompt, {
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       temperature: 0.8,
       max_tokens: 800
     });

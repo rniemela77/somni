@@ -20,22 +20,62 @@
 
     <!-- Insights View -->
     <div v-if="currentView === 'breakdown'">
-      <BreakdownList />
+      <BreakdownList 
+        :api-calls-description="apiCallsDescription"
+        :generate-button-text="generateButtonText"
+        :is-unlocked="isUnlocked"
+        :quizzes-left="quizzesLeft"
+      />
     </div>
 
     <div v-else-if="currentView === 'narrative'">
-      <Story />
+      <Narrative 
+        :api-calls-description="apiCallsDescription"
+        :generate-button-text="generateButtonText"
+        :is-unlocked="isUnlocked"
+        :quizzes-left="quizzesLeft"
+      />
     </div>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useUserStore } from '../../stores/user';
+import { useInsightsProgress } from '../../composables/useInsightsProgress';
+import { API_LIMITS } from '../../config/limits';
 import BreakdownList from '../insights/BreakdownList.vue';
-import Story from '../insights/Story.vue';
+import Narrative from '../insights/Narrative.vue';
 
+const userStore = useUserStore();
 const currentView = ref<'breakdown' | 'narrative'>('breakdown');
+
+const {
+  isUnlocked,
+  quizzesLeft,
+} = useInsightsProgress();
+
+const generateButtonText = computed(() => {
+  if (!isUnlocked.value) {
+    return `Complete ${quizzesLeft.value} more assessment${quizzesLeft.value === 1 ? '' : 's'} to generate a comprehensive analysis.`;
+  }
+  if (userStore.isGeneratingAnalysis) return 'Generating...';
+  if (userStore.openaiApiCallsRemaining <= 0) {
+    return userStore.isPaid ? 'CONTACT SUPPORT FOR ADDITIONAL ACCESS' : `UPGRADE TO PREMIUM FOR ${API_LIMITS.PAID_OPENAI_CALLS_LIMIT} REQUESTS`;
+  }
+  return userStore.personalityAnalysis && Object.keys(userStore.personalityAnalysis).length > 0 ? 'Regenerate Analysis' : 'Generate Analysis';
+});
+
+const apiCallsDescription = computed(() => {
+  if (userStore.openaiApiCallsRemaining <= 0 && !userStore.isPaid) {
+    return `You have run out of free AI analysis requests. Upgrade to premium for ${API_LIMITS.PAID_OPENAI_CALLS_LIMIT} total requests.`;
+  }
+  else if (userStore.openaiApiCallsRemaining <= 0 && userStore.isPaid) {
+    return `You have run out of AI analysis requests. Contact support for additional access.`;
+  }
+  return `${userStore.openaiApiCallsRemaining} remaining.`;
+});
 </script>
 
 <style scoped>

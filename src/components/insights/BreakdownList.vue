@@ -3,17 +3,15 @@
     <!-- Generate analysis section -->
     <div>
       <div class="mb-4">
-        <p class="lead mb-4">
-          Generate a comprehensive AI analysis of your personality based on your assessment results.
-        </p>
+        <div class="alert alert-info" role="alert">
+          <p class="mb-0">Generate a comprehensive AI analysis of your personality based on your assessment results.</p>
+        </div>
 
         <!-- API Calls Info -->
-        <div class="mb-3 d-flex flex-column align-items-start rounded">
-          <span class="fw-bold">AI Analysis Requests:
-            {{ `${userStore.openaiApiCallsRemaining} remaining` }}
-          </span>
+        <div class="mb-3 d-flex align-items-center">
+          <span class="fw-bold">AI Analysis Requests:</span>
 
-          <small class="text-muted">
+          <small class="text-muted ms-2">
             {{ apiCallsDescription }}
           </small>
         </div>
@@ -53,51 +51,34 @@
 import { ref, computed } from 'vue';
 import { useUserStore } from '../../stores/user';
 import Alert from '../ui/Alert.vue';
-import { useInsightsProgress } from '../../composables/useInsightsProgress';
 import { API_LIMITS } from '../../config/limits';
 import { PERSONALITY_ANALYSIS_SECTIONS } from '../../config/personalityAnalysis';
 import PersonalityAnalysisSection from './PersonalityAnalysisSection.vue';
 
+// Props
+interface Props {
+  apiCallsDescription: string;
+  generateButtonText: string;
+  isUnlocked: boolean;
+  quizzesLeft: number;
+}
+
+const props = defineProps<Props>();
+
 const userStore = useUserStore();
 const error = ref<string | null>(null);
-
-const {
-  isUnlocked,
-  quizzesLeft,
-} = useInsightsProgress();
 
 const sortedSections = computed(() => {
   return Object.values(PERSONALITY_ANALYSIS_SECTIONS)
     .sort((a, b) => a.display.order - b.display.order);
 });
 
-const generateButtonText = computed(() => {
-  if (!isUnlocked.value) {
-    return `Complete ${quizzesLeft.value} more assessment${quizzesLeft.value === 1 ? '' : 's'} to generate a comprehensive analysis.`;
-  }
-  if (userStore.isGeneratingAnalysis) return 'GENERATING...';
-  if (userStore.openaiApiCallsRemaining <= 0) {
-    return userStore.isPaid ? 'CONTACT SUPPORT FOR ADDITIONAL ACCESS' : `UPGRADE TO PREMIUM FOR ${API_LIMITS.PAID_OPENAI_CALLS_LIMIT} REQUESTS`;
-  }
-  return userStore.personalityAnalysis && Object.keys(userStore.personalityAnalysis).length > 0 ? 'REGENERATE ANALYSIS' : 'GENERATE ANALYSIS';
-});
-
 const buttonDisabled = computed(() =>
   userStore.isGeneratingAnalysis ||
   userStore.noQuizzesCompleted ||
-  !isUnlocked.value ||
+  !props.isUnlocked ||
   (userStore.openaiApiCallsRemaining <= 0 && !userStore.isPaid)
 );
-
-const apiCallsDescription = computed(() => {
-  if (userStore.openaiApiCallsRemaining <= 0 && !userStore.isPaid) {
-    return `You have run out of free AI analysis requests. Upgrade to premium for ${API_LIMITS.PAID_OPENAI_CALLS_LIMIT} total requests.`;
-  }
-  else if (userStore.openaiApiCallsRemaining === 0 && userStore.isPaid) {
-    return `You have run out of AI analysis requests. Contact support for additional access.`;
-  }
-  return `You have ${userStore.openaiApiCallsRemaining} more AI personality analysis requests.`;
-});
 
 const generateDescription = async () => {
   error.value = null;

@@ -2,6 +2,22 @@
 // This ensures API keys are never exposed to the client
 const fetch = require('node-fetch');
 
+/**
+ * Validates and fixes side-by-side double quotes that can break JSON parsing
+ * @param {string} text - The text to validate and fix
+ * @returns {string} - The cleaned text
+ */
+const validateAndFixDoubleQuotes = (text) => {
+  if (!text || typeof text !== 'string') {
+    return text;
+  }
+  
+  // Check for side-by-side double quotes and replace with single quote. (This prevents JSON parsing issues)
+  const cleanedText = text.replace(/""/g, '"');
+
+  return cleanedText;
+};
+
 exports.handler = async function(event, context) {
 
   // Only allow POST requests
@@ -75,11 +91,15 @@ exports.handler = async function(event, context) {
       throw new Error('Invalid response format from OpenAI');
     }
 
+    // Validate and fix the completion text
+    const completion = data.choices[0].message.content;
+    const cleanedCompletion = validateAndFixDoubleQuotes(completion);
+
     // Return the response
     return {
       statusCode: 200,
       body: JSON.stringify({
-        completion: data.choices[0].message.content,
+        completion: cleanedCompletion,
         usage: data.usage
       })
     };
