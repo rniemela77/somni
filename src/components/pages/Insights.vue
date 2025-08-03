@@ -2,117 +2,75 @@
   <div class="container">
     <h2 class="mb-4">AI Personality Insights</h2>
 
-    <!-- Generate analysis section -->
-    <div>
-      <div class="mb-4">
-        <p class="lead mb-4">
-          Generate a comprehensive AI analysis of your personality based on your assessment results.
-        </p>
-
-        <!-- API Calls Info -->
-        <div class="mb-3 d-flex flex-column align-items-start rounded">
-          <span class="fw-bold">AI Analysis Requests:
-            {{ `${userStore.openaiApiCallsRemaining} remaining` }}
-          </span>
-
-          <small class="text-muted">
-            {{ apiCallsDescription }}
-          </small>
-        </div>
-
-        <button v-if="userStore.openaiApiCallsRemaining > 0" @click="generateDescription" class="btn btn-primary btn-lg"
-          :disabled="buttonDisabled">
-          {{ generateButtonText }}
+    <!-- View Toggle -->
+    <div class="view-toggle mb-4">
+      <div class="btn-group" role="group">
+        <button @click="currentView = 'breakdown'" class="btn"
+          :class="currentView === 'breakdown' ? 'btn-primary' : 'btn-outline-primary'">
+          <i class="bi bi-list-check me-2"></i>
+          Breakdown
         </button>
-
-        <!-- Upgrade prompt when limit reached -->
-        <div v-if="userStore.openaiApiCallsRemaining <= 0 && !userStore.isPaid" class="mt-3">
-          <router-link to="/account" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-up-circle me-2"></i>
-            Upgrade to Premium ({{ API_LIMITS.PAID_OPENAI_CALLS_LIMIT }} Requests)
-          </router-link>
-        </div>
-      </div>
-
-      <!-- Error message -->
-      <Alert v-if="error" type="error" class="text-center mb-4" :message="error" />
-
-      <!-- Analysis Results -->
-      <div class="personality-analysis-list">
-        <PersonalityAnalysisSection v-for="section in sortedSections" :key="section.id" :title="section.title"
-          :icon="section.icon" :name="userStore?.personalityAnalysis?.[section.id]?.['Name'] || ''"
-          :description="userStore?.personalityAnalysis?.[section.id]?.['Description'] || ''"
-          :key-insights="userStore?.personalityAnalysis?.[section.id]?.['Key Insights'] || ''"
-          :quote-maxim="userStore?.personalityAnalysis?.[section.id]?.['Quote/Maxim'] || ''"
-          :quote-maxim-author="userStore?.personalityAnalysis?.[section.id]?.['Quote/Maxim Source'] || ''"
-          :loading="userStore.isGeneratingAnalysis"
-           />
+        <button @click="currentView = 'narrative'" class="btn"
+          :class="currentView === 'narrative' ? 'btn-primary' : 'btn-outline-primary'">
+          <i class="bi bi-book me-2"></i>
+          Narrative
+        </button>
       </div>
     </div>
+
+    <!-- Insights View -->
+    <div v-if="currentView === 'breakdown'">
+      <BreakdownList />
+    </div>
+
+    <div v-else-if="currentView === 'narrative'">
+      <Story />
+    </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useUserStore } from '../../stores/user';
-import Alert from '../ui/Alert.vue';
-import { useInsightsProgress } from '../../composables/useInsightsProgress';
-import { API_LIMITS } from '../../config/limits';
-import { PERSONALITY_ANALYSIS_SECTIONS } from '../../config/personalityAnalysis';
-import PersonalityAnalysisSection from '../insights/PersonalityAnalysisSection.vue';
+import { ref } from 'vue';
+import BreakdownList from '../insights/BreakdownList.vue';
+import Story from '../insights/Story.vue';
 
-const userStore = useUserStore();
-const error = ref<string | null>(null);
-const {
-  isUnlocked,
-  quizzesLeft,
-} = useInsightsProgress();
-
-const sortedSections = computed(() => {
-  return Object.values(PERSONALITY_ANALYSIS_SECTIONS)
-    .sort((a, b) => a.display.order - b.display.order);
-});
-
-const generateButtonText = computed(() => {
-  if (!isUnlocked.value) {
-    return `Complete ${quizzesLeft.value} more assessment${quizzesLeft.value === 1 ? '' : 's'} to generate a comprehensive analysis.`;
-  }
-  if (userStore.isGeneratingAnalysis) return 'GENERATING...';
-  if (userStore.openaiApiCallsRemaining <= 0) {
-    return userStore.isPaid ? 'CONTACT SUPPORT FOR ADDITIONAL ACCESS' : `UPGRADE TO PREMIUM FOR ${API_LIMITS.PAID_OPENAI_CALLS_LIMIT} REQUESTS`;
-  }
-  return userStore.personalityAnalysis && Object.keys(userStore.personalityAnalysis).length > 0 ? 'REGENERATE ANALYSIS' : 'GENERATE ANALYSIS';
-});
-
-const buttonDisabled = computed(() =>
-  userStore.isGeneratingAnalysis ||
-  userStore.noQuizzesCompleted ||
-  !isUnlocked.value ||
-  (userStore.openaiApiCallsRemaining <= 0 && !userStore.isPaid)
-);
-
-const apiCallsDescription = computed(() => {
-  if (userStore.openaiApiCallsRemaining <= 0 && !userStore.isPaid) {
-    return `You have run out of free AI analysis requests. Upgrade to premium for ${API_LIMITS.PAID_OPENAI_CALLS_LIMIT} total requests.`;
-  }
-  else if (userStore.openaiApiCallsRemaining === 0 && userStore.isPaid) {
-    return `You have run out of AI analysis requests. Contact support for additional access.`;
-  }
-  return `You have ${userStore.openaiApiCallsRemaining} more AI personality analysis requests.`;
-});
-
-const generateDescription = async () => {
-  error.value = null;
-
-  try {
-    const { success, error: analysisError } = await userStore.generatePersonalityAnalysis();
-
-    if (!success) {
-      throw new Error(analysisError || 'Failed to generate personality analysis');
-    }
-  } catch (err) {
-    console.error("Exception in generateDescription:", err);
-    error.value = err instanceof Error ? err.message : String(err);
-  }
-};
+const currentView = ref<'breakdown' | 'narrative'>('breakdown');
 </script>
+
+<style scoped>
+.view-toggle {
+  display: flex;
+  justify-content: center;
+}
+
+.feature-card {
+  background: var(--card-bg-color);
+  border: 1px solid var(--card-border-color);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card i {
+  font-size: 2.5rem;
+  display: block;
+}
+
+.feature-card h5 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.feature-card p {
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+</style>

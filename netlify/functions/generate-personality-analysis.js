@@ -1,7 +1,6 @@
-import { initializeFirebase } from './utils/firebase.js';
 import { success, error as errorResponse, handleOptions } from './utils/response.js';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { authenticateUser, callOpenAI, validateUserAttributes, checkApiCallLimit } from './utils/openai.js';
+import { FieldValue } from 'firebase-admin/firestore';
 
 // Import the frontend configuration to ensure consistency
 import { PERSONALITY_ANALYSIS_SECTIONS, generateAnalysisPrompt } from '../../src/config/personalityAnalysis.js';
@@ -56,43 +55,6 @@ const parseAnalysis = (text) => {
 };
 
 /**
- * Call OpenAI API for personality analysis using the existing openai function
- */
-const callOpenAI = async (prompt) => {
-  try {
-    // Call the existing openai function internally
-    const response = await fetch(`${process.env.URL || 'http://localhost:8888'}/.netlify/functions/openai`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        model: 'gpt-3.5-turbo',
-        temperature: 0.7,
-        max_tokens: 1500
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `OpenAI service error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    if (!data.completion) {
-      throw new Error('Invalid response from OpenAI service');
-    }
-
-    return data.completion;
-  } catch (error) {
-    console.error('Error calling OpenAI service:', error);
-    throw new Error(`OpenAI analysis failed: ${error.message}`);
-  }
-};
-
-/**
  * Netlify function to generate personality analysis
  */
 export async function handler(event, context) {
@@ -110,45 +72,20 @@ export async function handler(event, context) {
   }
 
   try {
-    // Initialize Firebase
-    await initializeFirebase();
-    const db = getFirestore();
-    console.log('🔥 Firebase initialized for personality analysis');
-
-    // Authenticate user
-    const authHeader = event.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return errorResponse('Unauthorized. Missing or invalid token.', 401);
-    }
-
-    const idToken = authHeader.split('Bearer ')[1];
-    const decodedToken = await getAuth().verifyIdToken(idToken);
-    const userId = decodedToken.uid;
-    console.log('👤 Authenticated user:', userId);
-
-    // Get user data from Firestore
-    const userRef = db.collection('users').doc(userId);
-    const userDoc = await userRef.get();
-
-    if (!userDoc.exists) {
-      return errorResponse('User not found', 404);
-    }
-
-    const userData = userDoc.data();
+    // Authenticate user and get user data
+    const { userRef, userData } = await authenticateUser(event);
     const attributes = userData.attributes || {};
     const openaiApiCalls = userData.openai_api_calls || 0;
     const isPaid = userData.isPaid || false;
 
+    console.log('👤 Authenticated user:', userData.id);
+    console.log('🔥 Firebase initialized for personality analysis');
+
     // Validate that user has completed assessments
-    if (Object.keys(attributes).length === 0) {
-      return errorResponse('No personality attributes found. Please complete some assessments first.', 400);
-    }
+    validateUserAttributes(attributes);
 
     // Check if user has reached the API call limit
-    const callLimit = isPaid ? API_LIMITS.PAID_OPENAI_CALLS_LIMIT : API_LIMITS.FREE_OPENAI_CALLS_LIMIT;
-    if (openaiApiCalls >= callLimit) {
-      return errorResponse(`You have reached your AI analysis limit (${callLimit} requests). Please contact support for additional access.`, 403);
-    }
+    checkApiCallLimit(userData, API_LIMITS);
 
     console.log(`📊 Found ${Object.keys(attributes).length} personality attributes for analysis`);
 
@@ -157,7 +94,11 @@ export async function handler(event, context) {
     
     // Call OpenAI API
     console.log('🤖 Calling OpenAI for personality analysis...');
-    const rawAnalysis = await callOpenAI(prompt);
+    const rawAnalysis = await callOpenAI(prompt, {
+      model: 'gpt-3.5-turbo',
+      temperature: 0.7,
+      max_tokens: 1500
+    });
     
     // Parse the analysis into sections
     const parsedAnalysis = parseAnalysis(rawAnalysis);
@@ -190,10 +131,14 @@ export async function handler(event, context) {
     console.error(`❌ Error generating personality analysis: ${error.message}`);
     
     // Return appropriate error based on type
-    if (error.message.includes('token')) {
+    if (error.message.includes('token') || error.message.includes('Unauthorized')) {
       return errorResponse('Authentication failed', 401);
     } else if (error.message.includes('OpenAI')) {
       return errorResponse('AI analysis service temporarily unavailable', 503);
+    } else if (error.message.includes('personality data') || error.message.includes('assessments')) {
+      return errorResponse(error.message, 400);
+    } else if (error.message.includes('AI analysis limit')) {
+      return errorResponse(error.message, 403);
     } else {
       return errorResponse(`Failed to generate personality analysis: ${error.message}`, 500);
     }

@@ -1,4 +1,5 @@
 import personalityData from '../../data/personalityData';
+import { formatPersonalityAttributes } from '../utils/personalityUtils';
 
 export interface PersonalitySection {
   id: string;
@@ -112,32 +113,7 @@ export const generateAnalysisPrompt = (attributes: PersonalityAttributes): strin
   let prompt = "Given the user's personality traits below:\n\n";
 
   // Add the attribute scores in a formatted way
-  Object.entries(attributes).forEach(([key, value]) => {
-    const scale = personalityData.find(
-      (scale) => scale.id === key.toLowerCase().replace(/-/g, "_")
-    );
-    if (scale) {
-      prompt += `- ${scale.positive} vs. ${scale.negative}: ${value} `;
-
-      const absValue = Math.abs(value);
-      let intensity = "";
-      if (absValue >= 80) intensity = "extremely";
-      else if (absValue >= 60) intensity = "strongly";
-      else if (absValue >= 40) intensity = "moderately";
-      else if (absValue >= 20) intensity = "somewhat";
-      else if (absValue > 0) intensity = "slightly";
-      else intensity = "";
-
-      if (value < 0) {
-        prompt += `(${intensity} more ${scale.negative})`;
-      } else if (value > 0) {
-        prompt += `(${intensity} more ${scale.positive})`;
-      } else {
-        prompt += "(perfectly balanced)";
-      }
-      prompt += "\n";
-    }
-  });
+  prompt += formatPersonalityAttributes(attributes);
 
   prompt += `\n\nProvide your response clearly using layman's terms, without too many references to personality terms, and in this format: \n\n`;
   prompt += `{\n`;

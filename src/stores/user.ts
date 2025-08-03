@@ -53,6 +53,11 @@ interface UserState {
   results: QuizResult[];
   openaiApiCalls: number;
   
+  // Story data
+  currentStory: string;
+  storyGeneratedAt: string | null;
+  storyCount: number;
+  
   // UI state
   loading: boolean;
   error: string;
@@ -91,6 +96,11 @@ export const useUserStore = defineStore('user', {
     personalityAnalysis: {},
     results: [],
     openaiApiCalls: 0,
+    
+    // Story data
+    currentStory: '',
+    storyGeneratedAt: null,
+    storyCount: 0,
     
     // UI state
     loading: true,
@@ -132,6 +142,11 @@ export const useUserStore = defineStore('user', {
     // OpenAI API calls remaining
     openaiApiCallsRemaining: (state) => {
       return state.isPaid ? API_LIMITS.PAID_OPENAI_CALLS_LIMIT - state.openaiApiCalls : API_LIMITS.FREE_OPENAI_CALLS_LIMIT - state.openaiApiCalls;
+    },
+
+    // Story getters
+    hasStory: (state) => {
+      return !!state.currentStory && state.currentStory.trim().length > 0;
     }
   },
 
@@ -179,6 +194,9 @@ export const useUserStore = defineStore('user', {
           this.personalityAnalysis = data.personalityAnalysis || {};
           this.results = data.results || [];
           this.openaiApiCalls = data.openaiApiCalls || 0;
+          this.currentStory = data.currentStory || '';
+          this.storyGeneratedAt = data.storyGeneratedAt || null;
+          this.storyCount = data.storyCount || 0;
           this.lastUserDataFetch = firebaseUser.uid;
         }
       }
@@ -324,6 +342,9 @@ export const useUserStore = defineStore('user', {
           personalityAnalysis: {},
           results: [],
           openaiApiCalls: 0,
+          currentStory: '',
+          storyGeneratedAt: null,
+          storyCount: 0,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         };
@@ -531,6 +552,35 @@ export const useUserStore = defineStore('user', {
       // For now, consider data fresh for the session
       // Could implement timestamp-based staleness checking
       return false;
+    },
+
+    // Story management
+    async updateStory(story: string) {
+      if (!this.userId) {
+        return { success: false, error: 'No user logged in' };
+      }
+
+      try {
+        const userRef = doc(db, 'users', this.userId);
+        const updateData = {
+          currentStory: story,
+          storyGeneratedAt: new Date().toISOString(),
+          updatedAt: serverTimestamp()
+        };
+        
+        await updateDoc(userRef, updateData);
+        
+        // Update local state
+        this.currentStory = story;
+        this.storyGeneratedAt = updateData.storyGeneratedAt;
+        
+        return { success: true, error: null };
+      } catch (error) {
+        return { 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Unknown error' 
+        };
+      }
     },
 
     // Cleanup method: removes the Firebase auth listener to prevent memory leaks or duplicate listeners
