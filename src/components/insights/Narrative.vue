@@ -15,7 +15,7 @@
                 </small>
             </div>
 
-            <button v-if="userStore.openaiApiCallsRemaining > 0" @click="generateNarrative" 
+            <button v-if="userStore.openaiApiCallsRemaining > 0" @click="generateNarrative"
                 class="btn btn-primary btn-lg" :disabled="buttonDisabled">
                 {{ generateButtonText }}
             </button>
@@ -70,7 +70,8 @@
                     </div>
 
                     <div class="narrative-footer text-center mt-4 pt-4 border-top">
-                        <button @click="generateNarrative" class="btn btn-outline-primary me-2" :disabled="buttonDisabled">
+                        <button @click="generateNarrative" class="btn btn-outline-primary me-2"
+                            :disabled="buttonDisabled">
                             <i class="bi bi-arrow-clockwise me-2"></i>
                             Generate New Narrative
                         </button>
@@ -78,6 +79,14 @@
                             <i class="bi bi-share me-2"></i>
                             Share Narrative
                         </button>
+
+                        <div class="mb-3 d-flex align-items-center justify-content-center">
+                            <span class="fw-bold">AI Analysis Requests:</span>
+
+                            <small class="text-muted ms-2">
+                                {{ apiCallsDescription }}
+                            </small>
+                        </div>
                     </div>
                 </div>
 
@@ -101,10 +110,10 @@ import { API_LIMITS } from '../../config/limits';
 
 // Props
 interface Props {
-  apiCallsDescription: string;
-  generateButtonText: string;
-  isUnlocked: boolean;
-  quizzesLeft: number;
+    apiCallsDescription: string;
+    generateButtonText: string;
+    isUnlocked: boolean;
+    quizzesLeft: number;
 }
 
 const props = defineProps<Props>();
@@ -147,10 +156,10 @@ const formattedNarrative = computed(() => {
 });
 
 const buttonDisabled = computed(() =>
-  loading.value ||
-  userStore.noQuizzesCompleted ||
-  !props.isUnlocked ||
-  (userStore.openaiApiCallsRemaining <= 0 && !userStore.isPaid)
+    loading.value ||
+    userStore.noQuizzesCompleted ||
+    !props.isUnlocked ||
+    (userStore.openaiApiCallsRemaining <= 0 && !userStore.isPaid)
 );
 
 // Methods
