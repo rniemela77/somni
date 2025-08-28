@@ -1,21 +1,19 @@
 <template>
     <Card>
-        <div class="d-flex gap-4 flex-column flex-md-row">
+        <div class="d-flex gap-4 flex-column justify-content-between h-100">
             <div class="flex-grow-1 gap-2 d-flex flex-column">
-                <div class="d-flex gap-4">
-                    <i class="card-icon align-self-center" :class="iconClass"></i>
-                    <div class="d-flex flex-column">
-                        <h2>{{ title }}</h2>
-                        <h3>{{ subtitle }}</h3>
-                    </div>
+                <div class="d-flex gap-3 align-items-center">
+                    <i class="card-icon" :class="iconClass"></i>
+                    <h2 class="mb-0 text-cinzel">{{ title }}</h2>
                 </div>
+                <h3>{{ subtitle }}</h3>
 
-                <div class="section-card-content" :style="{ maxWidth: $slots.button ? '33rem' : '100%' }">
+                <div class="section-card-content">
                     <slot name="content" />
                 </div>
             </div>
 
-            <div v-if="$slots.button" class="d-flex align-items-stretch flex-column align-self-md-end section-card-button">
+            <div v-if="$slots.button" class="d-flex align-items-stretch flex-column section-card-button">
                 <slot name="button" />
             </div>
         </div>
@@ -34,21 +32,27 @@ const props = defineProps<{
 
 <style scoped>
 .card-icon {
-    font-size: 3rem;
+    font-size: 2rem;
     color: var(--text-primary);
 }
 
 :deep(.section-card-button .btn) {
-    padding: clamp(1rem, 2vw, 2rem);
-    font-size: 1.2rem;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    font-size: 1rem;
     font-weight: 700;
     width: 100%;
 }
 .section-card-button {
-    flex: 0 0 34%;
+    /* flex: 0 0 34%; */
+}
+
+h2 {
+    font-size: 13px;
 }
 
 h3 {
+    font-size: 20px;
+    font-weight: 600;
     color: var(--text-primary);
 }
 

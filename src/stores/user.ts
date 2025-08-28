@@ -1,544 +1,332 @@
-import { defineStore } from 'pinia';
-import { 
-  auth,
-  db 
-} from '../services/firebase-config';
+import { defineStore } from "pinia";
+import type { User as FirebaseUser, Unsubscribe } from "firebase/auth";
+import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import type { UserData } from "../../shared/types/shared";
+import { REVELATION_MILESTONES } from "../../shared/config/personalityAnalysis";
+import { PERSONALITY_ANALYSIS_SECTIONS } from "../../shared/config/personalityAnalysis";
 import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  sendPasswordResetEmail,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
-  User as FirebaseUser
-} from "firebase/auth";
-import { 
-  doc, 
-  getDoc, 
-  setDoc, 
-  updateDoc,
-  writeBatch,
-  serverTimestamp 
-} from 'firebase/firestore';
-import { PERSONALITY_ANALYSIS_SECTIONS } from '../config/personalityAnalysis';
-import { API_LIMITS } from '../config/limits';
-import { useQuizStore } from './quiz';
-import { PersonalityAnalysis } from '../types/personality';
+  subscribeToAuth,
+  signInWithEmail,
+  signUpWithEmail,
+  signInWithGoogle as serviceSignInWithGoogle,
+  signOutUser,
+  sendPasswordReset,
+  mapFirebaseUser,
+} from "../services/auth-service";
 
-export interface QuizResult {
-  quizId: string;
-  attribute: string;
-  timestamp: string;
-  answers: Record<string, string>;
-  score: number;
-}
-
-interface AuthError extends Error {
-  code: string;
-}
 
 interface UserState {
-  // Firebase user
-  user: FirebaseUser | null;
-  
-  // Form inputs
+  firebaseUser: FirebaseUser | null;
+  user: UserData | null;
   email: string;
-  password: string;
-  
-  // User data
-  userAttributes: Record<string, number>;
-  isPaid: boolean;
-  personalityAnalysis: PersonalityAnalysis;
-  results: QuizResult[];
-  openaiApiCalls: number;
-  
-  // UI state
   loading: boolean;
-  error: string;
-  isProcessing: boolean;
+  error: string | null;
   initialized: boolean;
-  lastUserDataFetch: string | null;
-  
-  // Auth listener cleanup
-  authUnsubscribe: (() => void) | null;
+  generatingPersonalityAnalysis: boolean;
 }
 
-const AUTH_ERROR_MESSAGES: Record<string, string> = {
-  'auth/user-not-found': 'No account found with this email',
-  'auth/wrong-password': 'Incorrect password',
-  'auth/email-already-in-use': 'An account already exists with this email',
-  'auth/invalid-email': 'Please enter a valid email address',
-  'auth/weak-password': 'Password should be at least 6 characters',
-  'auth/popup-closed-by-user': 'Google sign-in was cancelled',
-  'auth/network-request-failed': 'Network error. Please check your connection',
-  'auth/too-many-requests': 'Too many attempts. Please try again later',
-  'default': 'An unexpected error occurred'
-};
+let unsubscribeAuth: Unsubscribe | null = null;
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore("user", {
   state: (): UserState => ({
-    // Firebase user
+    firebaseUser: null,
     user: null,
-    
-    // Form inputs
-    email: '',
-    password: '',
-    
-    // User data
-    userAttributes: {},
-    isPaid: false,
-    personalityAnalysis: {},
-    results: [],
-    openaiApiCalls: 0,
-    
-    // UI state
+    email: "",
     loading: true,
-    error: '',
-    isProcessing: false,
+    error: null,
     initialized: false,
-    lastUserDataFetch: null,
-    
-    // Auth listener cleanup
-    authUnsubscribe: null,
+
+    generatingPersonalityAnalysis: false,
   }),
 
   getters: {
-    userId: (state) => state.user?.uid || null,
-    isAuthenticated: (state) => !!state.user,
-    isReady: (state) => state.initialized,
-    isLoading: (state) => state.loading || state.isProcessing,
-    isGeneratingAnalysis: (state) => state.isProcessing,
-
-    // Quiz progress getters
-    completedQuizzesCount: (state) => {
-      return Object.keys(state.userAttributes || {}).length;
-    },
-
-    noQuizzesCompleted: (state) => {
-      const attributes = state.userAttributes || {};
-      return Object.keys(attributes).length === 0;
-    },
-
-    totalQuizzesCount: () => {
-      const quizStore = useQuizStore();
-      return quizStore.availableQuizzes.length;
-    },
-
-    hasIncompleteQuizzes() {
-      return this.completedQuizzesCount < this.totalQuizzesCount;
-    },
-
-    // OpenAI API calls remaining
-    openaiApiCallsRemaining: (state) => {
-      return state.isPaid ? API_LIMITS.PAID_OPENAI_CALLS_LIMIT - state.openaiApiCalls : API_LIMITS.FREE_OPENAI_CALLS_LIMIT - state.openaiApiCalls;
-    }
+    isAuthenticated: (state): boolean => Boolean(state.firebaseUser),
+    isReady: (state): boolean => state.initialized && !state.loading,
+    isLoading: (state): boolean => state.loading,
   },
 
   actions: {
-    // Auth State Management
-    async setUser(firebaseUser: FirebaseUser | null) {
-      this.error = '';
-      
-      try {
-        if (!firebaseUser) {
-          this.user = null;
-          this.userAttributes = {};
-          this.openaiApiCalls = 0;
-          this.lastUserDataFetch = null;
-          return;
-        }
-
-        this.user = firebaseUser;
-        await this.loadUserData(firebaseUser);
-        await this.loadQuizData();
-        
-      } catch (error) {
-        this.error = error instanceof Error ? error.message : 'Unknown error';
+    async submitAssessment(assessmentId: string, assessmentScore: number): Promise<void> {
+      console.log('submitAssessment', assessmentId, assessmentScore);
+      if (!this.user) {
+        console.error("User personality profile data not found");
+        return;
       }
+      if (!this.firebaseUser) {
+        console.error("User not found");
+        return;
+      }
+      if (this.firebaseUser.uid === undefined) {
+        console.error("User uid not found");
+        return;
+      }
+
+      // Ensure assessmentScores object exists
+      if (!this.user.assessmentScores) {
+        this.user.assessmentScores = {} as any;
+      }
+
+      // update the user attributes in the store
+      this.user.assessmentScores[assessmentId] = assessmentScore;
+
+      // update the user attributes in the database
+      await updateDoc(doc(db, "users", this.firebaseUser.uid), {
+        assessmentScores: this.user.assessmentScores
+      });
+
+      // Check if we should trigger any revelations
+      this.checkAndTriggerRevelations();
     },
 
-    // Load user data from Firestore
-    async loadUserData(firebaseUser: FirebaseUser) {
-      const shouldFetchData = !this.lastUserDataFetch || 
-        this.lastUserDataFetch !== firebaseUser.uid ||
-        this.isDataStale();
-
-      if (shouldFetchData) {
-        this.loading = true;
-        const { data, error } = await this.getOrCreateUser(firebaseUser.uid);
-        
-        if (error) {
-          this.error = error;
-          return;
-        }
-
-        if (data) {
-          this.userAttributes = data.attributes || {};
-          this.isPaid = data.isPaid;
-          this.personalityAnalysis = data.personalityAnalysis || {};
-          this.results = data.results || [];
-          this.openaiApiCalls = data.openaiApiCalls || 0;
-          this.lastUserDataFetch = firebaseUser.uid;
-        }
-      }
-    },
-
-    // Load quiz data for authenticated users
-    async loadQuizData() {
+    checkAndTriggerRevelations() {
       if (!this.user) return;
 
-      try {
-        const { useQuizStore } = await import('./quiz');
-        const quizStore = useQuizStore();
-        if (!quizStore.dataLoaded) {
-          await quizStore.loadQuizzes();
+      const completedAssessments = Object.keys(this.user.assessmentScores).length;
+      
+      // Check for revelation milestones using shared configuration
+      for (const milestone of REVELATION_MILESTONES) {
+        if (completedAssessments === milestone.requiredAssessments && 
+            !this.user?.personalityAnalysis?.[milestone.key] &&
+            !this.generatingPersonalityAnalysis) {
+          console.log(`Triggering ${milestone.key} revelation`);
+          // Map the milestone key (section id) to its category so the
+          // analysis function can generate all sections for that category.
+          const section = (PERSONALITY_ANALYSIS_SECTIONS as any)[milestone.key];
+          const category: string | undefined = section?.category;
+          this.generatePersonalityAnalysisForCluster(category || milestone.key);
+          break; // Only trigger one revelation at a time
         }
-      } catch (error) {
-        // Quiz loading failure is not critical
       }
     },
 
-    // Initialize auth state listener
-    async init() {
-      if (this.initialized) return;
+    async generatePersonalityAnalysisForCluster(cluster: string): Promise<{ success: boolean; error: string | null }> {
+      this.error = null;
+      this.generatingPersonalityAnalysis = true;
+      console.log('generating personality analysis for cluster', cluster);
+
+      try {
+        // Get the current user's ID token for authentication
+        if (!this.firebaseUser) {
+          throw new Error('User not authenticated');
+        }
+        
+        const idToken = await this.firebaseUser.getIdToken();
+        
+        const result = await fetch('/.netlify/functions/generate-personality-analysis', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({ cluster }),
+        });
+        
+        if (!result.ok) {
+          const errorData = await result.json();
+          throw new Error(errorData.error || `HTTP ${result.status}`);
+        }
+        
+        const data = await result.json();
+        
+        // Update the personality profile with the new analysis
+        if (this.user && data.personalityAnalysis) {
+          this.user.personalityAnalysis = {
+            ...this.user.personalityAnalysis,
+            ...data.personalityAnalysis
+          };
+          
+          // Update the database
+          if (this.firebaseUser?.uid) {
+            await updateDoc(doc(db, "users", this.firebaseUser.uid), {
+              personalityAnalysis: this.user.personalityAnalysis,
+              updatedAt: serverTimestamp()
+            });
+          }
+        }
+        
+        return { success: true, error: null };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        this.error = message;
+        return { success: false, error: message };
+      } finally {
+        this.generatingPersonalityAnalysis = false;
+      }
+    },
+
+    getIdToken(): Promise<string> {
+      if (!this.firebaseUser) {
+        throw new Error('User not authenticated');
+      }
+      return this.firebaseUser.getIdToken();
+    },
+
+    cleanupAuthListener(): void {
+      unsubscribeAuth?.();
+      unsubscribeAuth = null;
+    },
+
+    resetStore(): void {
+      this.$reset();
+      this.loading = false;
+      this.initialized = false;
+      this.firebaseUser = null;
+      this.user = null;
+      this.error = null;
+      this.cleanupAuthListener();
+    },
+
+    async init(): Promise<void> {
+      if (unsubscribeAuth) {
+        this.initialized = true;
+        this.loading = false;
+        return;
+      }
 
       this.loading = true;
-      try {
-        await new Promise<void>((resolve) => {
-          const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            this.authUnsubscribe = unsubscribe;
-            await this.setUser(user);
-            resolve();
-          });
-        });
+      this.error = null;
 
-        this.initialized = true;
-      } catch (error) {
-        this.error = error instanceof Error ? error.message : 'Unknown error';
+      unsubscribeAuth = subscribeToAuth(async (firebaseUser) => {
+        try {
+          if (firebaseUser) {
+            await this.setFirebaseUser(firebaseUser);
+          } else {
+            this.firebaseUser = null;
+            this.user = null;
+          }
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Unknown error";
+          this.error = message;
+        } finally {
+          this.initialized = true;
+          this.loading = false;
+        }
+      });
+    },
+
+    async signIn(password: string): Promise<{ success: boolean; error: string | null }> {
+      this.error = null;
+      this.loading = true;
+      try {
+        const result = await signInWithEmail(this.email, password);
+        if (result.ok) {
+          await this.setFirebaseUser(result.data);
+          return { success: true, error: null };
+        }
+        this.error = result.message;
+        return { success: false, error: result.message };
       } finally {
         this.loading = false;
       }
     },
 
-    // Authentication Methods with Navigation
-    async handleAuthAction(action: () => Promise<any>) {
-      if (this.isProcessing) return { success: false, error: 'Already processing' };
-      
-      this.isProcessing = true;
-      this.error = '';
-      
+    async signInWithGoogle(): Promise<{ success: boolean; error: string | null }> {
+      this.error = null;
+      this.loading = true;
       try {
-        const result = await action();
-        return result;
+        const result = await serviceSignInWithGoogle();
+        if (result.ok) {
+          await this.setFirebaseUser(result.data);
+          return { success: true, error: null };
+        }
+        this.error = result.message;
+        return { success: false, error: result.message };
       } finally {
-        this.isProcessing = false;
+        this.loading = false;
       }
     },
 
-    async signIn() {
-      return this.handleAuthAction(async () => {
-        try {
-          const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
-          await this.setUser(userCredential.user);
-          return { success: true, error: null };
-        } catch (error) {
-          const authError = error as AuthError;
-          this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
-          return { success: false, error: this.error };
-        }
-      });
-    },
-
-    async signInWithGoogle() {
-      return this.handleAuthAction(async () => {
-        try {
-          const provider = new GoogleAuthProvider();
-          const userCredential = await signInWithPopup(auth, provider);
-          await this.setUser(userCredential.user);
-          return { success: true, error: null };
-        } catch (error) {
-          const authError = error as AuthError;
-          this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
-          return { success: false, error: this.error };
-        }
-      });
-    },
-
-    async signUp() {
-      return this.handleAuthAction(async () => {
-        try {
-          const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
-          await this.setUser(userCredential.user);
-          return { success: true, error: null };
-        } catch (error) {
-          const authError = error as AuthError;
-          this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
-          return { success: false, error: this.error };
-        }
-      });
-    },
-
-    async signOut() {
-      return this.handleAuthAction(async () => {
-        try {
-          await signOut(auth);
-          await this.setUser(null);
-          return { success: true, error: null };
-        } catch (error) {
-          const authError = error as AuthError;
-          this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
-          return { success: false, error: this.error };
-        }
-      });
-    },
-
-    async resetPassword(email?: string) {
-      return this.handleAuthAction(async () => {
-        try {
-          await sendPasswordResetEmail(auth, email || this.email);
-          return { success: true, error: null };
-        } catch (error) {
-          const authError = error as AuthError;
-          this.error = AUTH_ERROR_MESSAGES[authError.code] || AUTH_ERROR_MESSAGES.default;
-          return { success: false, error: this.error };
-        }
-      });
-    },
-
-    // User Data Management Methods
-    async getOrCreateUser(userId: string) {
+    async signUp(password: string): Promise<{ success: boolean; error: string | null }> {
+      this.error = null;
+      this.loading = true;
       try {
-        const userRef = doc(db, 'users', userId);
-        const userDoc = await getDoc(userRef);
-        
-        if (userDoc.exists()) {
-          return { data: userDoc.data(), error: null };
+        const result = await signUpWithEmail(this.email, password);
+        if (result.ok) {
+          await this.setFirebaseUser(result.data);
+          return { success: true, error: null };
         }
-        
-        // Default user structure
-        const newUser = {
-          id: userId,
-          isPaid: false,
-          attributes: {},
-          personalityAnalysis: {},
-          results: [],
-          openaiApiCalls: 0,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        };
-        
-        await setDoc(userRef, newUser);
-        return { data: newUser, error: null };
-      } catch (error) {
-        return { 
-          data: null, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
-        };
-      }
-    },
-
-    async updateUser(data: Record<string, any>) {
-      if (!this.userId) {
-        return { success: false, error: 'No user logged in' };
-      }
-
-      try {
-        const userRef = doc(db, 'users', this.userId);
-        const updateData = {
-          ...data,
-          updatedAt: serverTimestamp()
-        };
-        
-        await updateDoc(userRef, updateData);
-        
-        // Update local state
-        Object.assign(this, data);
-        
-        return { success: true, error: null };
-      } catch (error) {
-        return { 
-          success: false, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
-        };
-      }
-    },
-
-    async checkPaidStatus() {
-      if (!this.userId) {
-        return false;
-      }
-
-      try {
-        const userRef = doc(db, 'users', this.userId);
-        const userDoc = await getDoc(userRef);
-        return userDoc.exists() ? userDoc.data().isPaid : false;
-      } catch (error) {
-        return false;
-      }
-    },
-
-    // Personality Analysis Methods
-    async generatePersonalityAnalysis() {
-      if (!this.userId) {
-        return { success: false, error: 'No user logged in' };
-      }
-
-      // Check if user has remaining free API calls
-      if (this.openaiApiCallsRemaining <= 0) {
-        const limit = this.isPaid ? API_LIMITS.PAID_OPENAI_CALLS_LIMIT : API_LIMITS.FREE_OPENAI_CALLS_LIMIT;
-        return { 
-          success: false, 
-          error: `You have reached your AI analysis limit (${limit} requests). Please contact support for additional access.` 
-        };
-      }
-
-      this.isProcessing = true;
-      
-      try {
-        // Get the current user's auth token
-        const currentUser = this.user;
-        if (!currentUser) {
-          throw new Error('Authentication required. Please log in again.');
-        }
-
-        const idToken = await currentUser.getIdToken();
-
-        // Call the backend function
-        const response = await fetch('/.netlify/functions/generate-personality-analysis', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${idToken}`
-          }
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || `HTTP ${response.status}: Failed to generate analysis`);
-        }
-
-        const data = await response.json();
-        
-        // Update local state with the new analysis
-        this.personalityAnalysis = { ...this.personalityAnalysis, ...data.personalityAnalysis };
-
-        // Increment OpenAI API calls counter
-        this.openaiApiCalls += 1;
-        
-        // Update the counter in Firebase
-        await this.updateUser({
-          openaiApiCalls: this.openaiApiCalls
-        });
-
-        return { 
-          success: true, 
-          error: null,
-          data: data.personalityAnalysis
-        };
-
-      } catch (error) {
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
-        };
+        this.error = result.message;
+        return { success: false, error: result.message };
       } finally {
-        this.isProcessing = false;
+        this.loading = false;
       }
     },
 
-    async updatePersonalityAnalysis(data: { results?: QuizResult[], personalityAnalysis?: PersonalityAnalysis }) {
-      if (!this.userId) {
-        return { success: false, error: 'No user logged in' };
-      }
-
+    async signOut(): Promise<{ success: boolean; error: string | null }> {
+      this.error = null;
+      this.loading = true;
       try {
-        // If updating personality analysis sections, validate them
-        if (data.personalityAnalysis) {
-          const validSections = Object.keys(PERSONALITY_ANALYSIS_SECTIONS);
-          const invalidSections = Object.keys(data.personalityAnalysis).filter(
-            key => !validSections.includes(key)
-          );
-
-          if (invalidSections.length > 0) {
-            throw new Error(`Invalid personality sections: ${invalidSections.join(', ')}`);
-          }
+        const result = await signOutUser();
+        if (result.ok) {
+          await this.setFirebaseUser(null);
+          return { success: true, error: null };
         }
-
-        const updateData = {
-          ...data,
-          updatedAt: serverTimestamp()
-        };
-
-        await this.updateUser(updateData);
-
-        // Update local state
-        if (data.personalityAnalysis) {
-          this.personalityAnalysis = { ...this.personalityAnalysis, ...data.personalityAnalysis };
-        }
-        if (data.results) {
-          this.results = data.results;
-        }
-
-        return { success: true, error: null };
-      } catch (error) {
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
-        };
+        this.error = result.message;
+        return { success: false, error: result.message };
+      } finally {
+        this.loading = false;
       }
     },
 
-    async submitQuizResult(result: QuizResult) {
-      if (!this.userId) {
-        return { success: false, error: 'No user logged in' };
-      }
-
+    async resetPassword(email?: string): Promise<{ success: boolean; error: string | null }> {
+      this.error = null;
+      this.loading = true;
       try {
-        const userRef = doc(db, 'users', this.userId);
-
-        // Update both results and attributes atomically
-        const batch = writeBatch(db);
-        batch.update(userRef, {
-          results: [...this.results, result],
-          attributes: {
-            ...this.userAttributes,
-            [result.attribute]: result.score
-          },
-          updatedAt: serverTimestamp()
-        });
-
-        await batch.commit();
-
-        // Update local state
-        this.results = [...this.results, result];
-        this.userAttributes = {
-          ...this.userAttributes,
-          [result.attribute]: result.score
-        };
-
-        return { success: true, error: null };
-      } catch (error) {
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
-        };
+        const origin = typeof window !== "undefined" ? window.location.origin : "";
+        const result = await sendPasswordReset(email || this.email, `${origin}/signin`);
+        if (result.ok) {
+          return { success: true, error: null };
+        }
+        this.error = result.message;
+        return { success: false, error: result.message };
+      } finally {
+        this.loading = false;
       }
     },
 
-    // Check if cached data is stale (e.g., older than 5 minutes)
-    isDataStale(): boolean {
-      // For now, consider data fresh for the session
-      // Could implement timestamp-based staleness checking
-      return false;
+    async setFirebaseUser(firebaseUser: FirebaseUser | null): Promise<void> {
+      this.error = null;
+      if (!firebaseUser) {
+        this.firebaseUser = null;
+        this.user = null;
+        return;
+      }
+
+      this.firebaseUser = firebaseUser;
+      await this.loadUserData(firebaseUser);
     },
 
-    // Cleanup method: removes the Firebase auth listener to prevent memory leaks or duplicate listeners
-    cleanup() {
-      if (this.authUnsubscribe) {
-        this.authUnsubscribe();
-        this.authUnsubscribe = null;
+    async loadUserData(firebaseUser: FirebaseUser): Promise<void> {
+      console.log("loading user data");
+      const userRef = doc(db, "users", firebaseUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      const publicUser = mapFirebaseUser(firebaseUser);
+
+      if (userDoc.exists()) {
+        const data = userDoc.data() as Omit<UserData, "user">;
+        // Ensure defaults for possibly missing fields in legacy docs
+        this.user = {
+          ...(data as any),
+          assessmentScores: (data as any).assessmentScores || {},
+          personalityAnalysis: (data as any).personalityAnalysis || {},
+        } as UserData;
+        return;
       }
-    }
-  }
-}); 
+
+      const defaultProfile: Omit<UserData, "user"> = {
+        id: firebaseUser.uid,
+        payments: [],
+        assessmentScores: {},
+        personalityAnalysis: {},
+        openaiApiCalls: 0,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+
+      await setDoc(userRef, defaultProfile, { merge: true });
+      this.user = { ...(defaultProfile as any), user: publicUser } as UserData;
+    },
+  },
+});

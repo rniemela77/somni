@@ -16,7 +16,7 @@ export function useDarkMode() {
     } else {
       document.body.classList.remove('dark');
     }
-    localStorage.setItem('darkMode', isDark.value);
+    localStorage.setItem('darkMode', isDark.value.toString());
   });
 
   return { isDark };

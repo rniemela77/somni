@@ -5,63 +5,56 @@ const personalityData = [
     positive: "Extraversion",
     negative: "Introversion",
     title: "Social Dynamics",
-    description: "This quiz assesses your tendency toward introversion or extraversion.",
-    traitDescriptions: {
-      positive: "Extraverts draw energy from social interaction and external stimulation. They tend to think out loud, seek out group activities, and feel energized by being around others. They often process experiences by discussing them and prefer active engagement with the world around them.",
-      negative: "Introverts gain energy from solitude and internal reflection. They prefer deep one-on-one conversations, need quiet time to recharge, and process experiences internally before sharing. They often have rich inner lives and value meaningful, intimate connections over broad social networks."
+    slug: "social_dynamics",
+    description:
+      "This quiz assesses your tendency toward introversion or extraversion.",
+    traits: {
+      positive: {
+        name: "Extraversion",
+        strength:
+          "Masterful at forging instant alliances, turning strangers into collaborators during crises or high-stakes negotiations",
+        blindspot:
+          "Often chase external validation, missing subtle internal cues that signal burnout before it crashes your momentum",
+        description:
+          "Extraverts thrive in chaotic environments, turning social noise into fuel for innovation, like DJs remixing a crowd's energy into breakthroughs. They draw energy from social interaction and external stimulation. They tend to think out loud, seek out group activities, and feel energized by being around others. They often process experiences by discussing them and prefer active engagement with the world around them.",
+      },
+      negative: {
+        name: "Introversion",
+        strength:
+          "Unmatched ability to listen actively, extracting unspoken truths from conversations that lead to profound empathy and strategic insights",
+        blindspot:
+          "Tendency to over-rehearse responses, delaying action in fast-paced scenarios where spontaneity could seize unexpected opportunities",
+        description:
+          "Introverts excel in 'mental marathons', sustaining deep dives into complex problems where others tire, uncovering hidden patterns in data or ideas. They gain energy from solitude and internal reflection. They prefer deep one-on-one conversations, need quiet time to recharge, and process experiences internally before sharing. They often have rich inner lives and value meaningful, intimate connections over broad social networks.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I find it energizing to dive into large group activities",
-        points: 0.1
+        text: "I seek out lively gatherings to share ideas and stories with many people",
+        points: 1,
       },
       {
         id: 2,
-        text: "I feel comfortable reflecting on ideas in solitude",
-        points: -0.1
+        text: "I find deep satisfaction in exploring my thoughts alone for long periods",
+        points: -1,
       },
       {
         id: 3,
-        text: "I often initiate conversations with unfamiliar people",
-        points: 0.1
+        text: "I strike up conversations with unfamiliar people in most situations",
+        points: 1,
       },
       {
         id: 4,
-        text: "I prefer low-key gatherings over bustling events",
-        points: -0.1
+        text: "I prefer to reflect carefully before sharing my opinions with others",
+        points: -1,
       },
       {
         id: 5,
-        text: "I enjoy sharing thoughts in group discussions",
-        points: 0.1
+        text: "I feel energized by being the center of attention in a group",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I retreat to quiet spaces to recharge",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I seek out opportunities to meet new people",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I find long stretches of solo time fulfilling",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I feel at ease when speaking up in a crowd",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I value moments of silence over lively chatter",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
     id: "neuroticism_emotional_stability",
@@ -69,1104 +62,993 @@ const personalityData = [
     positive: "Emotional Stability",
     negative: "Neuroticism",
     title: "Emotional Landscape",
-    description: "This quiz explores your level of emotional stability versus neurotic tendencies.",
-    traitDescriptions: {
-      positive: "Emotionally stable individuals maintain steady emotional states and recover quickly from setbacks. They tend to stay calm under pressure, adapt well to change, and maintain perspective in challenging situations. They generally experience less anxiety and are more resilient to stress.",
-      negative: "Neurotic individuals experience emotions more intensely and are more sensitive to environmental changes. They tend to be more self-aware and perceptive of subtle emotional shifts, though this can lead to overthinking and anxiety. They often feel things deeply and may need more time to process emotional experiences."
+    slug: "emotional_landscape",
+    description:
+      "This quiz explores your level of emotional stability versus neurotic tendencies.",
+    traits: {
+      positive: {
+        name: "Emotional Stability",
+        strength:
+          "Unwavering composure that fosters trust and steady progress, even when external pressures mount, enabling long-term goal pursuit",
+        blindspot:
+          "Underestimating emotional undercurrents in others, leading to overlooked interpersonal frictions that could erupt unexpectedly",
+        description:
+          "Emotionally stable individuals serve as anchors in storms, maintaining clarity amid chaos, allowing teams to navigate crises without panic. They maintain a balanced emotional state, experience fewer mood swings, and are better able to manage stress. They tend to be more resilient and have a more positive outlook on life.",
+      },
+      negative: {
+        name: "Neuroticism",
+        strength:
+          "Heightened vigilance that turns potential threats into opportunities for proactive fixes, like spotting flaws in plans before they derail success",
+        blindspot:
+          "Over-amplifying minor setbacks into catastrophes, draining energy on imagined worst-cases that rarely materialize",
+        description:
+          "Neurotics act as human seismographs, detecting emotional tremors early, which can preempt disasters in relationships or projects by sensing unspoken tensions. They experience more frequent mood fluctuations, are more sensitive to stress, and may struggle with anxiety and depression. They often have a more negative outlook on life and may be more prone to emotional outbursts.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I replay conversations in my mind after they happen",
-        points: -0.1
+        text: "I worry extensively about possible future misfortunes, even when things are going well",
+        points: -1,
       },
       {
         id: 2,
-        text: "I adapt easily when plans shift",
-        points: 0.1
+        text: "I remain calm and focused during unexpected challenges or setbacks",
+        points: 1,
       },
       {
         id: 3,
-        text: "I sometimes struggle to switch off my thoughts at night",
-        points: -0.1
+        text: "I experience intense mood swings in response to daily events",
+        points: -1,
       },
       {
         id: 4,
-        text: "I can carry on as usual when things don't go my way",
-        points: 0.1
+        text: "I bounce back quickly from disappointments without dwelling on them",
+        points: 1,
       },
       {
         id: 5,
-        text: "I notice tension building in my body under pressure",
-        points: -0.1
+        text: "I feel overwhelmed by stress from minor issues in my routine",
+        points: -1,
       },
-      {
-        id: 6,
-        text: "I feel grounded even in chaotic situations",
-        points: 0.1
-      },
-      {
-        id: 7,
-        text: "I find small setbacks weigh on me longer than expected",
-        points: -0.1
-      },
-      {
-        id: 8,
-        text: "I quickly let go of frustrations",
-        points: 0.1
-      },
-      {
-        id: 9,
-        text: "I feel uneasy without a clear plan",
-        points: -0.1
-      },
-      {
-        id: 10,
-        text: "I remain steady when facing uncertainty",
-        points: 0.1
-      }
-    ]
+    ],
   },
   {
     id: "openness_closedness",
-    displayName: "Openness-Closedness to Experience",
+    displayName: "Openness-Closedness",
     positive: "Openness",
     negative: "Closedness",
-    title: "Experience Spectrum",
-    description: "This quiz assesses your openness to new ideas versus preference for familiar approaches.",
-    traitDescriptions: {
-      positive: "Those high in openness actively seek out new experiences and ideas. They tend to be curious, creative, and willing to challenge conventional wisdom. They often enjoy abstract thinking, appreciate art and beauty, and are drawn to exploring different perspectives and possibilities.",
-      negative: "Those who prefer closedness value consistency and reliability in their experiences. They excel at maintaining stable routines, mastering established skills, and finding depth in familiar territory. They often have strong practical judgment and prefer concrete, proven solutions."
+    title: "Curiosity Continuum",
+    slug: "curiosity_continuum",
+    description:
+      "This quiz evaluates your openness to new experiences versus preference for familiarity.",
+    traits: {
+      positive: {
+        name: "Openness",
+        strength:
+          "Adapts swiftly to novel ideas, synthesizing diverse perspectives into groundbreaking solutions",
+        blindspot:
+          "May overlook practical constraints, chasing visionary ideas that are hard to implement",
+        description:
+          "Open individuals are intellectual explorers, diving into uncharted ideas with curiosity, like artists weaving new patterns from chaos. They embrace novelty, value creativity, and seek diverse experiences, often thriving in ambiguity and abstract thinking.",
+      },
+      negative: {
+        name: "Closedness",
+        strength:
+          "Excels at refining proven methods, ensuring reliability and efficiency in stable environments",
+        blindspot:
+          "May resist innovative approaches, missing opportunities for growth in rapidly changing contexts",
+        description:
+          "Closed individuals are guardians of tradition, finding comfort in the familiar, like craftsmen perfecting a time-tested skill. They prioritize practicality, prefer routine, and value stability, often excelling in structured settings.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I explore unfamiliar topics just for the sake of learning",
-        points: -0.1
+        text: "I seek out new and unfamiliar experiences to broaden my perspective",
+        points: 1,
       },
       {
         id: 2,
-        text: "I prefer routines that have worked for me before",
-        points: 0.1
+        text: "I prefer familiar routines over exploring untested possibilities",
+        points: -1,
       },
       {
         id: 3,
-        text: "I notice different perspectives in everyday situations",
-        points: -0.1
+        text: "I enjoy experimenting with ideas that challenge conventional thinking",
+        points: 1,
       },
       {
         id: 4,
-        text: "I stick to tried-and-true solutions when problems arise",
-        points: 0.1
+        text: "I find comfort in sticking to traditions and established methods",
+        points: -1,
       },
       {
         id: 5,
-        text: "I feel energized by unexpected detours",
-        points: -0.1
+        text: "I am eager to learn about subjects outside my usual interests",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I find comfort in predictable outcomes",
-        points: 0.1
-      },
-      {
-        id: 7,
-        text: "I question assumptions I encounter",
-        points: -0.1
-      },
-      {
-        id: 8,
-        text: "I avoid stepping outside my usual methods",
-        points: 0.1
-      },
-      {
-        id: 9,
-        text: "I seek out diverse experiences when I can",
-        points: -0.1
-      },
-      {
-        id: 10,
-        text: "I prefer familiarity over novelty",
-        points: 0.1
-      }
-    ]
-  },
-  {
-    id: "conscientiousness_impulsivity",
-    displayName: "Conscientiousness-Impulsivity",
-    positive: "Conscientiousness",
-    negative: "Impulsivity",
-    title: "Planning and Action Style",
-    description: "This quiz evaluates your tendency toward careful planning versus spontaneous action.",
-    traitDescriptions: {
-      positive: "Conscientious individuals are organized, methodical, and detail-oriented. They excel at long-term planning, maintaining order, and following through on commitments. They often have strong self-discipline and prefer structured approaches to achieving goals.",
-      negative: "Impulsive individuals are spontaneous, flexible, and quick to act on opportunities. They excel at thinking on their feet, adapting to the moment, and bringing fresh energy to situations. They often have a natural ability to seize the moment and think creatively under pressure."
-    },
-    questions: [
-      {
-        id: 1,
-        text: "I create detailed plans before starting projects",
-        points: 0.1
-      },
-      {
-        id: 2,
-        text: "I make decisions based on immediate feelings",
-        points: -0.1
-      },
-      {
-        id: 3,
-        text: "I keep my workspace neat and organized",
-        points: 0.1
-      },
-      {
-        id: 4,
-        text: "I prefer to go with the flow rather than stick to schedules",
-        points: -0.1
-      },
-      {
-        id: 5,
-        text: "I complete tasks well ahead of deadlines",
-        points: 0.1
-      },
-      {
-        id: 6,
-        text: "I often act without considering consequences",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I maintain detailed records of my activities",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I make purchases without much prior thought",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I follow through on my commitments reliably",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I change plans at the last minute when something more exciting comes up",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
     id: "agreeableness_antagonism",
     displayName: "Agreeableness-Antagonism",
     positive: "Agreeableness",
     negative: "Antagonism",
-    title: "Social Dynamics",
-    description: "This quiz assesses your tendency toward agreeableness versus antagonism.",
-    traitDescriptions: {
-      positive: "Agreeable individuals are warm, cooperative, and empathetic. They tend to be good listeners, value harmony, and are generally easy to get along with. They often prioritize the needs of others and are willing to compromise to maintain positive relationships.",
-      negative: "Antagonistic individuals are competitive, assertive, and sometimes confrontational. They tend to be more independent and value their own opinions, often prioritizing personal goals over group harmony. They may be more likely to challenge authority and express strong opinions."
+    title: "Interpersonal Harmony",
+    slug: "interpersonal_harmony",
+    description:
+      "This quiz measures your tendency toward cooperation versus confrontation in relationships.",
+    traits: {
+      positive: {
+        name: "Agreeableness",
+        strength:
+          "Builds trust through empathy, creating cohesive teams that thrive on mutual support",
+        blindspot:
+          "May avoid necessary conflict, allowing unresolved issues to fester",
+        description:
+          "Agreeable individuals are social glue, fostering harmony with kindness, like mediators calming a stormy debate. They prioritize cooperation, empathy, and altruism, often putting others' needs first.",
+      },
+      negative: {
+        name: "Antagonism",
+        strength:
+          "Drives progress by challenging flawed ideas, ensuring decisions are rigorously vetted",
+        blindspot:
+          "May alienate allies with bluntness, undermining collaboration when tact is needed",
+        description:
+          "Antagonistic individuals are bold truth-seekers, unafraid to confront, like debaters exposing weak arguments. They value honesty and competition, often prioritizing goals over feelings.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I find it easy to get along with others",
-        points: 0.1
+        text: "I prioritize others' needs even when it inconveniences me",
+        points: 1,
       },
       {
         id: 2,
-        text: "I prioritize my own goals over group harmony",
-        points: -0.1
+        text: "I challenge others' ideas openly to ensure the best outcome",
+        points: -1,
       },
       {
         id: 3,
-        text: "I often put others' needs before my own",
-        points: 0.1
+        text: "I strive to maintain harmony in my interactions with others",
+        points: 1,
       },
       {
         id: 4,
-        text: "I don't hesitate to challenge ideas I disagree with",
-        points: -0.1
+        text: "I push back against decisions I disagree with, regardless of feelings",
+        points: -1,
       },
       {
         id: 5,
-        text: "I seek compromise when conflicts arise",
-        points: 0.1
+        text: "I go out of my way to help others resolve their conflicts",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I express my strong opinions even if they upset others",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I genuinely care about other people's feelings",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I compete with others rather than cooperate",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I listen carefully to understand different perspectives",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I find myself in arguments more often than most people",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
-    id: "risk_safety",
-    displayName: "Risk-Safety Orientation",
-    positive: "Risk",
-    negative: "Safety",
-    title: "Risk-Safety Orientation",
-    description: "This quiz assesses your tolerance for risk and uncertainty versus preference for safety and security.",
-    traitDescriptions: {
-      positive: "Risk-oriented individuals are comfortable with uncertainty and willing to accept potential negative outcomes in pursuit of opportunities. They tend to embrace challenges where success isn't guaranteed, are willing to try new things that might not work out, and see potential setbacks as acceptable costs of exploration and growth.",
-      negative: "Safety-oriented individuals prioritize security and prefer to minimize potential harm or loss. They tend to choose proven paths, value predictability and stability, and prefer to thoroughly assess potential downsides before proceeding. They often excel at protecting resources and maintaining steady progress."
+    id: "conscientiousness_disinhibition",
+    displayName: "Conscientiousness-Disinhibition",
+    positive: "Conscientiousness",
+    negative: "Disinhibition",
+    title: "Duty and Drive",
+    slug: "duty_and_drive",
+    description:
+      "This quiz assesses your level of discipline versus spontaneity in your actions.",
+    traits: {
+      positive: {
+        name: "Conscientiousness",
+        strength:
+          "Delivers consistent results through meticulous planning, ensuring long-term success",
+        blindspot:
+          "May over-plan, missing opportunities that require quick, intuitive decisions",
+        description:
+          "Conscientious individuals are the architects of order, building success with discipline, like navigators charting a precise course. They are organized, reliable, and goal-driven, prioritizing duty and structure.",
+      },
+      negative: {
+        name: "Disinhibition",
+        strength:
+          "Embraces spontaneity, seizing fleeting opportunities others miss due to hesitation",
+        blindspot:
+          "May neglect long-term goals, derailed by impulsive choices or distractions",
+        description:
+          "Disinhibited individuals are free-spirited opportunists, thriving in the moment, like improvisers on a stage. They act on impulse, embrace flexibility, and often resist rigid plans.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I'm willing to try activities even if there's a chance I might get hurt",
-        points: 0.1
+        text: "I follow a structured plan to achieve my goals",
+        points: 1,
       },
       {
         id: 2,
-        text: "I prefer to stick with proven approaches rather than risk failure",
-        points: -0.1
+        text: "I act on sudden impulses without much forethought",
+        points: -1,
       },
       {
         id: 3,
-        text: "I invest money in opportunities that could lead to big gains or losses",
-        points: 0.1
+        text: "I complete tasks thoroughly before moving to new ones",
+        points: 1,
       },
       {
         id: 4,
-        text: "I keep my money in safe, guaranteed returns",
-        points: -0.1
+        text: "I prefer to go with the flow rather than stick to schedules",
+        points: -1,
       },
       {
         id: 5,
-        text: "I speak up in situations where I might face social rejection",
-        points: 0.1
+        text: "I take time to organize my tasks to ensure efficiency",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I avoid situations where I might embarrass myself",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I take career opportunities even when the outcome is uncertain",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I prefer job security over potentially rewarding but risky career moves",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I enjoy the thrill of not knowing how things will turn out",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I feel anxious when I can't predict what will happen next",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
-    id: "novelty_routine",
-    displayName: "Novelty Seeking-Routine Preference",
-    positive: "Novelty Seeking",
-    negative: "Routine Preference",
-    title: "Experience Variety",
-    description: "This quiz assesses your preference for variety and new experiences versus established routines and familiar patterns.",
-    traitDescriptions: {
-      positive: "Novelty seekers crave variety and new experiences in their daily lives. They enjoy breaking up routines, trying different approaches, and exploring unfamiliar environments. They tend to get restless with repetition and are energized by change, whether in activities, places, people, or experiences.",
-      negative: "Routine preferrers find comfort and efficiency in established patterns and familiar experiences. They excel at optimizing their habits, creating reliable systems, and finding depth through repetition. They often perform better when they can predict what's coming and have mastered their environment."
+    id: "humility_arrogance",
+    displayName: "Humility–Arrogance",
+    positive: "Humility",
+    negative: "Arrogance",
+    title: "Integrity Spectrum",
+    slug: "integrity_spectrum",
+    description:
+      "This quiz evaluates your inclination toward humility versus arrogance in how you view yourself and treat others.",
+    traits: {
+      positive: {
+        name: "Humility",
+        strength:
+          "Builds trust through genuine transparency, fostering authentic and lasting relationships",
+        blindspot:
+          "May undervalue self-promotion, missing chances to showcase strengths and contributions",
+        description:
+          "Humble individuals are grounded and sincere, acting with honesty and fairness, like guides who prioritize truth over status. They are modest, cooperative, and avoid manipulation or entitlement.",
+      },
+      negative: {
+        name: "Arrogance",
+        strength:
+          "Commands attention with confidence, driving bold initiatives and inspiring followership",
+        blindspot:
+          "May overestimate their abilities, dismissing valuable input and undermining collaboration",
+        description:
+          "Arrogant individuals are self-assured trailblazers, projecting dominance like leaders claiming the spotlight. They prioritize recognition and status, sometimes bending fairness to maintain superiority.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I like to vary my daily routine regularly",
-        points: 0.1
+        text: "I treat others fairly, even if it means less gain for me",
+        points: 1,
       },
       {
         id: 2,
-        text: "I follow the same patterns each day because they work for me",
-        points: -0.1
+        text: "I seek recognition for my achievements above others",
+        points: -1,
       },
       {
         id: 3,
-        text: "I seek out new restaurants rather than returning to favorites",
-        points: 0.1
+        text: "I admit my mistakes openly to maintain honesty",
+        points: 1,
       },
       {
         id: 4,
-        text: "I prefer to order the same dishes at places I know I like",
-        points: -0.1
+        text: "I believe my abilities surpass most people around me",
+        points: -1,
       },
       {
         id: 5,
-        text: "I enjoy taking different routes to familiar destinations",
-        points: 0.1
+        text: "I avoid taking credit for others' contributions",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I stick to the most efficient path I've already figured out",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I get bored doing the same activities repeatedly",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I find comfort in doing things the same way each time",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I like to rearrange my living space periodically",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I keep my belongings in the same places so I always know where they are",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
-    id: "analytical_intuitive",
-    displayName: "Analytical-Intuitive Cognition",
-    positive: "Analytical",
-    negative: "Intuitive",
-    title: "Thinking Style",
-    description: "This quiz assesses your cognitive processing style when approaching problems and making decisions.",
-    traitDescriptions: {
-      positive: "Analytical thinkers prefer step-by-step reasoning and systematic approaches to problems. They excel at breaking down complex issues into manageable parts, following logical sequences, and making decisions based on careful evaluation of evidence. They tend to want to understand the 'why' behind things and value methodical processes.",
-      negative: "Intuitive thinkers rely on gut feelings, pattern recognition, and holistic understanding. They excel at seeing connections that aren't immediately obvious, making quick insights, and grasping the essence of situations without detailed analysis. They often 'just know' things and trust their instincts when making decisions."
+    id: "sensing_intuition",
+    displayName: "Sensing-Intuition",
+    positive: "Intuition",
+    negative: "Sensing",
+    title: "Perception Pathways",
+    slug: "perception_pathways",
+    description:
+      "This quiz measures your preference for concrete details versus abstract possibilities.",
+    traits: {
+      positive: {
+        name: "Intuition",
+        strength:
+          "Anticipates future trends by connecting abstract patterns, driving innovation",
+        blindspot:
+          "May overlook present realities, chasing ideas detached from practicality",
+        description:
+          "Intuitive individuals are visionaries, weaving possibilities from abstract clues, like poets seeing meaning in the unseen. They focus on future potential, patterns, and big-picture thinking.",
+      },
+      negative: {
+        name: "Sensing",
+        strength:
+          "Masters details, ensuring accuracy and reliability in tangible tasks",
+        blindspot:
+          "May miss broader implications, sticking too closely to immediate facts",
+        description:
+          "Sensing individuals are grounded observers, excelling in the present, like artisans perfecting the details of their craft. They prioritize concrete facts, sensory input, and practical realities.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I break down complex problems into smaller, manageable steps",
-        points: 0.1
+        text: "I focus on future possibilities over current realities",
+        points: 1,
       },
       {
         id: 2,
-        text: "I often know the right answer without being able to explain how",
-        points: -0.1
+        text: "I rely on concrete facts to guide my decisions",
+        points: -1,
       },
       {
         id: 3,
-        text: "I want to see all the data before making important decisions",
-        points: 0.1
+        text: "I explore abstract ideas to solve complex problems",
+        points: 1,
       },
       {
         id: 4,
-        text: "I trust my first impression about people and situations",
-        points: -0.1
+        text: "I prefer to work with tangible, observable information",
+        points: -1,
       },
       {
         id: 5,
-        text: "I like to understand the logical reasoning behind recommendations",
-        points: 0.1
+        text: "I trust my hunches about what might happen next",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I can sense when something feels 'right' or 'wrong' without analysis",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I work through problems systematically from start to finish",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I see patterns and connections that others often miss",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I prefer to have concrete evidence before drawing conclusions",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I make decisions based on gut feelings that usually turn out right",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
-    id: "detail_big_picture",
-    displayName: "Detail Focus-Big-Picture Focus",
-    positive: "Detail Focus",
-    negative: "Big-Picture Focus",
-    title: "Attention to Detail",
-    description: "This quiz assesses whether you naturally focus on specific details versus broad patterns and overall themes.",
-    traitDescriptions: {
-      positive: "Detail-focused individuals naturally notice specifics, precision, and particulars. They excel at careful analysis, thorough examination, and ensuring accuracy in their work. They tend to be methodical, catch errors others miss, and prefer to understand all the components before seeing the whole picture.",
-      negative: "Big-picture focused individuals naturally see overall patterns, themes, and general concepts. They excel at understanding systems, recognizing broader implications, and grasping the essence of complex situations. They tend to think strategically, see how parts connect to the whole, and prefer to understand the forest before examining individual trees."
+    id: "thinking_feeling",
+    displayName: "Thinking-Feeling",
+    positive: "Thinking",
+    negative: "Feeling",
+    title: "Decision Dynamics",
+    slug: "decision_dynamics",
+    description:
+      "This quiz assesses your preference for logic versus values in decision-making.",
+    traits: {
+      positive: {
+        name: "Thinking",
+        strength:
+          "Makes impartial decisions, ensuring fairness in complex dilemmas",
+        blindspot:
+          "May neglect emotional impacts, causing unintended relational strain",
+        description:
+          "Thinkers are analytical judges, weighing decisions with logic, like scientists testing hypotheses. They prioritize objectivity, consistency, and rational analysis over emotions.",
+      },
+      negative: {
+        name: "Feeling",
+        strength:
+          "Aligns decisions with values, fostering empathy-driven solutions",
+        blindspot:
+          "May compromise logic for harmony, leading to inconsistent outcomes",
+        description:
+          "Feelers are compassionate decision-makers, guided by values, like diplomats balancing human needs. They prioritize empathy, personal beliefs, and relational harmony.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I notice small errors that others tend to miss",
-        points: 0.1
+        text: "I base decisions on logical analysis over personal values",
+        points: 1,
       },
       {
         id: 2,
-        text: "I focus on the overall theme rather than specific details",
-        points: -0.1
+        text: "I consider my emotions when making important choices",
+        points: -1,
       },
       {
         id: 3,
-        text: "I prefer to examine each component thoroughly before moving on",
-        points: 0.1
+        text: "I prioritize fairness over feelings in resolving disputes",
+        points: 1,
       },
       {
         id: 4,
-        text: "I grasp the general concept quickly without needing all the specifics",
-        points: -0.1
+        text: "I make choices to align with my core beliefs and values",
+        points: -1,
       },
       {
         id: 5,
-        text: "I double-check my work for accuracy and precision",
-        points: 0.1
+        text: "I evaluate options using objective criteria over gut feelings",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I see how different ideas connect to form larger patterns",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I focus on getting the facts exactly right",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I think about implications and broader consequences",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I pay attention to specific wording and precise language",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I understand complex situations by looking at the big picture first",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
-    id: "temporal_orientation",
-    displayName: "Temporal Orientation",
-    positive: "Future Focus",
-    negative: "Past Focus",
-    title: "Time Perspective",
-    description: "This quiz assesses whether you naturally orient toward the future or draw more from past experiences.",
-    traitDescriptions: {
-      positive: "Future-focused individuals are oriented toward what's coming next and what could be. They tend to be goal-oriented, plan ahead, and are motivated by potential outcomes and possibilities. They often think about improvements, innovations, and how things could be different or better in the time ahead.",
-      negative: "Past-focused individuals draw wisdom and guidance from previous experiences and established knowledge. They tend to value traditions, learn from history, and use past patterns to inform current decisions. They often appreciate proven methods, honor legacy, and find meaning in continuity and lessons learned."
+    id: "judging_perceiving",
+    displayName: "Judging-Perceiving",
+    positive: "Judging",
+    negative: "Perceiving",
+    title: "Life Approach",
+    slug: "life_approach",
+    description:
+      "This quiz evaluates your preference for structure versus flexibility in life.",
+    traits: {
+      positive: {
+        name: "Judging",
+        strength:
+          "Drives progress with decisive plans, ensuring timely goal achievement",
+        blindspot:
+          "May resist adapting to unexpected changes, limiting flexibility",
+        description:
+          "Judging individuals are master planners, creating order, like conductors leading a symphony. They prefer structure, decisiveness, and clear goals, thriving in organized settings.",
+      },
+      negative: {
+        name: "Perceiving",
+        strength:
+          "Adapts fluidly to change, seizing opportunities in unpredictable settings",
+        blindspot:
+          "May procrastinate, leaving tasks unfinished due to indecision",
+        description:
+          "Perceiving individuals are adaptable explorers, embracing flexibility, like sailors navigating shifting winds. They prefer spontaneity, openness, and freedom from rigid plans.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I spend more time thinking about upcoming goals than reflecting on past achievements",
-        points: 0.1
+        text: "I plan my activities to avoid last-minute changes",
+        points: 1,
       },
       {
         id: 2,
-        text: "I often draw on past experiences to guide my current decisions",
-        points: -0.1
+        text: "I keep my options open rather than commit early",
+        points: -1,
       },
       {
         id: 3,
-        text: "I'm more excited about future possibilities than nostalgic about the past",
-        points: 0.1
+        text: "I prefer to follow a clear schedule for my tasks",
+        points: 1,
       },
       {
         id: 4,
-        text: "I find wisdom in traditional ways of doing things",
-        points: -0.1
+        text: "I enjoy adapting to unexpected opportunities as they arise",
+        points: -1,
       },
       {
         id: 5,
-        text: "I focus on what I want to accomplish rather than what I've already done",
-        points: 0.1
+        text: "I set firm goals and work steadily to achieve them",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I often think about 'the good old days' and how things used to be",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I prefer to plan for tomorrow rather than reminisce about yesterday",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I believe we can learn important lessons from history",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I'm motivated by visions of what could be rather than memories of what was",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I value preserving traditions and maintaining connections to the past",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
-    id: "sensation_seeking",
-    displayName: "Sensation Seeking-Sensation Avoidance",
-    positive: "Sensation Seeking",
-    negative: "Sensation Avoidance",
-    title: "Stimulation Preferences",
-    description: "This quiz assesses your preference for intense, varied, and stimulating experiences versus calm, predictable environments.",
-    traitDescriptions: {
-      positive: "Sensation seekers crave intense, varied, and novel experiences. They enjoy high stimulation environments, seek out thrilling activities, and are drawn to situations that provide strong sensory input. They often enjoy loud music, bright lights, exciting adventures, and activities that provide adrenaline rushes or intense emotional experiences.",
-      negative: "Sensation avoiders prefer calm, peaceful, and low-stimulation environments. They tend to be sensitive to overwhelming sensory input and find comfort in quiet, predictable settings. They often prefer gentle activities, soft sounds, muted lighting, and environments that allow for relaxation and tranquility."
+    id: "psychoticism_socialization",
+    displayName: "Psychoticism-Socialization",
+    positive: "Socialization",
+    negative: "Psychoticism",
+    title: "Social Integration",
+    slug: "social_integration",
+    description:
+      "This quiz measures your adherence to social norms versus nonconformity.",
+    traits: {
+      positive: {
+        name: "Socialization",
+        strength:
+          "Fosters group cohesion by upholding shared norms, building trust",
+        blindspot:
+          "May conform excessively, stifling personal expression or innovation",
+        description:
+          "Socialized individuals are community builders, aligning with norms, like citizens strengthening a society. They value cooperation, social harmony, and adherence to rules.",
+      },
+      negative: {
+        name: "Psychoticism",
+        strength:
+          "Challenges norms boldly, sparking unconventional ideas and change",
+        blindspot:
+          "May disrupt group dynamics, creating conflict with nonconformity",
+        description:
+          "Psychotic individuals are rebels, defying conventions, like pioneers breaking new ground. They prioritize individuality, risk-taking, and unconventional thinking.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I enjoy loud, energetic music and lively atmospheres",
-        points: 0.1
+        text: "I follow social norms to maintain harmony with others",
+        points: 1,
       },
       {
         id: 2,
-        text: "I prefer quiet, peaceful environments where I can think clearly",
-        points: -0.1
+        text: "I challenge societal rules that seem restrictive or outdated",
+        points: -1,
       },
       {
         id: 3,
-        text: "I seek out thrilling activities like roller coasters or extreme sports",
-        points: 0.1
+        text: "I respect traditions to strengthen group bonds",
+        points: 1,
       },
       {
         id: 4,
-        text: "I avoid activities that might be too intense or overwhelming",
-        points: -0.1
+        text: "I act in ways that stand out from typical expectations",
+        points: -1,
       },
       {
         id: 5,
-        text: "I'm drawn to bright lights, vivid colors, and bold visual experiences",
-        points: 0.1
+        text: "I align my actions with widely accepted values",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I find comfort in soft lighting and muted, calming colors",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I enjoy the rush of adrenaline from exciting experiences",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I get overstimulated easily in busy, chaotic environments",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I like parties and events with lots of energy and activity",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I prefer gentle, low-key activities that don't overwhelm my senses",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
-    id: "authority_orientation",
-    displayName: "Authority Acceptance-Authority Rejection",
-    positive: "Authority Acceptance",
-    negative: "Authority Rejection",
-    title: "Authority Orientation",
-    description: "This quiz assesses your relationship with authority figures and hierarchical structures.",
-    traitDescriptions: {
-      positive: "Authority accepters tend to respect hierarchical structures and value the guidance of established leaders. They generally follow rules and procedures, appreciate clear chains of command, and believe that authority figures often have valuable expertise and perspective. They work well within structured systems and value order and stability.",
-      negative: "Authority rejecters tend to question hierarchical structures and prefer more egalitarian approaches. They value independent thinking, often challenge established rules when they seem unfair, and believe that good ideas can come from anyone regardless of position. They prefer collaborative decision-making and may resist top-down directives."
+    id: "optimism_pessimism",
+    displayName: "Optimism-Pessimism",
+    positive: "Optimism",
+    negative: "Pessimism",
+    title: "Outlook Orientation",
+    slug: "outlook_orientation",
+    description:
+      "This quiz assesses your tendency toward hopeful versus cautious outlooks.",
+    traits: {
+      positive: {
+        name: "Optimism",
+        strength:
+          "Inspires action by envisioning positive outcomes, rallying others",
+        blindspot:
+          "May underestimate risks, leading to unpreparedness for setbacks",
+        description:
+          "Optimists are beacons of hope, seeing possibilities, like adventurers expecting treasure. They focus on positive outcomes, resilience, and opportunity-driven thinking.",
+      },
+      negative: {
+        name: "Pessimism",
+        strength:
+          "Anticipates risks thoroughly, preparing robust contingency plans",
+        blindspot: "May dwell on negatives, dampening motivation or innovation",
+        description:
+          "Pessimists are cautious sentinels, guarding against failure, like watchmen scanning for danger. They focus on risks, challenges, and potential pitfalls.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I generally follow rules and procedures without questioning them",
-        points: 0.1
+        text: "I expect positive outcomes from my endeavors",
+        points: 1,
       },
       {
         id: 2,
-        text: "I often challenge decisions made by people in authority positions",
-        points: -0.1
+        text: "I prepare for the worst to avoid disappointment",
+        points: -1,
       },
       {
         id: 3,
-        text: "I respect the experience and expertise that comes with leadership positions",
-        points: 0.1
+        text: "I see challenges as opportunities for growth",
+        points: 1,
       },
       {
         id: 4,
-        text: "I believe good ideas can come from anyone, regardless of their rank",
-        points: -0.1
+        text: "I focus on potential obstacles before taking action",
+        points: -1,
       },
       {
         id: 5,
-        text: "I feel comfortable working within established hierarchies",
-        points: 0.1
+        text: "I believe things will generally work out well",
+        points: 1,
       },
-      {
-        id: 6,
-        text: "I prefer collaborative decision-making over top-down directives",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I believe that clear chains of command make organizations work better",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I question authority when I think they're making poor decisions",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I defer to supervisors and leaders when they give direction",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I think everyone should have an equal say in important decisions",
-        points: -0.1
-      }
-    ]
-  },
-  {
-    id: "competitive_cooperative",
-    displayName: "Competitive-Cooperative Drive",
-    positive: "Competitive",
-    negative: "Cooperative",
-    title: "Achievement Style",
-    description: "This quiz assesses your natural tendency toward competitive achievement versus cooperative collaboration.",
-    traitDescriptions: {
-      positive: "Competitive individuals are driven by personal achievement and outperforming others. They excel in environments where they can measure their success against others, set ambitious personal goals, and push themselves to be the best. They often thrive on challenges and are motivated by recognition and winning.",
-      negative: "Cooperative individuals are driven by collective success and working together toward shared goals. They excel in collaborative environments where they can contribute to team achievements, build consensus, and help others succeed. They often prioritize group harmony and are motivated by mutual support and shared accomplishments."
-    },
-    questions: [
-      {
-        id: 1,
-        text: "I'm motivated by the chance to outperform others",
-        points: 0.1
-      },
-      {
-        id: 2,
-        text: "I prefer working together toward shared goals",
-        points: -0.1
-      },
-      {
-        id: 3,
-        text: "I set personal records and try to beat them",
-        points: 0.1
-      },
-      {
-        id: 4,
-        text: "I find satisfaction in helping others succeed",
-        points: -0.1
-      },
-      {
-        id: 5,
-        text: "I enjoy competitions and contests",
-        points: 0.1
-      },
-      {
-        id: 6,
-        text: "I prioritize team success over individual recognition",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I compare my performance to others' achievements",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I share credit and resources with others willingly",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I'm driven by the desire to be the best",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I believe we accomplish more when we work together",
-        points: -0.1
-      }
-    ]
-  },
-  {
-    id: "social_boldness",
-    displayName: "Social Boldness-Social Reserve",
-    positive: "Social Boldness",
-    negative: "Social Reserve",
-    title: "Social Confidence",
-    description: "This quiz assesses your comfort level with social visibility and taking social risks.",
-    traitDescriptions: {
-      positive: "Socially bold individuals are comfortable being the center of attention and taking social risks. They tend to speak up confidently in groups, volunteer for public roles, and aren't afraid to express controversial opinions. They often enjoy leadership positions and are comfortable with social visibility.",
-      negative: "Socially reserved individuals prefer to avoid the spotlight and are more cautious in social situations. They tend to observe before participating, prefer behind-the-scenes roles, and are careful about what they share publicly. They often excel at listening and providing thoughtful, considered input."
-    },
-    questions: [
-      {
-        id: 1,
-        text: "I'm comfortable being the center of attention",
-        points: 0.1
-      },
-      {
-        id: 2,
-        text: "I prefer to observe social situations before participating",
-        points: -0.1
-      },
-      {
-        id: 3,
-        text: "I volunteer to speak in front of groups",
-        points: 0.1
-      },
-      {
-        id: 4,
-        text: "I think carefully before sharing my opinions publicly",
-        points: -0.1
-      },
-      {
-        id: 5,
-        text: "I enjoy taking on leadership roles in social settings",
-        points: 0.1
-      },
-      {
-        id: 6,
-        text: "I prefer to work behind the scenes rather than be in the spotlight",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I'm not afraid to express controversial opinions",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I'm cautious about how others might perceive my actions",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I feel energized by social visibility and recognition",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I prefer to let others take the lead in social situations",
-        points: -0.1
-      }
-    ]
-  },
-  {
-    id: "empathy_detachment",
-    displayName: "Empathy-Emotional Detachment",
-    positive: "Empathy",
-    negative: "Emotional Detachment",
-    title: "Emotional Connection",
-    description: "This quiz assesses your tendency to connect with and respond to others' emotions versus maintaining emotional distance.",
-    traitDescriptions: {
-      positive: "Empathetic individuals naturally connect with and respond to others' emotions. They tend to feel what others are feeling, are moved by others' experiences, and often prioritize emotional understanding in their relationships. They excel at providing emotional support and understanding different perspectives.",
-      negative: "Emotionally detached individuals maintain emotional distance and are less affected by others' emotional states. They tend to approach situations objectively, make decisions based on logic rather than feelings, and are less likely to be overwhelmed by others' emotions. They often excel at remaining calm in emotionally charged situations."
-    },
-    questions: [
-      {
-        id: 1,
-        text: "I can easily sense when someone is upset, even if they don't say anything",
-        points: 0.1
-      },
-      {
-        id: 2,
-        text: "I make decisions based on facts rather than feelings",
-        points: -0.1
-      },
-      {
-        id: 3,
-        text: "I feel affected by other people's emotional states",
-        points: 0.1
-      },
-      {
-        id: 4,
-        text: "I can remain objective even in emotionally charged situations",
-        points: -0.1
-      },
-      {
-        id: 5,
-        text: "I often feel what others are feeling",
-        points: 0.1
-      },
-      {
-        id: 6,
-        text: "I prefer to analyze situations logically rather than emotionally",
-        points: -0.1
-      },
-      {
-        id: 7,
-        text: "I'm moved by stories of other people's experiences",
-        points: 0.1
-      },
-      {
-        id: 8,
-        text: "I can separate my emotions from the emotions of others",
-        points: -0.1
-      },
-      {
-        id: 9,
-        text: "I prioritize understanding how others feel in conflicts",
-        points: 0.1
-      },
-      {
-        id: 10,
-        text: "I prefer to focus on solutions rather than emotional support",
-        points: -0.1
-      }
-    ]
+    ],
   },
   {
     id: "assertiveness_passivity",
     displayName: "Assertiveness-Passivity",
     positive: "Assertiveness",
     negative: "Passivity",
-    title: "Communication Style",
-    description: "This quiz assesses your tendency to express your needs and opinions directly versus avoiding conflict and deferring to others.",
-    traitDescriptions: {
-      positive: "Assertive individuals confidently express their needs, opinions, and boundaries. They tend to speak up for themselves, ask for what they want, and address conflicts directly. They often take initiative in situations and are comfortable advocating for their interests while respecting others.",
-      negative: "Passive individuals tend to avoid conflict and defer to others' preferences. They often put others' needs before their own, hesitate to express their true feelings, and may go along with things they don't want to avoid confrontation. They often excel at maintaining harmony and being accommodating."
+    title: "Influence Style",
+    slug: "influence_style",
+    description:
+      "This quiz evaluates your tendency to lead versus defer in interactions.",
+    traits: {
+      positive: {
+        name: "Assertiveness",
+        strength:
+          "Drives change by confidently voicing needs, shaping outcomes",
+        blindspot: "May dominate discussions, overlooking quieter voices",
+        description:
+          "Assertive individuals are bold influencers, shaping their world, like captains steering a ship. They express needs clearly, take initiative, and lead decisively.",
+      },
+      negative: {
+        name: "Passivity",
+        strength:
+          "Fosters collaboration by listening, ensuring all perspectives are heard",
+        blindspot:
+          "May avoid leadership, missing chances to shape critical outcomes",
+        description:
+          "Passive individuals are quiet supporters, yielding to others, like crew members harmonizing a team. They avoid conflict, defer decisions, and prioritize group consensus.",
+      },
     },
     questions: [
       {
         id: 1,
-        text: "I confidently express my needs and wants",
-        points: 0.1
+        text: "I express my needs clearly, even in tense situations",
+        points: 1,
       },
       {
         id: 2,
-        text: "I often go along with others' preferences to avoid conflict",
-        points: -0.1
+        text: "I defer to others’ preferences to maintain peace",
+        points: -1,
       },
       {
         id: 3,
-        text: "I speak up when I disagree with something",
-        points: 0.1
+        text: "I take the lead in group decisions when needed",
+        points: 1,
       },
       {
         id: 4,
-        text: "I hesitate to ask for what I want",
-        points: -0.1
+        text: "I avoid confrontation by agreeing with others",
+        points: -1,
       },
       {
         id: 5,
-        text: "I address conflicts directly rather than avoiding them",
-        points: 0.1
+        text: "I advocate for my ideas to influence outcomes",
+        points: 1,
+      },
+    ],
+  },
+  {
+    id: "empathy_callousness",
+    displayName: "Empathy-Callousness",
+    positive: "Empathy",
+    negative: "Callousness",
+    title: "Emotional Connection",
+    slug: "emotional_connection",
+    description:
+      "This quiz measures your sensitivity to others’ emotions versus detachment.",
+    traits: {
+      positive: {
+        name: "Empathy",
+        strength:
+          "Builds deep bonds by understanding others’ emotions, fostering trust",
+        blindspot:
+          "May over-prioritize others’ feelings, neglecting personal needs",
+        description:
+          "Empathetic individuals are emotional bridges, connecting hearts, like healers soothing pain. They sense others’ feelings, prioritize compassion, and nurture relationships.",
+      },
+      negative: {
+        name: "Callousness",
+        strength:
+          "Maintains focus on goals, undeterred by emotional distractions",
+        blindspot: "May harm relationships by ignoring others’ emotional needs",
+        description:
+          "Callous individuals are pragmatic taskmasters, prioritizing outcomes, like generals focused on victory. They detach from emotions, value efficiency, and may seem cold.",
+      },
+    },
+    questions: [
+      { id: 1, text: "I feel deeply affected by others’ struggles", points: 1 },
+      {
+        id: 2,
+        text: "I prioritize my goals over others’ emotional needs",
+        points: -1,
       },
       {
-        id: 6,
-        text: "I put others' needs before my own",
-        points: -0.1
+        id: 3,
+        text: "I try to understand others’ feelings before acting",
+        points: 1,
       },
       {
-        id: 7,
-        text: "I take initiative in group situations",
-        points: 0.1
+        id: 4,
+        text: "I focus on results over emotional considerations",
+        points: -1,
+      },
+      { id: 5, text: "I comfort others when they are distressed", points: 1 },
+    ],
+  },
+  {
+    id: "impulsivity_self_control",
+    displayName: "Impulsivity-Self-Control",
+    positive: "Self-Control",
+    negative: "Impulsivity",
+    title: "Behavioral Regulation",
+    slug: "behavioral_regulation",
+    description:
+      "This quiz assesses your tendency toward restraint versus spontaneity.",
+    traits: {
+      positive: {
+        name: "Self-Control",
+        strength:
+          "Maintains focus on long-term goals, avoiding costly distractions",
+        blindspot:
+          "May miss spontaneous opportunities by over-regulating actions",
+        description:
+          "Self-controlled individuals are disciplined navigators, steering steadily, like pilots avoiding turbulence. They prioritize restraint, planning, and long-term outcomes.",
+      },
+      negative: {
+        name: "Impulsivity",
+        strength:
+          "Seizes fleeting moments, acting decisively in fast-paced scenarios",
+        blindspot: "May act recklessly, undermining goals with hasty decisions",
+        description:
+          "Impulsive individuals are bold opportunists, diving into action, like dancers moving to a sudden beat. They act on instinct, embrace risk, and prioritize immediate rewards.",
+      },
+    },
+    questions: [
+      { id: 1, text: "I think carefully before making decisions", points: 1 },
+      { id: 2, text: "I act on sudden urges without much thought", points: -1 },
+      {
+        id: 3,
+        text: "I resist temptations to stay focused on my goals",
+        points: 1,
+      },
+      { id: 4, text: "I pursue immediate rewards even if risky", points: -1 },
+      {
+        id: 5,
+        text: "I plan my actions to avoid impulsive mistakes",
+        points: 1,
+      },
+    ],
+  },
+  {
+    id: "resilience_fragility",
+    displayName: "Resilience-Fragility",
+    positive: "Resilience",
+    negative: "Fragility",
+    title: "Adversity Response",
+    slug: "adversity_response",
+    description:
+      "This quiz evaluates your ability to withstand versus succumb to adversity.",
+    traits: {
+      positive: {
+        name: "Resilience",
+        strength:
+          "Thrives under pressure, turning setbacks into growth opportunities",
+        blindspot: "May push through pain, ignoring needed rest or support",
+        description:
+          "Resilient individuals are sturdy oaks, bending but not breaking, like warriors enduring storms. They recover quickly, adapt to challenges, and maintain optimism.",
+      },
+      negative: {
+        name: "Fragility",
+        strength:
+          "Senses vulnerabilities early, prompting cautious protective measures",
+        blindspot:
+          "May crumble under pressure, amplifying setbacks into crises",
+        description:
+          "Fragile individuals are delicate sensors, highly aware of stress, like glass attuned to cracks. They may struggle to recover, feeling overwhelmed by challenges.",
+      },
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I recover quickly from setbacks and move forward",
+        points: 1,
+      },
+      { id: 2, text: "I feel overwhelmed by life’s challenges", points: -1 },
+      { id: 3, text: "I adapt easily to difficult circumstances", points: 1 },
+      {
+        id: 4,
+        text: "I struggle to cope with unexpected hardships",
+        points: -1,
+      },
+      { id: 5, text: "I find strength in adversity to keep going", points: 1 },
+    ],
+  },
+  {
+    id: "creativity_conventionality",
+    displayName: "Creativity-Conventionality",
+    positive: "Creativity",
+    negative: "Conventionality",
+    title: "Innovation Spectrum",
+    slug: "innovation_spectrum",
+    description:
+      "This quiz measures your inclination toward originality versus tradition.",
+    traits: {
+      positive: {
+        name: "Creativity",
+        strength:
+          "Generates novel solutions, transforming challenges into opportunities",
+        blindspot:
+          "May prioritize originality over practicality, risking inefficiency",
+        description:
+          "Creative individuals are idea alchemists, crafting novelty, like artists painting new worlds. They value originality, imagination, and unconventional approaches.",
+      },
+      negative: {
+        name: "Conventionality",
+        strength:
+          "Ensures reliability by refining trusted methods, avoiding risky experiments",
+        blindspot: "May resist change, missing innovative breakthroughs",
+        description:
+          "Conventional individuals are stewards of tradition, perfecting the known, like builders using proven blueprints. They prioritize reliability, tradition, and practicality.",
+      },
+    },
+    questions: [
+      { id: 1, text: "I seek original ways to solve problems", points: 1 },
+      {
+        id: 2,
+        text: "I prefer proven methods over new approaches",
+        points: -1,
+      },
+      { id: 3, text: "I enjoy creating unique ideas or products", points: 1 },
+      { id: 4, text: "I stick to familiar ways to ensure success", points: -1 },
+      {
+        id: 5,
+        text: "I explore unconventional ideas for inspiration",
+        points: 1,
+      },
+    ],
+  },
+  {
+    id: "religiosity_secularism",
+    displayName: "Religiosity-Secularism",
+    positive: "Secularism",
+    negative: "Religiosity",
+    title: "Belief Orientation",
+    slug: "belief_orientation",
+    description:
+      "This quiz assesses your reliance on spiritual versus rational frameworks.",
+    traits: {
+      positive: {
+        name: "Secularism",
+        strength:
+          "Grounds decisions in evidence, fostering objective problem-solving",
+        blindspot:
+          "May dismiss spiritual insights, missing deeper meaning or motivation",
+        description:
+          "Secular individuals are rational navigators, guided by evidence, like scientists probing reality. They prioritize logic, skepticism, and empirical reasoning.",
+      },
+      negative: {
+        name: "Religiosity",
+        strength:
+          "Finds purpose through faith, inspiring resilience in tough times",
+        blindspot: "May cling to beliefs, overlooking contradictory evidence",
+        description:
+          "Religious individuals are spiritual anchors, finding meaning in faith, like pilgrims seeking divine guidance. They prioritize spiritual values, tradition, and community.",
+      },
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I rely on evidence and reason to form my beliefs",
+        points: 1,
       },
       {
-        id: 8,
-        text: "I prefer to let others make decisions",
-        points: -0.1
+        id: 2,
+        text: "I find guidance in spiritual or religious beliefs",
+        points: -1,
       },
       {
-        id: 9,
-        text: "I advocate for my interests when necessary",
-        points: 0.1
+        id: 3,
+        text: "I question beliefs that lack empirical support",
+        points: 1,
       },
       {
-        id: 10,
-        text: "I avoid expressing opinions that might upset others",
-        points: -0.1
-      }
-    ]
+        id: 4,
+        text: "I draw strength from my spiritual convictions",
+        points: -1,
+      },
+      { id: 5, text: "I base decisions on logic over faith", points: 1 },
+    ],
   },
   {
-    id: "work_leisure",
-    displayName: "Workaholism-Leisure-Orientation",
-    positive: "Workaholism",
-    negative: "Leisure-Orientation"
+    id: "masculinity_femininity",
+    displayName: "Masculinity-Femininity",
+    positive: "Femininity",
+    negative: "Masculinity",
+    title: "Gender Expression",
+    slug: "gender_expression",
+    description:
+      "This quiz evaluates your alignment with nurturing versus assertive traits.",
+    traits: {
+      positive: {
+        name: "Femininity",
+        strength:
+          "Nurtures relationships with warmth, fostering deep emotional bonds",
+        blindspot:
+          "May prioritize others’ needs, neglecting personal ambitions",
+        description:
+          "Feminine individuals are relational caregivers, weaving connection, like gardeners tending bonds. They emphasize nurturing, empathy, and collaboration.",
+      },
+      negative: {
+        name: "Masculinity",
+        strength:
+          "Drives outcomes with bold assertiveness, leading decisive action",
+        blindspot: "May suppress emotions, straining interpersonal connections",
+        description:
+          "Masculine individuals are action-oriented leaders, pushing forward, like warriors claiming victory. They prioritize assertiveness, independence, and achievement.",
+      },
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I prioritize nurturing others’ emotional needs",
+        points: 1,
+      },
+      {
+        id: 2,
+        text: "I focus on achieving goals over emotional bonds",
+        points: -1,
+      },
+      { id: 3, text: "I show warmth to strengthen relationships", points: 1 },
+      { id: 4, text: "I assert my needs to drive results", points: -1 },
+      { id: 5, text: "I comfort others to build trust", points: 1 },
+    ],
   },
   {
-    id: "moral_care",
-    displayName: "Moral Foundations: Care-Harm Sensitivity",
-    positive: "Care",
-    negative: "Harm"
+    id: "authoritarianism_egalitarianism",
+    displayName: "Authoritarianism-Egalitarianism",
+    positive: "Egalitarianism",
+    negative: "Authoritarianism",
+    title: "Power Dynamics",
+    slug: "power_dynamics",
+    description:
+      "This quiz measures your preference for equality versus hierarchy.",
+    traits: {
+      positive: {
+        name: "Egalitarianism",
+        strength:
+          "Promotes fairness, empowering diverse voices in group decisions",
+        blindspot:
+          "May struggle with leadership voids in high-stakes scenarios",
+        description:
+          "Egalitarian individuals are champions of fairness, leveling power, like mediators ensuring all are heard. They value equality, collaboration, and shared responsibility.",
+      },
+      negative: {
+        name: "Authoritarianism",
+        strength:
+          "Provides clear direction, ensuring efficiency in critical moments",
+        blindspot: "May suppress dissent, stifling creativity or fairness",
+        description:
+          "Authoritarian individuals are decisive commanders, enforcing order, like generals leading with authority. They prioritize hierarchy, control, and swift decision-making.",
+      },
+    },
+    questions: [
+      {
+        id: 1,
+        text: "I believe everyone’s input deserves equal consideration",
+        points: 1,
+      },
+      {
+        id: 2,
+        text: "I support strong leadership to maintain order",
+        points: -1,
+      },
+      { id: 3, text: "I promote shared decision-making in groups", points: 1 },
+      { id: 4, text: "I value clear authority to guide actions", points: -1 },
+      {
+        id: 5,
+        text: "I advocate for fairness over rigid hierarchies",
+        points: 1,
+      },
+    ],
   },
   {
-    id: "moral_fairness",
-    displayName: "Moral Foundations: Fairness-Cheating Sensitivity",
-    positive: "Fairness",
-    negative: "Cheating"
+    id: "narcissism_modesty",
+    displayName: "Narcissism-Modesty",
+    positive: "Modesty",
+    negative: "Narcissism",
+    title: "Self-Perception",
+    slug: "self_perception",
+    description:
+      "This quiz assesses your tendency toward humility versus self-importance.",
+    traits: {
+      positive: {
+        name: "Modesty",
+        strength:
+          "Builds trust by sharing credit, fostering collaborative success",
+        blindspot:
+          "May undervalue own contributions, missing leadership opportunities",
+        description:
+          "Modest individuals are quiet contributors, deflecting praise, like team players sharing glory. They prioritize humility, teamwork, and collective achievement.",
+      },
+      negative: {
+        name: "Narcissism",
+        strength:
+          "Drives ambition with bold self-confidence, inspiring others to follow",
+        blindspot: "May alienate others by seeking excessive admiration",
+        description:
+          "Narcissistic individuals are self-focused stars, craving the spotlight, like performers commanding a stage. They prioritize personal recognition, confidence, and status.",
+      },
+    },
+    questions: [
+      { id: 1, text: "I share credit for successes with others", points: 1 },
+      { id: 2, text: "I seek admiration for my accomplishments", points: -1 },
+      {
+        id: 3,
+        text: "I downplay my achievements to focus on others",
+        points: 1,
+      },
+      {
+        id: 4,
+        text: "I feel entitled to special recognition for my efforts",
+        points: -1,
+      },
+      { id: 5, text: "I value group success over personal praise", points: 1 },
+    ],
   },
-  {
-    id: "moral_loyalty",
-    displayName: "Moral Foundations: Loyalty-Betrayal Sensitivity",
-    positive: "Loyalty",
-    negative: "Betrayal"
-  },
-  {
-    id: "moral_authority",
-    displayName: "Moral Foundations: Authority-Subversion Sensitivity",
-    positive: "Authority",
-    negative: "Subversion"
-  },
-  {
-    id: "moral_purity",
-    displayName: "Moral Foundations: Purity-Degradation Sensitivity",
-    positive: "Purity",
-    negative: "Degradation"
-  },
-  {
-    id: "learning_visual_verbal",
-    displayName: "Learning Style: Visual-Verbal Preference",
-    positive: "Visual",
-    negative: "Verbal"
-  },
-  {
-    id: "learning_sequential_global",
-    displayName: "Learning Style: Sequential-Global Processing",
-    positive: "Sequential",
-    negative: "Global"
-  },
-  {
-    id: "time_urgency",
-    displayName: "Time Urgency-Time Relaxation",
-    positive: "Time Urgency",
-    negative: "Time Relaxation"
-  },
-  {
-    id: "planning_hedonism",
-    displayName: "Future Planning-Present Hedonism",
-    positive: "Future Planning",
-    negative: "Present Hedonism"
-  },
-  {
-    id: "self_efficacy",
-    displayName: "Self-Efficacy-Self-Doubt",
-    positive: "Self-Efficacy",
-    negative: "Self-Doubt"
-  },
-  {
-    id: "control_spontaneity",
-    displayName: "Control Need-Spontaneity Need",
-    positive: "Control Need",
-    negative: "Spontaneity Need"
-  },
-  {
-    id: "conformity_nonconformity",
-    displayName: "Conformity-Nonconformity",
-    positive: "Conformity",
-    negative: "Nonconformity"
-  },
-  {
-    id: "detail_conceptual",
-    displayName: "Detail Orientation-Conceptual Orientation",
-    positive: "Detail Orientation",
-    negative: "Conceptual Orientation"
-  },
-  {
-    id: "persistence_disengagement",
-    displayName: "Persistence-Disengagement",
-    positive: "Persistence",
-    negative: "Disengagement"
-  },
-  {
-    id: "gratitude_entitlement",
-    displayName: "Gratitude-Entitlement",
-    positive: "Gratitude",
-    negative: "Entitlement"
-  },
-  {
-    id: "spiritual_material",
-    displayName: "Spiritual-Material Orientation",
-    positive: "Spiritual",
-    negative: "Material"
-  },
-  {
-    id: "environmentalism_anthropocentrism",
-    displayName: "Environmentalism-Anthropocentrism",
-    positive: "Environmentalism",
-    negative: "Anthropocentrism"
-  },
-  {
-    id: "altruism_self_interest",
-    displayName: "Altruism-Self-Interest",
-    positive: "Altruism",
-    negative: "Self-Interest"
-  },
-  {
-    id: "innovation_tradition",
-    displayName: "Innovation-Tradition Preference",
-    positive: "Innovation",
-    negative: "Tradition"
-  },
-  {
-    id: "sensory_sensitivity",
-    displayName: "Sensory Sensitivity-Sensory Under-Responsiveness",
-    positive: "Sensory Sensitivity",
-    negative: "Sensory Under-Responsiveness"
-  },
-  {
-    id: "interdependence_independence",
-    displayName: "Interdependence-Independence",
-    positive: "Interdependence",
-    negative: "Independence"
-  },
-  {
-    id: "information_seeking",
-    displayName: "Information Seeking-Information Avoidance",
-    positive: "Information Seeking",
-    negative: "Information Avoidance"
-  },
-  {
-    id: "structure_ambiguity",
-    displayName: "Structure Seeking-Ambiguity Tolerance",
-    positive: "Structure Seeking",
-    negative: "Ambiguity Tolerance"
-  }
 ];
 
-export default personalityData; 
+export default personalityData;

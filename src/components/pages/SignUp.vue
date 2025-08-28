@@ -23,7 +23,7 @@
             <label class="form-label" for="password">Password</label>
             <input 
               id="password"
-              v-model="userStore.password" 
+              v-model="password" 
               type="password" 
               class="form-control"
               placeholder="Choose a password"
@@ -69,7 +69,7 @@
           Continue with Google
         </button>
 
-        <p v-if="!isPasswordMatch && userStore.password && confirmPassword" 
+        <p v-if="!isPasswordMatch && password && confirmPassword" 
            class="text-danger text-center mt-3">
           Passwords do not match
         </p>
@@ -96,10 +96,11 @@ import Card from '../ui/Card.vue';
 
 const userStore = useUserStore();
 const router = useRouter();
+const password = ref<string>("");
 const confirmPassword = ref<string>("");
 
 const isPasswordMatch = computed<boolean>(() => {
-  return userStore.password === confirmPassword.value;
+  return password.value === confirmPassword.value;
 });
 
 const handleSignUp = async (): Promise<void> => {
@@ -108,7 +109,7 @@ const handleSignUp = async (): Promise<void> => {
     return;
   }
   
-  const { success } = await userStore.signUp();
+  const { success } = await userStore.signUp(password.value);
   if (success) {
     router.push('/');
   }
