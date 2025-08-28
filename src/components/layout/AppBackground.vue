@@ -13,5 +13,7 @@
 	z-index: -1;
 	/*light mode*/
 	filter: contrast(0.9) saturate(0.2) brightness(6.8);
+	pointer-events: none;
+	user-select: none;
 }
 </style>
