@@ -3,8 +3,8 @@
 		<div class="container">
 			<router-link to="/" class="navbar-brand">
 				<h1 class="h3 mb-0 d-flex flex-column justify-content-center">
-					<span class="somni-text">Somni</span>
-					<small class="text-muted d-block lead">Personality Analyzer</small>
+					<span class="somni-text text-cinzel">Somni</span>
+					<small class="text-muted d-block lead">Quests for Self-Discovery</small>
 				</h1>
 			</router-link>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -38,8 +38,8 @@
 						</li>
 						<li class="nav-item">
 							<router-link to="/insights" class="nav-link" active-class="active">
-								<i class="bi bi-lightbulb me-2"></i>
-								Insights
+								<i class="bi bi-journal-bookmark-fill me-2"></i>
+								Mythbook
 							</router-link>
 						</li>
 
@@ -132,14 +132,18 @@ const { isDark } = useDarkMode();
 	font-weight: 900;
 	font-size: 3rem;
 	text-transform: uppercase;
-	letter-spacing: -2px;
+	letter-spacing: -2.5px;
 	color: var(--text-primary);
+	text-shadow: 0 2px 1px rgba(0, 0, 0, 0.5);
+
+	&:first-letter {
+		font-size: 3.5rem;
+	}
 }
 
 .somni-text~* {
 	margin-top: -5px;
 	font-size: 1rem;
-	margin-left: 0.3rem;
 }
 
 .navbar-toggler {

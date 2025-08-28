@@ -26,8 +26,8 @@ body.dark {
 
   --bs-emphasis-color-rgb: var(--primary-color-lightest);
 
-  --card-bg-color: rgba(255, 255, 255, 0.08);
-  --card-inset-bg-color: rgba(0, 0, 0, 0.09);
+  --card-bg-color: rgba(0 0 0 / 0.6);
+  --card-inset-bg-color: rgba(255 255 255 / 0.1);
 
   --card-fancy-bg-color: linear-gradient(144deg, #44309287 -114%, transparent 75%), #3333336e;
     --card-fancy-img-bg: linear-gradient(135deg, #3f344af2 0%, #1d1d1d78 100%);
@@ -74,5 +74,13 @@ body.dark {
     color: #fff !important;
     border-radius: 0.25rem !important;
     padding: 0.25rem 0.5rem !important;
+  }
+
+  .app-bg {
+    filter: invert(0)!important;
+  }
+
+  .icon-light {
+    filter: invert(0);
   }
 }

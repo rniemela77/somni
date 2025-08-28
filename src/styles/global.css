@@ -4,6 +4,20 @@
   padding: 0;
 }
 
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+.text-cinzel {
+  font-family: 'Cinzel', serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 :root {
   --body-bg-color: #fff;
   --body-text-color: #333;
@@ -47,7 +61,7 @@
   --neutral-color-lighter: #ccc;
   --neutral-color-lightest: #eee;
 
-  --card-bg-color: rgba(46 44 53 / 0.05);
+  --card-bg-color: rgba(255 255 255 / 0.8);
   --card-inset-bg-color: rgba(0, 0, 0, 0.05);
 
   --card-fancy-bg-color: linear-gradient(
@@ -85,8 +99,10 @@ body {
 .app-container {
   max-width: 1200px;
   width: 100%;
-  backdrop-filter: blur(1px);
   border-radius: 1rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 @media (max-width: 768px) {
   .app-container {
@@ -95,6 +111,19 @@ body {
   }
   body {
     padding: 0;
+  }
+}
+
+/* this makes the main content area the full height of the page */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  & > * {
+    max-height: fit-content;
   }
 }
 
@@ -186,6 +215,16 @@ a {
   animation: fadeIn 0.5s ease-in-out;
 }
 
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.form-control {
+  border: 1px solid var(--primary-color);
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -193,6 +232,14 @@ a {
   to {
     opacity: 1;
   }
+}
+
+.letter-spacing-1 {
+  letter-spacing: 1px;
+}
+
+.font-weight-bold {
+  font-weight: 600;
 }
 
 .skeleton-text-header {

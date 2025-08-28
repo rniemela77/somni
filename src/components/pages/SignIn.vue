@@ -13,7 +13,7 @@
 
         <div class="mb-3">
           <label class="form-label" for="password">Password</label>
-          <input id="password" v-model="userStore.password" type="password" class="form-control"
+          <input id="password" v-model="password" type="password" class="form-control"
             placeholder="Enter your password" required :disabled="userStore.isLoading" />
         </div>
 
@@ -44,21 +44,27 @@
         <p>Don't have an account?
           <router-link to="/signup" class="text-primary">Sign Up</router-link>
         </p>
+
+        <p>Forgot your password?
+          <router-link to="/reset-password" class="text-primary">Reset Password</router-link>
+        </p>
       </div>
     </Card>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useRouter } from 'vue-router';
 import Card from '../ui/Card.vue';
 
 const userStore = useUserStore();
 const router = useRouter();
+const password = ref<string>("");
 
 const handleSignIn = async (): Promise<void> => {
-  const { success } = await userStore.signIn();
+  const { success } = await userStore.signIn(password.value);
   if (success) {
     router.push('/');
   }

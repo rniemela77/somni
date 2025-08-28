@@ -1,6 +1,6 @@
 <template>
-    <div class="card h-100 border-0" :class="cardClasses" >
-        <div :class="paddingClasses">
+    <div class="card border-0" :class="cardClasses" >
+        <div :class="paddingClasses" class="h-100">
             <slot />
         </div>
     </div>
@@ -24,6 +24,11 @@ const props = defineProps({
         type: String,
         default: 'low',
         validator: (v: string) => ['low', 'full'].includes(v)
+    },
+    border: {
+        type: String,
+        default: 'none',
+        validator: (v: string) => ['none', 'light', 'medium', 'dark'].includes(v)
     }
 });
 
@@ -42,7 +47,12 @@ const cardClasses = computed(() => ({
     'shadow-none': props.shadow === 'none',
     // bg opacity
     'bg-opacity-low': props.bgOpacity === 'low',
-    'bg-opacity-full': props.bgOpacity === 'full'
+    'bg-opacity-full': props.bgOpacity === 'full',
+    // border
+    'border-light': props.border === 'light',
+    'border-medium': props.border === 'medium',
+    'border-dark': props.border === 'dark',
+    'border-none': props.border === 'none'
 }));
 </script>
 
@@ -65,5 +75,17 @@ const cardClasses = computed(() => ({
 }
 .shadow-none {
     box-shadow: none !important;
+}
+.border-light {
+    border: 1px solid #8a7cffb5 !important;
+}
+.border-medium {
+    border: 1px solid var(--primary-color) !important;
+}
+.border-dark {
+    border: 1px solid var(--border-color-dark) !important;
+}
+.border-none {
+    border: none !important;
 }
 </style>

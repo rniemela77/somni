@@ -5,23 +5,24 @@
 
     <!-- Dashboard -->
     <div v-else class="container">
-      <WelcomeCard v-if="!userStore.completedQuizzesCount" />
+      <WelcomeCard v-if="totalCompletedAssessments === 0" />
 
-      <!-- Assessment Result -->
-      <AssessmentResult v-if="route.query.showResult" class="mb-4"/>
+      <h1 class="text-cinzel page-title">YOUR JOURNEY</h1>
 
       <!-- Progress Bar -->
-      <ProgressBar :completedAssessments="userStore.completedQuizzesCount"
-        :totalAssessments="userStore.totalQuizzesCount" class="mb-4"/>
+      <ProgressBar :completedAssessments="totalCompletedAssessments"
+        :totalAssessments="totalAssessments" class="mb-5"/>
 
       <!-- Next Assessment Section -->
-      <NextAssessment v-if="firstIncompleteAssessment" :scale="firstIncompleteAssessment" class="mb-4"/>
-
-      <!-- AI Insights Section -->
-      <InsightsCard class="mb-4"/>
+      <div class="d-flex gap-4 flex-column flex-md-row">
+        <NextAssessment v-if="nextAssessment" :assessment="nextAssessment" class="mb-md-4"/>
+        
+        <!-- AI Insights Section -->
+        <InsightsCard class="mb-4"/>
+      </div>
 
       <!-- Completed Assessments Section -->
-      <CompletedAssessments :scores="userStore.userAttributes" />
+      <CompletedAssessments v-if="completedAssessmentsWithScores.length > 0" :completedAssessmentsWithScores="completedAssessmentsWithScores" />
     </div>
   </div>
 </template>
@@ -31,16 +32,15 @@ import { useUserStore } from '../../stores/user';
 import ProgressBar from '../dashboard/ProgressBar.vue';
 import NextAssessment from '../dashboard/NextAssessment.vue';
 import CompletedAssessments from '../dashboard/CompletedAssessments.vue';
-import AssessmentResult from '../dashboard/AssessmentResult.vue';
 import WelcomeCard from '../dashboard/WelcomeCard.vue';
 import LandingPage from './LandingPage.vue';
-import { useRoute } from 'vue-router';
-import { useNextAssessment } from '../../composables/useNextAssessment';
 import InsightsCard from '../dashboard/InsightsCard.vue';
+import { useAssessmentProgress } from '../../composables/useAssessmentProgress';
 
 const userStore = useUserStore();
-const { firstIncompleteAssessment } = useNextAssessment();
-const route = useRoute();
+
+const { nextAssessment, totalCompletedAssessments, totalAssessments, completedAssessmentsWithScores } = useAssessmentProgress();
+
 </script>
 
 <style scoped></style>

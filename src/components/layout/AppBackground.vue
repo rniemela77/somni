@@ -1,42 +1,17 @@
 <template>
-	<div class="app-bg"></div>
+	<img src="/Users/rvniemela/Sites/somni/public/images/night-bg.jpg" class="app-bg" />
 </template>
 
 <style scoped>
 .app-bg {
-	position: fixed;
-	top: 0;
-	left: 0;
 	width: 100vw;
 	height: 100vh;
-	z-index: -1;
-}
-
-.app-bg::before,
-.app-bg::after {
-	content: "";
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: -1;
+	object-fit: cover;
+	object-position: center;
 	position: fixed;
 	inset: 0;
-}
-
-.app-bg::before {
-	background-image: var(--app-bg-gradient);
-}
-
-.app-bg::after {
-	content: "";
-	background-image: url("/src/assets/bg.jpg");
-	background-size: 50% 50%;
-	background-repeat: repeat;
-	opacity: 0.1;
-	background-blend-mode: multiply;
-	z-index: 0;
-	position: fixed;
-	inset: 0;
+	z-index: -1;
+	/*light mode*/
+	filter: contrast(0.9) saturate(0.2) brightness(6.8);
 }
 </style>

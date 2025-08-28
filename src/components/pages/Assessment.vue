@@ -1,7 +1,7 @@
 <template>
   <div class="assessment-view container">
     <button class="btn btn-outline-secondary mb-4" @click="goBack">
-      <i class="bi bi-arrow-left me-2"></i>Back to Assessments
+      <i class="bi bi-arrow-left me-2"></i>Back
     </button>
 
     <!-- Tips Section -->
@@ -20,99 +20,82 @@
       </ul>
     </div>
 
-    <div v-if="quizLoading" class="text-center">
-      <h2 class="mb-3" style="text-align: left;">Loading assessment...</h2>
-      <p class="skeleton-text-line"></p>
-      <p class="skeleton-text-line"></p>
-      <p class="skeleton-text-line mb-3"></p>
+    <!-- Assessment questions -->
+    <div v-if="currentAssessment">
+      <h2 class="mb-3">{{ currentAssessment.title }}</h2>
+      <p class="text-muted mb-4">{{ currentAssessment.description }}</p>
 
-      <div class="skeleton-card"></div>
-    </div>
+      <form @submit.prevent="submitAssessment">
+        <Card v-for="(question, index) in currentAssessment.questions" padding="sm" :key="question.id" class="mb-4">
+          <div>
+            <p class="fw-bold">Question {{ index + 1 }}</p>
+            <p class="mb-4">{{ question.text }}</p>
 
-    <div v-else-if="quizError" class="alert alert-danger">
-      <p>{{ quizError }}</p>
-      <button class="btn btn-outline-primary mt-2" @click="retryLoad">
-        Try Again
-      </button>
-    </div>
-
-    <div v-else-if="currentQuiz">
-      <!-- Quiz questions -->
-      <div>
-        <h2 class="mb-3">{{ currentQuiz.title }}</h2>
-        <p class="text-muted mb-4">{{ currentQuiz.description }}</p>
-
-        <form @submit.prevent="submitAssessment">
-          <Card v-for="(question, index) in currentQuiz.questions" padding="sm" :key="question.id" class="mb-4">
-            <div>
-              <p class="fw-bold">Question {{ index + 1 }}</p>
-              <p class="mb-4">{{ question.text }}</p>
-
-              <div class="slider-value text-center">
-                <div class="score-label">
-                  <strong>{{ getScoreLabel(quizAnswers[question.id] || '0') }}</strong>
-                </div>
-              </div>
-
-              <div class="slider-container">
-                <div class="slider-labels d-flex justify-content-between mb-2">
-                  <span>Almost Never</span>
-                  <span>Sometimes</span>
-                  <span>Almost Always</span>
-                </div>
-                <div class="slider-track position-relative">
-                  <!-- Negative fill (from 0 to negative values) -->
-                  <div class="slider-fill negative" :style="{
-                    width: parseFloat(quizAnswers[question.id] || '0') < 0 ? (Math.abs(parseFloat(quizAnswers[question.id] || '0')) / 2) + '%' : '0%',
-                    right: '50%'
-                  }"></div>
-                  <!-- Positive fill (from 0 to positive values) -->
-                  <div class="slider-fill positive" :style="{
-                    width: parseFloat(quizAnswers[question.id] || '0') > 0 ? (parseFloat(quizAnswers[question.id] || '0') / 2) + '%' : '0%',
-                    left: '50%'
-                  }"></div>
-                  <input type="range" class="form-range" v-model="quizAnswers[question.id]" min="-100" max="100"
-                    :disabled="isSubmittingQuiz" required />
-                </div>
+            <div class="slider-value text-center">
+              <div class="score-label">
+                <strong>{{ getScoreLabel(assessmentAnswers[question.id] || '0') }}</strong>
               </div>
             </div>
-          </Card>
-          <div class="d-flex justify-content-between gap-2 mt-4">
-            <button type="button" class="btn btn-secondary" @click="goBack">
-              Cancel
-            </button>
-            <button type="submit" class="btn btn-primary" :disabled="isSubmittingQuiz || !areAllQuestionsAnswered">
-              {{ isSubmittingQuiz ? 'Submitting...' : 'Submit Assessment' }}
-            </button>
+
+            <div class="slider-container">
+              <div class="slider-labels d-flex justify-content-between mb-2">
+                <span>Almost Never</span>
+                <span>Sometimes</span>
+                <span>Almost Always</span>
+              </div>
+              <div class="slider-track position-relative">
+                <!-- Negative fill (from 0 to negative values) -->
+                <div class="slider-fill negative" :style="{
+                  width: parseFloat(assessmentAnswers[question.id] || '0') < 0 ? (Math.abs(parseFloat(assessmentAnswers[question.id] || '0')) / 2) + '%' : '0%',
+                  right: '50%'
+                }"></div>
+                <!-- Positive fill (from 0 to positive values) -->
+                <div class="slider-fill positive" :style="{
+                  width: parseFloat(assessmentAnswers[question.id] || '0') > 0 ? (parseFloat(assessmentAnswers[question.id] || '0') / 2) + '%' : '0%',
+                  left: '50%'
+                }"></div>
+                <input type="range" class="form-range" v-model="assessmentAnswers[question.id]" min="-100" max="100"
+                  :disabled="isSubmittingAssessment" required />
+              </div>
+            </div>
           </div>
-        </form>
-      </div>
+        </Card>
+        <div class="d-flex justify-content-between gap-2 mt-4">
+          <button type="button" class="btn btn-secondary" @click="goBack">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" :disabled="isSubmittingAssessment">
+            {{ isSubmittingAssessment ? 'Completing...' : 'Complete Quest' }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useQuizStore } from '../../stores/quiz';
+import { useAssessmentStore } from '../../stores/assessment';
 import { useUserStore } from '../../stores/user';
 import Card from '../ui/Card.vue';
 
 const route = useRoute();
 const router = useRouter();
 
-const scaleId = computed(() => route.params.scaleId as string);
-const quizStore = useQuizStore();
+const assessmentSlug = route.params.assessmentSlug;
+const assessmentStore = useAssessmentStore();
 const userStore = useUserStore();
 
-const currentQuiz = ref<any>(null);
-const quizAnswers = ref<Record<string, string>>({});
-const isSubmittingQuiz = ref(false);
-const assessmentSubmitted = ref(false);
+const currentAssessment = assessmentStore.allAssessments.find(assessment => assessment.slug === assessmentSlug);
+// create '0' for each question in the assessment
+const assessmentAnswers = ref<Record<string, string>>(
+  Object.fromEntries(
+    currentAssessment?.questions.map(question => [question.id, '0']) || []
+  )
+);
 
-// Use quiz store's loading and error states
-const quizLoading = computed(() => quizStore.loading);
-const quizError = computed(() => quizStore.error);
+const isSubmittingAssessment = ref(false);
 
 const tips = ref([
   "Choose a time when your mood is neutral - avoid taking assessments on exceptionally good or bad days",
@@ -121,73 +104,19 @@ const tips = ref([
   "Take your time - there's no rush to complete the assessment"
 ]);
 
-const areAllQuestionsAnswered = computed(() => {
-  if (!currentQuiz.value?.questions) return false;
-  return currentQuiz.value.questions.every((question: any) =>
-    quizAnswers.value[question.id] !== undefined && quizAnswers.value[question.id] !== ''
-  );
-});
-
-watch(scaleId, (newScaleId) => {
-  if (newScaleId) {
-    loadQuiz(newScaleId);
-  }
-});
-
-onMounted(() => {
-  loadQuiz(scaleId.value);
-});
-
-const loadQuiz = async (scaleId: string) => {
-  try {
-    const result = await quizStore.selectQuiz(scaleId);
-    if (result.error) {
-      return;
-    }
-    if (!quizStore.currentQuiz) {
-      throw new Error('Quiz not found');
-    }
-    currentQuiz.value = quizStore.currentQuiz;
-    quizAnswers.value = currentQuiz.value.questions.reduce((acc: Record<string, string>, q: any) => {
-      acc[q.id] = "0";
-      return acc;
-    }, {});
-  } catch (err) {
-    console.error('Error loading quiz:', err);
-  }
-};
-
-const resetState = () => {
-  currentQuiz.value = null;
-  assessmentSubmitted.value = false;
-  quizAnswers.value = {};
-};
-
-const retryLoad = () => {
-  if (scaleId.value) {
-    loadQuiz(scaleId.value);
-  }
-};
-
 const submitAssessment = async () => {
-  if (!currentQuiz.value || !areAllQuestionsAnswered.value) return;
-  isSubmittingQuiz.value = true;
-  try {
-    const { error: submitError } = await quizStore.submitQuiz(quizAnswers.value);
-    if (submitError) {
-      assessmentSubmitted.value = false;
-    } else {
-      assessmentSubmitted.value = true;
-      await quizStore.loadUserResults();
-      // Redirect to dashboard with showResult param
-      router.push({ name: 'home', query: { showResult: currentQuiz.value.id } });
-      return;
-    }
-  } catch (err) {
-    assessmentSubmitted.value = false;
-  } finally {
-    isSubmittingQuiz.value = false;
-  }
+  if (!currentAssessment) return;
+    
+  // average score answers. multiply each score by the points value
+  let assessmentScore = 0;
+  Object.values(assessmentAnswers.value).forEach((answer, index) => {
+    assessmentScore += Number(answer) * currentAssessment.questions[index].points;
+  });
+  assessmentScore = Math.round(assessmentScore / Object.values(assessmentAnswers.value).length);
+
+  //submit to user store
+  await userStore.submitAssessment(currentAssessment.id , assessmentScore);
+  router.push({ name: 'assessment-result' });
 };
 
 const goBack = () => {
@@ -207,7 +136,7 @@ const getScoreLabel = (score: string | number): string => {
 </script>
 
 <style scoped>
-/* Quiz slider styles */
+/* Assessment slider styles */
 .slider-container {
   padding: 1.5rem 0;
   position: relative;

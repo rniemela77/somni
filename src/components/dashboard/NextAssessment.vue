@@ -1,13 +1,13 @@
 <template>
-    <SectionCard title="Next Assessment" :subtitle="scale.title" iconClass="bi bi-pencil-square">
+    <SectionCard title="NEXT QUEST" :subtitle="assessment.title" iconClass="bi bi-feather" border="light">
         <template #content>
-            <i class="text-muted my-3">{{ scale.description }}</i>
+            <i class="text-muted my-3">{{ assessment.description }}</i>
         </template>
 
         <template #button>
             <router-link class="btn btn-primary align-self-md-end"
-                :to="{ name: 'assessment', params: { scaleId: scale.id } }">
-                <span>Start Assessment</span>
+                :to="{ name: 'assessment', params: { assessmentSlug: assessment.slug } }">
+                <span>Start Quest</span>
                 <i class="bi bi-arrow-right ms-2"></i>
             </router-link>
         </template>
@@ -16,11 +16,9 @@
 
 <script setup lang="ts">
 import SectionCard from '../ui/SectionCard.vue';
-import { useUserStore } from '../../stores/user';
+import type { Assessment } from '../../../shared/types/shared';
 
-const props = defineProps<{ scale: ExtendedPersonalityScale }>();
+defineProps<{ assessment: Assessment }>();
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -7,6 +7,9 @@ import Insights from "./components/pages/Insights.vue";
 import PrivacyPolicy from "./components/pages/PrivacyPolicy.vue";
 import TermsOfService from "./components/pages/TermsOfService.vue";
 import AssessmentView from './components/pages/Assessment.vue';
+import AssessmentResult from './components/pages/AssessmentResult.vue';
+import ResetPassword from './components/pages/ResetPassword.vue';
+import Revelation from './components/pages/Revelation.vue';
 import { useUserStore } from "./stores/user";
 
 // Define custom meta types
@@ -40,9 +43,27 @@ const routes: AppRouteRecord[] = [
     meta: { requiresGuest: true }
   },
   {
-    path: "/assessment/:scaleId",
+    path: "/reset-password",
+    component: ResetPassword,
+    name: 'reset-password',
+    meta: { requiresGuest: true }
+  },
+  {
+    path: "/assessment/:assessmentSlug",
     component: AssessmentView,
     name: 'assessment',
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/assessment-result/:assessmentSlug",
+    component: AssessmentResult,
+    name: 'assessment-result',
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/revelation/:revelationSlug",
+    component: Revelation,
+    name: 'revelation',
     meta: { requiresAuth: true }
   },
   { 
@@ -72,7 +93,7 @@ const routes: AppRouteRecord[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(_to, _from, savedPosition) {
     // If there's a saved position (browser back/forward), use it
     if (savedPosition) {
       return savedPosition;

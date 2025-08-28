@@ -35,8 +35,14 @@ https://somni.netlify.app/
    --api-key sk_test_... \
    --forward-to http://localhost:8888/.netlify/functions/stripe-webhook
    ```
+   
    ii. It will provide you with a webhook secret, `whsec_...`
    Put that key in the .env file as `STRIPE_WEBHOOK_SECRET`
+
+   iii. Run the app locally (or do a stripe CLI command like `stripe trigger checkout.session.completed`)
+   ```
+   npm run dev:netlify
+   ```
    
 
 3. Run the development server with Netlify functions:

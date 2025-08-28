@@ -20,19 +20,7 @@ const handler = async (event, context) => {
   try {
     for (const quiz of quizzes) {
       // Use set with merge:true to update existing documents or create new ones
-      await db.collection("quizzes").doc(quiz.id).set({
-        title: quiz.title,
-        description: quiz.description,
-        questions: quiz.questions,
-        id: quiz.id,
-        displayName: quiz.displayName,
-        positive: quiz.positive,
-        negative: quiz.negative,
-        traitDescriptions: quiz.traitDescriptions || {
-          positive: "",
-          negative: ""
-        }
-      }, { merge: true });
+      await db.collection("quizzes").doc(quiz.id).set(quiz, { merge: true });
       console.log(`Quiz ${quiz.id} updated successfully!`);
     }
     console.log("Firestore seeding complete!");

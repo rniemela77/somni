@@ -1,41 +1,41 @@
 <template>
   <div>
     <!-- Completed Quizzes Section -->
-    <Card v-if="completedScales.length > 0" class="quiz-section">
-      <h3 class="section-title">Completed Assessments</h3>
+    <Card class="quiz-section" border="light" title="Past Quest Discoveries">
+      <h2 class="section-title text-cinzel">DISCOVERIES</h2>
       <div class="completed-scales-container">
-        <Card v-for="scale in completedScales" :key="scale.id" class="scale-item" padding="0">
-          <button class="scale-header btn btn-outline-secondary" @click="toggleScale(scale.id)">
+        <Card v-for="assessment in props.completedAssessmentsWithScores" :key="assessment.slug" class="scale-item"
+          padding="0" :id="assessment.slug">
+          <button class="scale-header btn btn-outline-primary" @click="toggleScale(assessment.slug)">
             <div class="scale-header-content">
               <div class="scale-title">
-                <span class="dominant-trait">{{ getDominantTraitName(scale) }}</span>
-                <span class="score-display">{{ Math.abs(Math.round(getScoreForScale(scale, props.scores))) }}%</span>
+                <span class="dominant-trait">{{ getDominantTrait(assessment).name }}</span>
+                <span class="score-display">{{ Math.abs(Math.round(assessment.score)) }}%</span>
               </div>
             </div>
-            <div class="chevron" :class="{ 'chevron--expanded': expandedScales.has(scale.id) }"></div>
+            <div class="chevron" :class="{ 'chevron--expanded': expandedScales.has(assessment.slug) }"></div>
           </button>
-          <div class="scale-content" :class="{ 'scale-content-hidden': !expandedScales.has(scale.id) }">
+          <div class="scale-content" :class="{ 'scale-content-hidden': !expandedScales.has(assessment.slug) }">
             <!-- Visual Scale Bar -->
             <div class="scale-visual" padding="sm">
               <div class="scale-labels">
-                <span class="negative-label"
-                  :class="{ 'label--dominant': getScoreForScale(scale, props.scores) < 0 }">{{ scale.negative }}</span>
-                <span class="positive-label"
-                  :class="{ 'label--dominant': getScoreForScale(scale, props.scores) > 0 }">{{ scale.positive }}</span>
+                <span class="negative-label" :class="{ 'label--dominant': assessment.score < 0 }">{{
+                  assessment.traits.negative.name }}</span>
+                <span class="positive-label" :class="{ 'label--dominant': assessment.score > 0 }">{{
+                  assessment.traits.positive.name }}</span>
               </div>
               <div class="scale-bar">
                 <div class="scale-line"></div>
                 <!-- Score line from center -->
                 <div class="scale-value" :style="{
-                  width: Math.abs(getScoreForScale(scale, props.scores)) / 2 + '%',
-                  left: getScoreForScale(scale, props.scores) >= 0 ? '50%' : 'auto',
-                  right: getScoreForScale(scale, props.scores) < 0 ? '50%' : 'auto'
+                  width: Math.abs(assessment.score) / 2 + '%',
+                  left: assessment.score >= 0 ? '50%' : 'auto',
+                  right: assessment.score < 0 ? '50%' : 'auto'
                 }">
                 </div>
                 <!-- Score marker -->
-                <div class="scale-marker"
-                  :style="{ left: calculatePosition(getScoreForScale(scale, props.scores)) + '%' }"
-                  :title="`Score: ${Math.round(getScoreForScale(scale, props.scores))}`">
+                <div class="scale-marker" :style="{ left: calculatePosition(assessment.score) + '%' }"
+                  :title="`Score: ${assessment.score}`">
                 </div>
               </div>
             </div>
@@ -43,29 +43,29 @@
             <div class="traits-container">
               <div class="trait-description">
                 <div class="trait-intensity">
-                  <template v-if="getScoreForScale(scale, props.scores) < 0">
-                    User {{ getTraitIntensityText(getScoreForScale(scale, props.scores)) }} {{
-                      scale.negative.toLowerCase() }}
+                  <template v-if="assessment.score < 0">
+                    User {{ getTraitIntensityText(assessment.score) }} {{
+                      assessment.traits.negative.name.toLowerCase() }}
                   </template>
                 </div>
-                <h4>{{ scale.negative }}</h4>
-                <p>{{ getTraitDescription(scale, 'negative') }}</p>
+                <h4>{{ assessment.traits.negative.name }}</h4>
+                <p>{{ assessment.traits.negative.description }}</p>
               </div>
               <div class="trait-description">
                 <div class="trait-intensity">
-                  <template v-if="getScoreForScale(scale, props.scores) > 0">
-                    User {{ getTraitIntensityText(getScoreForScale(scale, props.scores)) }} {{
-                      scale.positive.toLowerCase() }}
+                  <template v-if="assessment.score > 0">
+                    User {{ getTraitIntensityText(assessment.score) }} {{
+                      assessment.traits.positive.name.toLowerCase() }}
                   </template>
                 </div>
-                <h4>{{ scale.positive }}</h4>
-                <p>{{ getTraitDescription(scale, 'positive') }}</p>
+                <h4>{{ assessment.traits.positive.name }}</h4>
+                <p>{{ assessment.traits.positive.description }}</p>
               </div>
             </div>
 
             <!-- Retake Quiz button for completed scales -->
             <div class="d-flex justify-content-center">
-              <button @click="openAssessment(scale)" class="btn btn-outline-primary btn-sm">
+              <button @click="retakeAssessment(assessment)" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-arrow-clockwise me-1"></i>
                 Retake Assessment
               </button>
@@ -80,26 +80,19 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { usePersonalityTraits } from '../../composables/usePersonalityTraits';
-import type { ExtendedPersonalityScale } from '../../composables/usePersonalityTraits';
 import Card from '../ui/Card.vue';
+import type { Assessment, AssessmentWithScore } from '../../../shared/types/shared';
+import { useAssessmentProgress } from '../../composables/useAssessmentProgress';
+
+const { getTraitIntensityText, getDominantTrait, calculatePosition } = useAssessmentProgress();
 
 interface Props {
-  scores: Record<string, number>;
+  completedAssessmentsWithScores: AssessmentWithScore[];
 }
 
 const props = defineProps<Props>();
 const router = useRouter();
 const expandedScales = ref<Set<string>>(new Set());
-const { getAllScales, getScoreForScale, getTraitIntensityText, getTraitDescription } = usePersonalityTraits();
-
-const completedScales = computed(() => {
-  return getAllScales().filter(scale => {
-    const hasQuestions = scale.questions && scale.questions.length > 0;
-    const isComplete = props.scores[scale.id] !== undefined;
-    return hasQuestions && isComplete;
-  });
-});
 
 const toggleScale = (scaleId: string) => {
   if (expandedScales.value.has(scaleId)) {
@@ -110,20 +103,8 @@ const toggleScale = (scaleId: string) => {
   expandedScales.value = new Set(expandedScales.value);
 };
 
-const openAssessment = (scale: ExtendedPersonalityScale) => {
-  router.push({ name: 'assessment', params: { scaleId: scale.id } });
-};
-
-const calculatePosition = (score: number): number => {
-  return ((score + 100) / 2);
-};
-
-const getDominantTraitName = (scale: ExtendedPersonalityScale): string => {
-  const score = getScoreForScale(scale, props.scores);
-  if (score === 0) {
-    return `${scale.negative}/${scale.positive}`;
-  }
-  return score < 0 ? scale.negative : scale.positive;
+const retakeAssessment = (assessment: Assessment) => {
+  router.push({ name: 'assessment', params: { assessmentSlug: assessment.slug } });
 };
 </script>
 
@@ -149,8 +130,7 @@ const getDominantTraitName = (scale: ExtendedPersonalityScale): string => {
 }
 
 .section-title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1rem;
   margin-bottom: 1.5rem;
   text-align: left;
 }
@@ -317,8 +297,8 @@ const getDominantTraitName = (scale: ExtendedPersonalityScale): string => {
   top: 50%;
   left: 0;
   right: 0;
-  height: 2px;
-  background: rgba(0,0,0, 0.2);
+  height: 1px;
+  background: var(--primary-color);
   transform: translateY(-50%);
 }
 
@@ -351,10 +331,6 @@ const getDominantTraitName = (scale: ExtendedPersonalityScale): string => {
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: all 0.2s ease;
-}
-
-.scale-marker:hover {
-  transform: translate(-50%, -50%) scale(1.2);
 }
 
 .trait-intensity {
