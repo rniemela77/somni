@@ -21,6 +21,7 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    chunkSizeWarningLimit: 1200,
     // Enable cache busting with content hashes
     rollupOptions: {
       output: {
@@ -41,8 +42,14 @@ export default defineConfig({
           }
           return `assets/[name]-[hash].${ext}`;
         },
-        manualChunks: {
-          'vendor': ['vue', 'vue-router', 'pinia'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('firebase')) return 'vendor-firebase';
+            if (id.includes('bootstrap')) return 'vendor-bootstrap';
+            if (id.includes('stripe')) return 'vendor-stripe';
+            if (id.includes('openai')) return 'vendor-openai';
+            return 'vendor';
+          }
         },
       },
     },

@@ -1,5 +1,5 @@
 <template>
-	<img src="/Users/rvniemela/Sites/somni/public/images/night-bg.jpg" class="app-bg" />
+	<img src="/images/night-bg.jpg" class="app-bg" />
 </template>
 
 <style scoped>

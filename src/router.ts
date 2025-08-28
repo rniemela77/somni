@@ -1,15 +1,15 @@
 import { createRouter, createWebHistory, RouteRecordRaw, NavigationGuardNext, RouteLocationNormalized } from "vue-router";
-import SignUp from "./components/pages/SignUp.vue";
-import SignIn from "./components/pages/SignIn.vue";
-import Dashboard from "./components/pages/Dashboard.vue";
-import Account from "./components/pages/Account.vue";
-import Insights from "./components/pages/Insights.vue";
-import PrivacyPolicy from "./components/pages/PrivacyPolicy.vue";
-import TermsOfService from "./components/pages/TermsOfService.vue";
-import AssessmentView from './components/pages/Assessment.vue';
-import AssessmentResult from './components/pages/AssessmentResult.vue';
-import ResetPassword from './components/pages/ResetPassword.vue';
-import Revelation from './components/pages/Revelation.vue';
+const SignUp = () => import("./components/pages/SignUp.vue");
+const SignIn = () => import("./components/pages/SignIn.vue");
+const Dashboard = () => import("./components/pages/Dashboard.vue");
+const Account = () => import("./components/pages/Account.vue");
+const Insights = () => import("./components/pages/Insights.vue");
+const PrivacyPolicy = () => import("./components/pages/PrivacyPolicy.vue");
+const TermsOfService = () => import("./components/pages/TermsOfService.vue");
+const AssessmentView = () => import('./components/pages/Assessment.vue');
+const AssessmentResult = () => import('./components/pages/AssessmentResult.vue');
+const ResetPassword = () => import('./components/pages/ResetPassword.vue');
+const Revelation = () => import('./components/pages/Revelation.vue');
 import { useUserStore } from "./stores/user";
 
 // Define custom meta types
