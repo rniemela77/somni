@@ -3,7 +3,7 @@ import { db } from "../firebase";
 import type { Assessment } from "../../shared/types/shared";
 import hardcodedAssessments from "../../data/personalityData.js";
 
-const DEV_MODE = false; // dev mode = pull assessments from local file
+const DEV_MODE = true; // dev mode = pull assessments from local file
 
 export async function fetchAllAssessments() {
   if (DEV_MODE) {

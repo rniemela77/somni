@@ -103,8 +103,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     title: "The Flame",
     description: "A primal light flares, whispering your soul’s first truths.",
     promptInstructions: {
-      title: "<2-4 word mythic title reflecting the user’s initial trait>",
-      details: "<Write a 2-3 sentence actionable insight using mythic, poetic language to describe the user’s emerging nature, then provide a specific, practical tip for leveraging this trait in daily life (e.g., relationships, work, self-growth). Example: ‘A shadowed flame flickers in your soul, revealing a reflective spirit. Journal nightly to capture insights, guiding wiser choices in work or relationships.’>",
+      title: "<2-3 word mythic title reflecting the user’s initial trait>",
+      details: "<Write a 2-3 sentence actionable insight using mythic, poetic language to describe the user’s nature, then provide a specific, practical tip for leveraging this trait in daily life (e.g., relationships, work, self-growth). Example: ‘A shadowed flame flickers in your soul, revealing a reflective spirit. Journal nightly to capture insights, guiding wiser choices in work or relationships.’>",
     },
     category: "originRealm",
     icon: "flame.svg",
@@ -114,8 +114,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     title: "Spirit Animal",
     description: "A primal guide rises, embodying instincts that steer your path.",
     promptInstructions: {
-      title: "<2-4 word mythic title naming the user’s spirit animal>",
-      details: "<Write a 2-3 sentence actionable insight using mythic language to describe the user’s spirit animal as a reflection of their core instincts, then provide a unique, practical strategy for harnessing these instincts in a specific context (e.g., decision-making, creativity). Example: ‘The Watchful Owl guides your vigilant heart, seeing truths in darkness. In group settings, use your keen perception to identify unspoken needs, strengthening team dynamics.’>",
+      title: "<2-3 word mythic title naming the user’s spirit animal>",
+      details: "<3 sentences total: one mythic metaphor sentence, one explanation sentence, one actionable strategy sentence.>",
     },
     category: "originRealm",
     icon: "animal.svg",
@@ -125,7 +125,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     title: "The Ripple",
     description: "Your essence ripples outward, shaping the world’s vision of your myth.",
     promptInstructions: {
-      title: "<2-4 word mythic title reflecting the user’s external impact>",
+      title: "<2 word mythic title reflecting the user’s external impact>",
       details: "<Write a 2-3 sentence actionable insight using mythic language to describe how the user’s traits influence others, then offer a unique, practical strategy for enhancing their impact (e.g., communication, leadership, social settings). Example: ‘Your vigilant ripple stirs hearts, a sensitive force that captivates quietly. In meetings, listen deeply, then share one bold idea to inspire trust.’>",
     },
     category: "outerRealm",
@@ -136,8 +136,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     title: "Tarot Archetype",
     description: "A mystic card unveils a facet of your soul, guiding you through life’s mysteries.",
     promptInstructions: {
-      title: "<2-4 word mythic title naming the user’s tarot card archetype>",
-      details: "<Write a 2-3 sentence actionable insight using mythic language to align the user with a tarot card archetype (e.g., The Hermit, The Star, avoiding The Fool or The Magician), then offer a unique, practical strategy for using this archetype’s energy in daily life (e.g., personal growth, social interactions). Example: ‘The Star’s Light shines through your empathetic soul, guiding with hope. Schedule weekly reflection time to turn your sensitivity into creative insights for projects.’>",
+      title: "<The name of the tarot card archetype the user is most aligned with>",
+      details: "<Write a 2-3 sentence actionable insight using mythic language to align the user with a tarot card archetype, then offer a unique, practical strategy for using this archetype’s energy in daily life (e.g., personal growth, social interactions). Example: ‘The Star’s Light shines through your empathetic soul, guiding with hope. Schedule weekly reflection time to turn your sensitivity into creative insights for projects.’>",
     },
     category: "innerRealm",
     icon: "card.svg",
@@ -158,7 +158,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     title: "Elemental Alignment",
     description: "An ancient element binds your traits, anchoring you to the cosmos.",
     promptInstructions: {
-      title: "<2-4 word mythic title naming the user’s elemental alignment>",
+      title: "<The name of the element the user is most aligned with (Fire, Water, Earth, Air, Spirit)>",
       details: "<Write a 2-3 sentence actionable insight using mythic language to align the user with an element (Fire, Water, Earth, Air), then provide a specific, practical strategy for channeling this element in daily life (e.g., leadership, relationships). Example: ‘The Water’s Flow courses through your empathetic soul, nurturing connections. In conflicts, use your compassion to mediate, fostering harmony in groups.’>",
     },
     category: "cosmicPath",

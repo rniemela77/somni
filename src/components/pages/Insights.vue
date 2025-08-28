@@ -24,7 +24,7 @@
     <!-- Generate Button - Only shown when no insights available -->
     <div v-if="!hasCategoryContent && !userStore.generatingPersonalityAnalysis" class="generate-button-container text-center mb-4">
       <button 
-        @click="generateCluster(currentCategory)" 
+        @click="generateCluster(currentSection?.id || 'theFlame')" 
         class="btn btn-primary btn-lg" 
         :disabled="userStore.generatingPersonalityAnalysis"
       >
@@ -107,7 +107,7 @@
         <!-- Re-generate Button - only when current section is unlocked -->
         <div v-if="!isCurrentSectionLocked" class="regenerate-button-container text-center mt-4 pt-3 border-top">
           <button 
-            @click="generateCluster(currentCategory)" 
+            @click="generateCluster(currentSection?.id || 'theFlame')" 
             class="btn btn-outline-primary" 
             :disabled="userStore.generatingPersonalityAnalysis"
           >

@@ -90,11 +90,8 @@ export const useUserStore = defineStore("user", {
             !this.user?.personalityAnalysis?.[milestone.key] &&
             !this.generatingPersonalityAnalysis) {
           console.log(`Triggering ${milestone.key} revelation`);
-          // Map the milestone key (section id) to its category so the
-          // analysis function can generate all sections for that category.
-          const section = (PERSONALITY_ANALYSIS_SECTIONS as any)[milestone.key];
-          const category: string | undefined = section?.category;
-          this.generatePersonalityAnalysisForCluster(category || milestone.key);
+          // Generate only this specific section
+          this.generatePersonalityAnalysisForCluster(milestone.key);
           break; // Only trigger one revelation at a time
         }
       }
@@ -119,7 +116,8 @@ export const useUserStore = defineStore("user", {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`,
           },
-          body: JSON.stringify({ cluster }),
+          // If the provided value matches a section id, send sectionId; otherwise treat it as a category cluster
+          body: JSON.stringify((PERSONALITY_ANALYSIS_SECTIONS as any)[cluster] ? { sectionId: cluster } : { cluster }),
         });
         
         if (!result.ok) {

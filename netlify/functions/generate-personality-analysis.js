@@ -44,10 +44,10 @@ export async function handler(event, context) {
       return errorResponse("Invalid request body", 400);
     }
 
-    const { cluster } = requestBody;
+    const { cluster, sectionId } = requestBody;
 
-    if (!cluster) {
-      return errorResponse("Missing cluster parameter", 400);
+    if (!cluster && !sectionId) {
+      return errorResponse("Missing cluster or sectionId parameter", 400);
     }
 
     console.log("Processing cluster:", cluster);
@@ -63,7 +63,7 @@ export async function handler(event, context) {
     checkApiCallLimit(userData, API_LIMITS);
 
     // Generate the analysis prompt
-    const prompt = generateAnalysisPrompt(assessmentScores, cluster);
+    const prompt = generateAnalysisPrompt(assessmentScores, { category: cluster, sectionId });
     console.log('prompt', prompt);
 
     // Call OpenAI API
@@ -117,33 +117,47 @@ export async function handler(event, context) {
 }
 
 const formatAttributesIntoText = (assessmentScores) => {
-  let text =
-    "The user has taken a set of personality tests. Each test measures a spectrum between two opposite traits. The score is not about intensity, but about which side of the spectrum the user leans toward. A score of 0 means the user is perfectly balanced between the two traits. A score of 50 means the user moderately leans toward that trait. A score of 100 means the user strongly and consistently expresses that trait. Importantly: A lower score does not mean “low” in the trait. It only shows that the user is closer to balance. For example, if Extraversion is 25, that means the user expresses Extraversion fairly often, just not extremely. You can think of 25 Extraversion as the same as 75 Introversion.\n\n";
+  let text = "";
 
   // put most intense traits first
-  let sortedScores = Object.keys(assessmentScores).sort(
+  const sortedKeys = Object.keys(assessmentScores).sort(
     (a, b) => Math.abs(assessmentScores[b]) - Math.abs(assessmentScores[a])
   );
 
-  // each line: <dominant trait>: <absolute score>
-  sortedScores.forEach((key) => {
+  // each line: descriptive leaning text per absolute score range
+  sortedKeys.forEach((key) => {
     const scale = PersonalityData.find((scale) => scale.id === key);
-    const dominantTraitName =
-      assessmentScores[key] > 0 ? scale.positive : scale.negative;
-    if (assessmentScores[key] === 0) {
-      // if balanced, show both traits
-      text += `${scale.positive}: 0\n${scale.negative}: 0\n`;
+    if (!scale) return;
+
+    const score = assessmentScores[key] || 0;
+    const absScore = Math.abs(score);
+
+    const dominantTraitName = score >= 0 ? scale.positive : scale.negative;
+    const oppositeTraitName = score >= 0 ? scale.negative : scale.positive;
+
+    let description = "";
+    if (absScore <= 10) {
+      description = `Slightly more ${dominantTraitName} than ${oppositeTraitName}`;
+    } else if (absScore <= 25) {
+      description = `Light leaning toward ${dominantTraitName}`;
+    } else if (absScore <= 45) {
+      description = `Moderate leaning toward ${dominantTraitName}`;
+    } else if (absScore <= 65) {
+      description = `Clear leaning toward ${dominantTraitName}`;
+    } else if (absScore <= 85) {
+      description = `Strong leaning toward ${dominantTraitName}`;
     } else {
-      // if not balanced, show only the dominant trait
-      text += `${dominantTraitName}: ${Math.abs(assessmentScores[key])}\n`;
+      description = `Extreme leaning toward ${dominantTraitName}`;
     }
+
+    text += `${description}\n`;
   });
 
-  return text;
+  return text.trim();
 };
 
 // Generate prompt for a specific category or section
-export const generateAnalysisPrompt = (assessmentScores, category) => {
+export const generateAnalysisPrompt = (assessmentScores, { category, sectionId }) => {
   // console.log('generateAnalysisPrompt', assessmentScores, category, '\n');
   // Build prompt
   let prompt = `${SHARED_PROMPT_INSTRUCTIONS}\n\n`;
@@ -154,10 +168,22 @@ export const generateAnalysisPrompt = (assessmentScores, category) => {
   prompt += `${attributeText}\n\n`;
   prompt += `Provide responses in the following JSON format:\n{\n`;
 
-  // filter only sections for the given category
-  const sectionsForCategory = Object.values(
-    PERSONALITY_ANALYSIS_SECTIONS
-  ).filter((section) => section.category === category);
+  // Determine which sections to generate
+  let sectionsToGenerate = [];
+  if (sectionId) {
+    const one = Object.values(PERSONALITY_ANALYSIS_SECTIONS).find((s) => s.id === sectionId);
+    if (!one) {
+      throw new Error(`Unknown sectionId: ${sectionId}`);
+    }
+    sectionsToGenerate = [one];
+  } else if (category) {
+    sectionsToGenerate = Object.values(PERSONALITY_ANALYSIS_SECTIONS).filter((s) => s.category === category);
+    if (!sectionsToGenerate.length) {
+      throw new Error(`No sections found for category: ${category}`);
+    }
+  } else {
+    throw new Error("No category or sectionId provided for analysis generation");
+  }
 
   /*
    example:
@@ -172,7 +198,7 @@ export const generateAnalysisPrompt = (assessmentScores, category) => {
     },
   }
   */
-  sectionsForCategory.forEach((section) => {
+  sectionsToGenerate.forEach((section) => {
     prompt += `"${section.id}": {\n`;
     Object.entries(section.promptInstructions).forEach(([field, value]) => {
       prompt += `"${field}": "${value}",\n`;
