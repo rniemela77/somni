@@ -1,8 +1,7 @@
 export const SHARED_PROMPT_INSTRUCTIONS = `
-Generate insights based on the user's personality scores that are specific, actionable, and distinct from common personality test outputs.
-Craft responses in a vivid, mythic, and poetic narrative tone to align with the 'self myth' aesthetic, evoking timeless storytelling.
-Use clear, accessible language, emphasizing practical strategies for daily life (e.g., work, relationships, personal growth).
-`;
+Generate insights based on the user's personality scores that are specific, concise, and distinct from common personality test outputs.
+Craft responses in a mythic, poetic narrative tone to align with the 'self myth' aesthetic, evoking timeless storytelling.
+Use clear, simple language at a Grade 6-8 reading level, with varied timeless imagery such as archetypal roles, life stories, or mythic figures, to reveal a unique, enlightening aspect of the user's fundamental self, clearly showing how their personality traits combine into a hidden strength or pattern in their inner nature, keeping descriptions meaningful and specific.`;
 
 // Master object containing all personality analysis data
 export const PERSONALITY_ANALYSIS_SECTIONS = {
@@ -13,8 +12,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     title: "The Flame",
     description: "A primal light flares, whispering your soul's first truths.",
     promptInstructions: {
-      title: "<2-3 word mythic title reflecting the user's initial trait>",
-      details: "<Write a 2-3 sentence actionable insight using mythic, poetic language to describe the user's nature, then provide a specific, practical tip for leveraging this trait in daily life (e.g., relationships, work, self-growth). Example: 'A shadowed flame flickers in your soul, revealing a reflective spirit. Journal nightly to capture insights, guiding wiser choices in work or relationships.'>",
+      title: "<2-3 word mythic title reflecting the user's primary personality trait, using timeless imagery like archetypal roles or life stories>",
+      details: "<Write exactly 2 concise sentences in a mythic, poetic tone at a Grade 6-8 reading level to reveal how the user's core personality traits combine into a unique, timeless essence. Use varied imagery like archetypal roles, life stories, or mythic figures to clearly show a hidden strength or pattern in their inner self, ensuring descriptions are meaningful and specific to their traits.>",
     },
     category: "originRealm",
     categoryDescription: "The dawn of your myth, where primal essence takes shape.",
@@ -28,7 +27,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     description: "A primal guide rises, embodying instincts that steer your path.",
     promptInstructions: {
       title: "<2-3 word mythic title naming the user's spirit animal>",
-      details: "<3 sentences total: one mythic metaphor sentence, one explanation sentence, one actionable strategy sentence.>",
+      details: "<Write exactly 3-4 concise sentences to describe the nature and behavior of a single, named spirit animal embodying a timeless essence. Use imagery tied to the animal's characteristics to indirectly reflect the user's core personality traits, revealing a hidden strength or pattern in their inner self through the animal's distinct qualities, ensuring descriptions are meaningful and specific to their traits.>",
     },
     category: "originRealm",
     categoryDescription: "The dawn of your myth, where primal essence takes shape.",
@@ -41,8 +40,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     title: "The Ripple",
     description: "Your essence ripples outward, shaping the world's vision of your myth.",
     promptInstructions: {
-      title: "<2 word mythic title reflecting the user's external impact>",
-      details: "<Write a 2-3 sentence actionable insight using mythic language to describe how the user's traits influence others, then offer a unique, practical strategy for enhancing their impact (e.g., communication, leadership, social settings). Example: 'Your vigilant ripple stirs hearts, a sensitive force that captivates quietly. In meetings, listen deeply, then share one bold idea to inspire trust.'>",
+      title: "<2-3 word mythic title reflecting how others perceive the user's personality>",
+      details: "<Write 2-3 concise sentences to describe how the user's core personality traits are perceived by others as a timeless, mythic presence. Use imagery tied to archetypal roles, life stories, or mythic figures to reveal a hidden strength or pattern in how their traits shape others’ views, ensuring descriptions are meaningful and specific to their traits.>",
     },
     category: "outerRealm",
     categoryDescription: "The waves you cast, shaping the world's view of your story.",
@@ -55,8 +54,8 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     title: "Tarot Archetype",
     description: "A mystic card unveils a facet of your soul, guiding you through life's mysteries.",
     promptInstructions: {
-      title: "<The name of the tarot card archetype the user is most aligned with>",
-      details: "<Write a 2-3 sentence actionable insight using mythic language to align the user with a tarot card archetype, then offer a unique, practical strategy for using this archetype's energy in daily life (e.g., personal growth, social interactions). Example: 'The Star's Light shines through your empathetic soul, guiding with hope. Schedule weekly reflection time to turn your sensitivity into creative insights for projects.'>",
+      title: "<The specific tarot card that the user is most aligned with>",
+      details: "<Write a 2-3 sentence description of the tarot card that the user is most aligned with. Use imagery tied to the card's characteristics to reveal a hidden strength or pattern in their inner self, ensuring descriptions are meaningful and specific to their traits.>",
     },
     category: "innerRealm",
     categoryDescription: "The core of your being, where truth and desire forge your essence.",
@@ -70,7 +69,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     description: "At your core burns a truth, forged where drives meet fears.",
     promptInstructions: {
       title: "<2-4 word mythic title reflecting the user's core personality>",
-      details: "<Write exactly two sentences using mythic language to reveal a unique emotional or psychological pattern, then provide a specific, actionable tip for leveraging or balancing this pattern in a real-world context (e.g., decision-making, stress management). Example: 'Your heart weaves bold visions with sharp fears, creating restless wisdom. Practice brief mindfulness pauses during stress to channel sensitivity into clarity.'>",
+      details: "<Write 2-3 concise sentences to describe the user's core personality traits as a timeless, mythic essence embodying what matters most to their inner self. Use imagery tied to archetypal roles, life stories, or mythic figures to reveal a hidden strength or pattern in their deepest values, ensuring descriptions are meaningful and specific to their traits.>",
     },
     category: "innerRealm",
     categoryDescription: "The core of your being, where truth and desire forge your essence.",
@@ -84,7 +83,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     description: "An ancient element binds your traits, anchoring you to the cosmos.",
     promptInstructions: {
       title: "<The name of the element the user is most aligned with (Fire, Water, Earth, Air, Spirit)>",
-      details: "<Write a 2-3 sentence actionable insight using mythic language to align the user with an element (Fire, Water, Earth, Air), then provide a specific, practical strategy for channeling this element in daily life (e.g., leadership, relationships). Example: 'The Water's Flow courses through your empathetic soul, nurturing connections. In conflicts, use your compassion to mediate, fostering harmony in groups.'>",
+      details: "<Write 2-3 concise sentences to describe the user’s core personality traits as a timeless cosmic element guiding their inner path. Use imagery tied to the element’s nature, archetypal roles, or mythic figures to reveal a hidden strength or pattern in how their traits align with the cosmos, ensuring descriptions are meaningful and specific to their traits.>",
     },
     category: "cosmicPath",
     categoryDescription: "The cosmic forces aligning your spirit with the universe's rhythm.",
@@ -98,7 +97,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = {
     description: "A stage of your epic unfolds, revealing your role in life's grand tale.",
     promptInstructions: {
       title: "<2-4 word mythic title naming the user's hero's journey stage>",
-      details: "<Write a 2-3 sentence actionable insight using mythic language to align the user with a specific hero's journey stage (e.g., The Threshold, The Mentor, avoiding The Quest or The Return), then offer a unique, practical strategy for embracing this stage in daily life (e.g., personal growth, challenges). Example: 'The Threshold calls your vigilant spirit, poised to face new challenges. Take one small risk weekly, like sharing an idea, to build confidence.'>",
+      details: "<Write 2-3 concise sentences to describe the user’s core personality traits as a timeless stage in a hero’s journey. Use imagery tied to archetypal roles, life stories, or mythic figures to reveal a hidden strength or pattern in their current life path, ensuring descriptions are meaningful and specific to their traits.>",
     },
     category: "cosmicPath",
     categoryDescription: "The cosmic forces aligning your spirit with the universe's rhythm.",
