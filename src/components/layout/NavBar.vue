@@ -134,7 +134,6 @@ const { isDark } = useDarkMode();
 	text-transform: uppercase;
 	letter-spacing: -2.5px;
 	color: var(--text-primary);
-	text-shadow: 0 2px 1px rgba(0, 0, 0, 0.5);
 
 	&:first-letter {
 		font-size: 3.5rem;
