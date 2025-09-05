@@ -40,7 +40,7 @@ import { useUserStore } from '../../stores/user';
 import type { AnalysisData } from '../../../shared/types/shared';
 import Alert from '../ui/Alert.vue';
 import { API_LIMITS } from '../../config/limits';
-import { PERSONALITY_ANALYSIS_SECTIONS } from '../../config/personalityAnalysis';
+import { PERSONALITY_ANALYSIS_SECTIONS } from '../../../shared/config/personalityAnalysis';
 import PersonalityAnalysisSection from './PersonalityAnalysisSection.vue';
 import Card from '../ui/Card.vue';
 

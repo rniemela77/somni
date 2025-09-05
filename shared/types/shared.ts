@@ -41,6 +41,7 @@ export interface UserData {
   id: string;
   assessmentScores: AssessmentScore;
   personalityAnalysis: PersonalityAnalysis;
+  mythicMirror: MythicMirrorEntry[];
   openaiApiCalls: number;
   payments: Payment[];
   createdAt?: any;
@@ -54,6 +55,15 @@ export interface Payment {
   status: string;
   createdAt: any;
   updatedAt: any;
+}
+
+export interface MythicMirrorEntry {
+  challenge: string;
+  response: {
+    title: string;
+    details: string;
+  };
+  createdAt: any;
 }
 
 // Firebase personality analysis
@@ -87,10 +97,13 @@ export interface PersonalitySectionPromptInstructions {
 // This matches the actual structure in shared/config/personalityAnalysis.js
 export interface PersonalitySection {
   id: string;
+  slug: string;
+  requiredAssessments: number;
   title: string;
+  description: string;
   promptInstructions: PersonalitySectionPromptInstructions;
-  category: string;
-  icon: string;
+  category?: string;
+  icon?: string;
 }
 
 export interface ExtendedPersonalitySection extends PersonalitySection {
@@ -101,10 +114,8 @@ export interface PersonalityAttributes {
   [key: string]: any;
 }
 
-// Type for the sections object
-export interface PersonalityAnalysisSections {
-  [key: string]: PersonalitySection;
-}
+// Type for the sections array
+export type PersonalityAnalysisSections = PersonalitySection[];
 
 
 

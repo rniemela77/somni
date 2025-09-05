@@ -42,7 +42,7 @@
 								Mythbook
 							</router-link>
 						</li>
-
+						
 						<!-- Desktop dropdown (hidden on mobile) -->
 						<li class="nav-item dropdown d-none d-sm-block">
 							<a class="btn btn-outline-secondary nav-link dropdown-toggle d-flex align-items-center justify-content-center"
@@ -112,7 +112,6 @@ const router = useRouter()
 const handleSignOut = async (): Promise<void> => {
 	const { success } = await userStore.signOut()
 	if (success) {
-		userStore.cleanup();
 		router.push('/signin')
 	}
 }

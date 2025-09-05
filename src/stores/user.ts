@@ -77,6 +77,9 @@ export const useUserStore = defineStore("user", {
 
       // Check if we should trigger any revelations
       this.checkAndTriggerRevelations();
+      
+      // Check if we should generate a personality role
+      this.checkAndGeneratePersonalityRole();
     },
 
     checkAndTriggerRevelations() {
@@ -95,6 +98,11 @@ export const useUserStore = defineStore("user", {
           break; // Only trigger one revelation at a time
         }
       }
+    },
+
+    checkAndGeneratePersonalityRole() {
+      // This function is now deprecated - personality roles are handled through personality analysis sections
+      return;
     },
 
     async generatePersonalityAnalysisForCluster(cluster: string): Promise<{ success: boolean; error: string | null }> {
@@ -117,7 +125,7 @@ export const useUserStore = defineStore("user", {
             'Authorization': `Bearer ${idToken}`,
           },
           // If the provided value matches a section id, send sectionId; otherwise treat it as a category cluster
-          body: JSON.stringify((PERSONALITY_ANALYSIS_SECTIONS as any)[cluster] ? { sectionId: cluster } : { cluster }),
+          body: JSON.stringify(PERSONALITY_ANALYSIS_SECTIONS.find(s => s.id === cluster) ? { sectionId: cluster } : { cluster }),
         });
         
         if (!result.ok) {
@@ -309,7 +317,9 @@ export const useUserStore = defineStore("user", {
           ...(data as any),
           assessmentScores: (data as any).assessmentScores || {},
           personalityAnalysis: (data as any).personalityAnalysis || {},
+          mythicMirror: (data as any).mythicMirror || [],
         } as UserData;
+
         return;
       }
 
@@ -318,6 +328,7 @@ export const useUserStore = defineStore("user", {
         payments: [],
         assessmentScores: {},
         personalityAnalysis: {},
+        mythicMirror: [],
         openaiApiCalls: 0,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -325,6 +336,52 @@ export const useUserStore = defineStore("user", {
 
       await setDoc(userRef, defaultProfile, { merge: true });
       this.user = { ...(defaultProfile as any), user: publicUser } as UserData;
+    },
+
+
+    async generateMythicMirrorAnalysis(challenge: string): Promise<{ success: boolean; error: string | null; response?: { title: string; details: string } }> {
+      this.error = null;
+      this.generatingPersonalityAnalysis = true;
+      console.log('generating mythic mirror analysis for challenge:', challenge.substring(0, 50) + '...');
+
+      try {
+        // Get the current user's ID token for authentication
+        if (!this.firebaseUser) {
+          throw new Error('User not authenticated');
+        }
+        
+        const idToken = await this.firebaseUser.getIdToken();
+        
+        const result = await fetch('/.netlify/functions/generate-mythic-mirror', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({ challenge }),
+        });
+        
+        if (!result.ok) {
+          const errorData = await result.json();
+          throw new Error(errorData.error || `HTTP ${result.status}`);
+        }
+        
+        const data = await result.json();
+        
+        // Update the user data with the new mythic mirror entry
+        if (this.user && data.response) {
+          // The backend already updated the user document, so we need to refresh our local data
+          await this.loadUserData(this.firebaseUser);
+        }
+        
+        return { success: true, error: null, response: data.response };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        this.error = message;
+        return { success: false, error: message };
+      } finally {
+        this.generatingPersonalityAnalysis = false;
+      }
     },
   },
 });

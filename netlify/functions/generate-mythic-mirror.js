@@ -20,7 +20,7 @@ import { API_LIMITS } from "../../src/config/limits.js";
 import PersonalityData from "../../data/personalityData.js";
 
 /**
- * Netlify function to generate personality analysis
+ * Netlify function to generate mythic mirror analysis
  */
 export async function handler(event, context) {
   // Handle CORS preflight
@@ -44,13 +44,17 @@ export async function handler(event, context) {
       return errorResponse("Invalid request body", 400);
     }
 
-    const { cluster, sectionId } = requestBody;
+    const { challenge } = requestBody;
 
-    if (!cluster && !sectionId) {
-      return errorResponse("Missing cluster or sectionId parameter", 400);
+    if (!challenge || typeof challenge !== 'string' || challenge.trim().length === 0) {
+      return errorResponse("Challenge text is required", 400);
     }
 
-    console.log("Processing cluster:", cluster);
+    if (challenge.length > 500) {
+      return errorResponse("Challenge text must be 500 characters or less", 400);
+    }
+
+    console.log("Processing mythic mirror challenge:", challenge.substring(0, 50) + "...");
 
     // Authenticate user and get user data
     const { userRef, userData } = await authenticateUser(event);
@@ -62,9 +66,9 @@ export async function handler(event, context) {
     // Check if user has reached the API call limit
     checkApiCallLimit(userData, API_LIMITS);
 
-    // Generate the analysis prompt
-    const prompt = generateAnalysisPrompt(assessmentScores, { category: cluster, sectionId }, userData);
-    console.log('prompt', prompt);
+    // Generate the analysis prompt with the user's challenge
+    const prompt = generateMythicMirrorPrompt(assessmentScores, challenge.trim());
+    console.log('Generated prompt for mythic mirror');
 
     // Call OpenAI API
     const rawAnalysis = await callOpenAI(prompt, {
@@ -72,24 +76,43 @@ export async function handler(event, context) {
       max_output_tokens: 800,
     });
 
-    // convert into json array of objects
+    // Parse the response
     const parsedAnalysis = JSON.parse(rawAnalysis);
+    
+    // Extract the mythic mirror response
+    const mythicMirrorResponse = parsedAnalysis.mythicMirror;
+    if (!mythicMirrorResponse || !mythicMirrorResponse.title || !mythicMirrorResponse.details) {
+      throw new Error("Invalid response format from OpenAI");
+    }
 
-    // Save the analysis back to Firestore
+    // Create the new mythic mirror entry
+    const newEntry = {
+      challenge: challenge.trim(),
+      response: mythicMirrorResponse,
+      createdAt: new Date(),
+    };
+
+    // Get existing mythic mirror entries
+    const existingEntries = userData.mythicMirror || [];
+    
+    // Add the new entry to the beginning of the array (most recent first)
+    const updatedEntries = [newEntry, ...existingEntries];
+
+    // Save the new entry to Firestore
     await userRef.update({
-      personalityAnalysis: parsedAnalysis,
+      mythicMirror: updatedEntries,
       openai_api_calls: FieldValue.increment(1),
       updatedAt: FieldValue.serverTimestamp(),
-      lastAnalysisGenerated: FieldValue.serverTimestamp(),
+      lastMythicMirrorGenerated: FieldValue.serverTimestamp(),
     });
 
-    // Return the parsed analysis
+    // Return the response
     return success({
-      personalityAnalysis: parsedAnalysis,
+      response: mythicMirrorResponse,
       generatedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error(`❌ Error generating personality analysis: ${error.message}`);
+    console.error(`❌ Error generating mythic mirror analysis: ${error.message}`);
     console.error("Error stack:", error.stack);
 
     // Return appropriate error based on type
@@ -107,16 +130,18 @@ export async function handler(event, context) {
       return errorResponse(error.message, 400);
     } else if (error.message.includes("AI analysis limit")) {
       return errorResponse(error.message, 403);
+    } else if (error.message.includes("Challenge text")) {
+      return errorResponse(error.message, 400);
     } else {
       return errorResponse(
-        `Failed to generate personality analysis: ${error.message}`,
+        `Failed to generate mythic mirror analysis: ${error.message}`,
         500
       );
     }
   }
 }
 
-const formatAttributesIntoText = (assessmentScores, limit = 5) => {
+const formatAttributesIntoText = (assessmentScores) => {
   let text = "Personality Traits:\n";
 
   // put most intense traits first
@@ -125,7 +150,7 @@ const formatAttributesIntoText = (assessmentScores, limit = 5) => {
   );
 
   // each line: descriptive leaning text per absolute score range
-  sortedKeys.slice(0, limit).forEach((key) => {
+  sortedKeys.forEach((key) => {
     const scale = PersonalityData.find((scale) => scale.id === key);
     if (!scale) return;
 
@@ -136,29 +161,28 @@ const formatAttributesIntoText = (assessmentScores, limit = 5) => {
     const oppositeTraitName = score >= 0 ? scale.negative : scale.positive;
 
     let description = "";
-    if (absScore <= 10) {
-      description = `- Balanced between ${dominantTraitName} and ${oppositeTraitName}`;
+    if (absScore <= 10 && absScore > 0) {
+      description = `Slightly more ${dominantTraitName} than ${oppositeTraitName}`;
     } else if (absScore <= 25) {
-      description = `- Light leaning toward ${dominantTraitName}`;
-    } else if (absScore <= 50) {
-      description = `- Moderate leaning toward ${dominantTraitName}`;
-    } else if (absScore <= 75) {
-      description = `- Clear leaning toward ${dominantTraitName}`;
+      description = `Light leaning toward ${dominantTraitName}`;
+    } else if (absScore <= 45) {
+      description = `Moderate leaning toward ${dominantTraitName}`;
+    } else if (absScore <= 65) {
+      description = `Clear leaning toward ${dominantTraitName}`;
     } else if (absScore <= 85) {
-      description = `- Strong leaning toward ${dominantTraitName}`;
+      description = `Strong leaning toward ${dominantTraitName}`;
     } else {
-      description = `- Extreme leaning toward ${dominantTraitName}`;
+      description = `Extreme leaning toward ${dominantTraitName}`;
     }
 
-    text += `${description}\n`;
+    text += `- ${description}\n`;
   });
 
   return text.trim();
 };
 
-// Generate prompt for a specific category or section
-export const generateAnalysisPrompt = (assessmentScores, { category, sectionId }, userData) => {
-  // console.log('generateAnalysisPrompt', assessmentScores, category, '\n');
+// Generate prompt specifically for mythic mirror with user's challenge
+const generateMythicMirrorPrompt = (assessmentScores, challenge) => {
   // Build prompt
   let prompt = `${SHARED_PROMPT_INSTRUCTIONS}\n\n`;
 
@@ -168,51 +192,22 @@ export const generateAnalysisPrompt = (assessmentScores, { category, sectionId }
   prompt += `${attributeText}\n\n`;
   prompt += `Provide responses in the following JSON format:\n{\n`;
 
-  // Determine which sections to generate
-  let sectionsToGenerate = [];
-  if (sectionId) {
-    const one = PERSONALITY_ANALYSIS_SECTIONS.find((s) => s.id === sectionId);
-    if (!one) {
-      throw new Error(`Unknown sectionId: ${sectionId}`);
-    }
-    sectionsToGenerate = [one];
-  } else if (category) {
-    // Since sections don't have categories currently, return all sections for any category
-    sectionsToGenerate = PERSONALITY_ANALYSIS_SECTIONS;
-    if (!sectionsToGenerate.length) {
-      throw new Error(`No sections found for category: ${category}`);
-    }
-  } else {
-    throw new Error("No category or sectionId provided for analysis generation");
+  // Get the mythic mirror section configuration
+  const mythicMirrorSection = PERSONALITY_ANALYSIS_SECTIONS.find(s => s.id === 'mythicMirror');
+  if (!mythicMirrorSection) {
+    throw new Error("Mythic mirror section not found in configuration");
   }
 
-  /*
-   example:
-  {
-    "core": {
-      "title": "<The core personality in 2-4 words>",
-      "details": "<Write exactly two sentences describing the core personality. Focus on revealing unique, non-obvious emotional patterns and psychological traits that provide genuine insight>",
-    },
-    "myersBriggs": {
-      "title": "<The Myers-Briggs type that best fits the user's personality (ISTJ, ISFJ, INFJ, INTJ, ISTP, ISFP, INFP, INTP, ESTP, ESFP, ENFP, ENTP, ESTJ, ESFJ, ENFJ, ENTJ).>",
-      "details": "<Explain two or three sentences why this type reflects their character.>",
-    },
-  }
-  */
-  sectionsToGenerate.forEach((section) => {
-    prompt += `"${section.id}": {\n`;
-    Object.entries(section.promptInstructions).forEach(([field, value]) => {
-      // Replace &ROLE& with theAwakening title if it exists
-      let processedValue = value;
-      if (value.includes('&ROLE&')) {
-        // Get the user's theAwakening title from their personality analysis
-        const theAwakeningTitle = userData?.personalityAnalysis?.theAwakening?.title || 'the awakened one';
-        processedValue = value.replace(/&ROLE&/g, theAwakeningTitle);
-      }
-      prompt += `"${field}": "${processedValue}",\n`;
-    });
-    prompt += `},\n`;
-  });
+  // Replace the &CHALLENGE& placeholder with the user's actual challenge
+  const detailsWithChallenge = mythicMirrorSection.promptInstructions.details.replace(
+    '&CHALLENGE&',
+    challenge
+  );
+
+  prompt += `"mythicMirror": {\n`;
+  prompt += `"title": "${mythicMirrorSection.promptInstructions.title}",\n`;
+  prompt += `"details": "${detailsWithChallenge}",\n`;
+  prompt += `},\n`;
 
   prompt += `}\n`;
 
