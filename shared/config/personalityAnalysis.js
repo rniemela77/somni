@@ -1,162 +1,124 @@
-export const SHARED_PROMPT_INSTRUCTIONS = `
-Generate insights based on the user's personality scores that are specific, concise, and distinct from common personality test outputs.
-Craft responses in a mythic, poetic narrative tone to align with the 'self myth' aesthetic, evoking timeless storytelling.
-Use clear, simple language at a Grade 6-8 reading level, with varied timeless imagery such as archetypal roles, life stories, or mythic figures, to reveal a unique, enlightening aspect of the user's fundamental self, clearly showing how their personality traits combine into a hidden strength or pattern in their inner nature, keeping descriptions meaningful and specific.`;
+export const SHARED_PROMPT_INSTRUCTIONS =
+  "You are helping create a personality experience that reflects back to people the truth and quiet power of who they are. The goal is not to analyze or explain personality traits, but to translate them into archetypal reflections that feel timeless, beautiful, and true. Everything you generate should be emotionally resonant, accessible, and evocative — like modern myth, not academic analysis. Write for a smart, curious reader — somewhere between literary fiction and thoughtful introspection — but keep it clear and human. The ideal tone is: grounded but poetic, warm but precise, mysterious but never vague. Every output should leave the reader feeling seen, intrigued, and slightly more in love with who they already are. Never address the reader; instead use the archetype role name or “they/their.” Use simple grade 6-8 language."; // Master object containing all personality analysis data
 
-// Master object containing all personality analysis data
-export const PERSONALITY_ANALYSIS_SECTIONS = {
-  theFlame: {
-    id: "theFlame",
-    slug: "the-flame",
+export const PERSONALITY_ANALYSIS_SECTIONS = [
+  {
+    id: "theAwakening",
+    slug: "the-awakening",
     requiredAssessments: 3,
-    title: "The Flame",
-    description: "A primal light flares, whispering your soul's first truths.",
+    title: "The Awakening",
+    description: "An introduction to your mythical persona.",
     promptInstructions: {
-      title: "<2-3 word mythic title reflecting the user's primary personality trait, using timeless imagery like archetypal roles or life stories>",
-      details: "<Write exactly 2 concise sentences in a mythic, poetic tone at a Grade 6-8 reading level to reveal how the user's core personality traits combine into a unique, timeless essence. Use varied imagery like archetypal roles, life stories, or mythic figures to clearly show a hidden strength or pattern in their inner self, ensuring descriptions are meaningful and specific to their traits.>",
+      title:
+        "<Archetypal role name, 1-2 words. (Example: The Silent Sage, The Radiant Guide, The Adventurous Pathfinder, The Revelling Maverick, The Steadfast Champion, The Solitary Rebel)>",
+      details:
+        "<Write a short narrative (3 sentences) that reimagines the user's personality as if they were a mythic or timeless figure. Use metaphor and grounded imagery to express how their traits shape their way of being — how they move, decide, and thrive in the world. Do not label or name the traits. Instead, embody them through behavior, pattern, and symbolic choices. Sentence 1: Establish how they move through the world — their natural orientation. Sentence 2: Show how they respond to structure, challenge, or uncertainty. Sentence 3: Offer a moment of clarity, power, or overlooked strength — something the user might recognize but rarely celebrate. Keep it subtle, specific, and emotionally insightful. It should feel like a mirror that shows the soul, not a list of qualities.>",
     },
-    category: "originRealm",
-    categoryDescription: "The dawn of your myth, where primal essence takes shape.",
-    icon: "flame.svg",
   },
-  spiritAnimal: {
-    id: "spiritAnimal",
-    slug: "spirit-animal",
+  {
+    id: "theReflection",
+    slug: "the-reflection",
     requiredAssessments: 6,
-    title: "Spirit Animal",
-    description: "A primal guide rises, embodying instincts that steer your path.",
+    title: "The Reflection",
+    description: "How others perceive the persona.",
     promptInstructions: {
-      title: "<2-3 word mythic title naming the user's spirit animal>",
-      details: "<Write exactly 3-4 concise sentences to describe the nature and behavior of a single, named spirit animal embodying a timeless essence. Use imagery tied to the animal's characteristics to indirectly reflect the user's core personality traits, revealing a hidden strength or pattern in their inner self through the animal's distinct qualities, ensuring descriptions are meaningful and specific to their traits.>",
+      title:
+        "<2-3 words to describe how the user's personality is perceived by others.>",
+      details:
+        "<Write a short, vivid scene (3–4 sentences) showing how the character known as ‘&ROLE&’ is perceived by others in the world. Choose a setting that symbolically echoes their inner world — a marketplace, council chamber, crossroads, forest trail, ocean shore, or similar. In this scene: Let the character’s personality traits manifest through action, rhythm, or presence. Include a quiet, observant reaction from one stranger or ally — someone who notices what others might miss. Include a subtle misunderstanding, projection, or rumor that arises from how others perceive the character. Close with a small but meaningful insight — a gesture, look, or moment that hints at the deeper truth beneath the surface. Do not name the traits directly. Instead, show them — through small decisions, quiet patterns, or the way others feel around them. Focus on emotional realism and symbolic detail. The goal is to reflect how the character is experienced by others — with warmth, ambiguity, and quiet strength.>",
     },
-    category: "originRealm",
-    categoryDescription: "The dawn of your myth, where primal essence takes shape.",
-    icon: "animal.svg",
   },
-  theRipple: {
-    id: "theRipple",
-    slug: "the-ripple",
+  {
+    id: "theDestiny",
+    slug: "the-destiny",
     requiredAssessments: 9,
-    title: "The Ripple",
-    description: "Your essence ripples outward, shaping the world's vision of your myth.",
+    title: "The Destiny",
+    description: "The persona's greater purpose is revealed.",
     promptInstructions: {
-      title: "<2-3 word mythic title reflecting how others perceive the user's personality>",
-      details: "<Write 2-3 concise sentences to describe how the user's core personality traits are perceived by others as a timeless, mythic presence. Use imagery tied to archetypal roles, life stories, or mythic figures to reveal a hidden strength or pattern in how their traits shape others’ views, ensuring descriptions are meaningful and specific to their traits.>",
+      title: "<2-3 words to describe the persona's greater purpose.>",
+      details:
+        "<Write a short passage (3–4 sentences) describing the quiet, essential role this character (‘&ROLE&’) is uniquely suited to play in the world. This isn’t a job or title — it’s the deeper work of their nature: the pattern they hold, the shift they bring, the gift they can’t help but offer. The tone should be mythic but grounded — a mix of destiny and subtle inevitability. Let their traits manifest as hidden strengths that shape their impact, even if others don’t always see it. You may hint at: What they protect or preserve, What they help others see or feel, What would be missing if they weren’t there. Do not name personality traits or get abstract. Use concrete image, motion, and quiet clarity. This is not about praise — it’s about placement in the larger world.>",
     },
-    category: "outerRealm",
-    categoryDescription: "The waves you cast, shaping the world's view of your story.",
-    icon: "wave.svg",
   },
-  tarotArchetype: {
-    id: "tarotArchetype",
-    slug: "tarot-archetype",
+  {
+    id: "theTrial",
+    slug: "the-trial",
     requiredAssessments: 12,
-    title: "Tarot Archetype",
-    description: "A mystic card unveils a facet of your soul, guiding you through life's mysteries.",
+    title: "The Inner Trial",
+    description: "A short legend that mirrors the persona's choices.",
     promptInstructions: {
-      title: "<The specific tarot card that the user is most aligned with>",
-      details: "<Write a 2-3 sentence description of the tarot card that the user is most aligned with. Use imagery tied to the card's characteristics to reveal a hidden strength or pattern in their inner self, ensuring descriptions are meaningful and specific to their traits.>",
+      title: "<2-3 words to describe the persona's inner trial.>",
+      details:
+        "<Write a short, emotionally resonant passage (3–4 sentences) showing the kind of challenges or tensions this persona faces as a result of how they’re wired. These are not flaws — they are the natural friction of being this way in a world that often moves differently. Show: What weighs on them or wears them down, What they carry quietly or what others don’t realize takes effort, How they adapt, protect themselves, or recover. Use metaphor and grounded image, not analysis or abstract phrasing. The tone should be honest but gentle — never self-pitying. The purpose is to reflect back their quiet endurance and the cost of their gifts.>",
     },
-    category: "innerRealm",
-    categoryDescription: "The core of your being, where truth and desire forge your essence.",
-    icon: "card.svg",
   },
-  theHeart: {
-    id: "theHeart",
-    slug: "the-heart",
+  {
+    id: "theProphecy",
+    slug: "the-prophecy",
     requiredAssessments: 15,
-    title: "The Heart",
-    description: "At your core burns a truth, forged where drives meet fears.",
+    title: "The Prophecy",
+    description: "A glimpse of the persona's possible future.",
     promptInstructions: {
-      title: "<2-4 word mythic title reflecting the user's core personality>",
-      details: "<Write 2-3 concise sentences to describe the user's core personality traits as a timeless, mythic essence embodying what matters most to their inner self. Use imagery tied to archetypal roles, life stories, or mythic figures to reveal a hidden strength or pattern in their deepest values, ensuring descriptions are meaningful and specific to their traits.>",
+      title: "<2-3 words to describe the persona's prophecy.>",
+      details:
+        "<Write around 100 words that reflects the quiet change this persona leaves in their wake. This is not about success, status, or attention — it is about the pattern they restore, the question they help others ask, or the feeling they make possible. Show: What softens, reorients, or opens around them, What others slowly realize after they’re gone, What grows differently because of how they moved through a space, moment, or season. Use grounded metaphor or poetic image. Do not make it grandiose — it should feel subtle, real, and resonant. Leave the reader with a quiet sense of beauty, meaning, and contribution.>",
     },
-    category: "innerRealm",
-    categoryDescription: "The core of your being, where truth and desire forge your essence.",
-    icon: "heart-flame.svg",
   },
-  elementalAlignment: {
-    id: "elementalAlignment",
-    slug: "elemental-alignment",
-    requiredAssessments: 17,
-    title: "Elemental Alignment",
-    description: "An ancient element binds your traits, anchoring you to the cosmos.",
-    promptInstructions: {
-      title: "<The name of the element the user is most aligned with (Fire, Water, Earth, Air, Spirit)>",
-      details: "<Write 2-3 concise sentences to describe the user’s core personality traits as a timeless cosmic element guiding their inner path. Use imagery tied to the element’s nature, archetypal roles, or mythic figures to reveal a hidden strength or pattern in how their traits align with the cosmos, ensuring descriptions are meaningful and specific to their traits.>",
-    },
-    category: "cosmicPath",
-    categoryDescription: "The cosmic forces aligning your spirit with the universe's rhythm.",
-    icon: "element.svg",
-  },
-  heroesJourney: {
-    id: "heroesJourney",
-    slug: "heroes-journey",
+  {
+    id: "theTurningPoint",
+    slug: "the-turning-point",
     requiredAssessments: 18,
-    title: "Hero's Journey",
-    description: "A stage of your epic unfolds, revealing your role in life's grand tale.",
+    title: "The Turning Point",
+    description: "How the persona’s story is retold in the mythic world.",
     promptInstructions: {
-      title: "<2-4 word mythic title naming the user's hero's journey stage>",
-      details: "<Write 2-3 concise sentences to describe the user’s core personality traits as a timeless stage in a hero’s journey. Use imagery tied to archetypal roles, life stories, or mythic figures to reveal a hidden strength or pattern in their current life path, ensuring descriptions are meaningful and specific to their traits.>",
+      title: "<2-3 words to describe the persona's turning point.>",
+      details:
+        "<Write a short, charged scene (3–5 sentences) where the character (‘&ROLE&’) reaches a turning point — a moment that draws them out of their pattern and into decisive presence. It might be: A quiet crisis that only they notice, A moment where others falter and their unique strength fills the gap, A subtle threshold that requires them to act — not as someone new, but as who they’ve always been becoming. This is not a climax — it is a shift. A calling. A sense that the time for hiding, hesitating, or simply observing is over. Use imagery and mood to show the atmosphere of this moment. Do not describe what happens next. The story pauses on the edge — with clarity, weight, and anticipation.>",
     },
-    category: "cosmicPath",
-    categoryDescription: "The cosmic forces aligning your spirit with the universe's rhythm.",
-    icon: "path.svg",
   },
-  theWeave: {
-    id: "theWeave",
-    slug: "the-weave",
+  {
+    id: "theShadow",
+    slug: "the-shadow",
     requiredAssessments: 19,
-    title: "The Weave",
-    description: "Your myth weaves together, threading past to destined path.",
+    title: "The Shadow",
+    description: "The persona's shadow side.",
     promptInstructions: {
-      title: "<2-4 word mythic title reflecting the user's unifying destiny>",
-      details: "<Write a 2-3 sentence actionable insight using mythic language to unify the user's dominant traits into a sense of purpose, then offer a unique, practical strategy for pursuing this purpose (e.g., career, relationships, personal growth). Example: 'Your weave binds empathy and vision, crafting a healer's path. Lead small group discussions to foster connection, using your insight to guide others.'>",
+      title: "<2-3 words to describe the persona's shadow.>",
+      details:
+        "<Write a short, emotionally honest reflection (3–4 sentences) describing the shadow of this persona — the tension, habit, or reaction that can overgrow their gifts when they are tired, unseen, or uncertain. This is not a flaw to be fixed, but a pattern to understand: the way their strength can become sharp, or soft, or small in the wrong season. Show: What they tend to avoid, deny, or overdo, What emerges when they are overwhelmed or disconnected from purpose, What they might not notice until it's already shaping how they move. Use grounded image or metaphor. Do not be clinical or harsh. The tone is reflective, compassionate, and true.>",
     },
-    category: "destinyRealm",
-    categoryDescription: "The path where traits converge, guiding you to your purpose.",
-    icon: "tapestry.svg",
   },
-  narrative: {
-    id: "narrative",
-    slug: "narrative",
+  {
+    id: "untoldStrengths",
+    slug: "untold-strengths",
     requiredAssessments: 20,
-    title: "Narrative",
-    description: "Your life's story unfolds, told through instinct and choice.",
+    title: "Untold Strengths",
+    description: "The persona's untold strengths.",
     promptInstructions: {
-      title: "<2-4 word mythic title naming the narrative's theme>",
-      details: "<Write a 250-300 word narrative about an animal protagonist whose temperament, choices, and environment reflect the user's dominant traits from all dimensions, without naming the traits. Introduce a specific animal species and individual as the protagonist, present a realistic challenge, show how their traits inform their actions, highlight undervalued trait advantages (e.g., introversion fostering insight), maintain a mature, non-judgmental tone at a Grade 8-10 reading level, avoid fairy-tale clichés, and conclude with an earned, uplifting resolution. Example: 'The Quiet Fox navigates a storm-threatened forest, using keen senses to find a safe path, guiding others with subtle wisdom.'>",
+      title: "<2-3 words to describe the persona's untold strengths.>",
+      details:
+        "<Write a short, emotionally resonant reflection (3–4 sentences) that reveals a strength this persona carries that is rarely seen — even by themselves. This is a capacity that grows quietly beneath their patterns: something that appears slowly, under pressure, or in moments when no one is watching. Show: What strength lives in their restraint, observation, care, or refusal to follow the crowd, How they endure, shift others, or hold meaning without needing recognition, Why this strength is rarely named, but deeply needed in the world. Use metaphor or poetic image, but make the impact feel real. The tone should be reverent, clear, and affirming — not grandiose, just true.>",
     },
-    category: "narrative",
-    categoryDescription: "Your life's story, woven through instinct and choice.",
-    icon: "scroll.svg",
-  }
-};
+  },
+];
 
 // Derived objects for backward compatibility
-export const REVELATION_MILESTONES = Object.values(PERSONALITY_ANALYSIS_SECTIONS).map(section => ({
-  key: section.id,
-  slug: section.slug,
-  requiredAssessments: section.requiredAssessments,
-  title: section.title,
-  description: section.description
-}));
-
-// Create categories object from unique categories in sections
-const uniqueCategories = [...new Set(Object.values(PERSONALITY_ANALYSIS_SECTIONS).map(section => section.category))];
-export const CATEGORIES = Object.fromEntries(
-  uniqueCategories.map(categoryId => {
-    const section = Object.values(PERSONALITY_ANALYSIS_SECTIONS).find(s => s.category === categoryId);
-    return [categoryId, {
-      id: categoryId,
-      description: section?.categoryDescription || ''
-    }];
+export const REVELATION_MILESTONES = PERSONALITY_ANALYSIS_SECTIONS.map(
+  (section) => ({
+    key: section.id,
+    slug: section.slug,
+    requiredAssessments: section.requiredAssessments,
+    title: section.title,
+    description: section.description,
   })
 );
+
+// Create categories object - currently no categories defined in sections
+export const CATEGORIES = {};
 
 export default {
   SHARED_PROMPT_INSTRUCTIONS,
   REVELATION_MILESTONES,
   CATEGORIES,
-  PERSONALITY_ANALYSIS_SECTIONS
+  PERSONALITY_ANALYSIS_SECTIONS,
 };

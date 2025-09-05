@@ -63,7 +63,7 @@ export async function handler(event, context) {
     checkApiCallLimit(userData, API_LIMITS);
 
     // Generate the analysis prompt
-    const prompt = generateAnalysisPrompt(assessmentScores, { category: cluster, sectionId });
+    const prompt = generateAnalysisPrompt(assessmentScores, { category: cluster, sectionId }, userData);
     console.log('prompt', prompt);
 
     // Call OpenAI API
@@ -116,8 +116,8 @@ export async function handler(event, context) {
   }
 }
 
-const formatAttributesIntoText = (assessmentScores) => {
-  let text = "";
+const formatAttributesIntoText = (assessmentScores, limit = 5) => {
+  let text = "Personality Traits:\n";
 
   // put most intense traits first
   const sortedKeys = Object.keys(assessmentScores).sort(
@@ -125,7 +125,7 @@ const formatAttributesIntoText = (assessmentScores) => {
   );
 
   // each line: descriptive leaning text per absolute score range
-  sortedKeys.forEach((key) => {
+  sortedKeys.slice(0, limit).forEach((key) => {
     const scale = PersonalityData.find((scale) => scale.id === key);
     if (!scale) return;
 
@@ -137,17 +137,17 @@ const formatAttributesIntoText = (assessmentScores) => {
 
     let description = "";
     if (absScore <= 10) {
-      description = `Slightly more ${dominantTraitName} than ${oppositeTraitName}`;
+      description = `- Balanced between ${dominantTraitName} and ${oppositeTraitName}`;
     } else if (absScore <= 25) {
-      description = `Light leaning toward ${dominantTraitName}`;
-    } else if (absScore <= 45) {
-      description = `Moderate leaning toward ${dominantTraitName}`;
-    } else if (absScore <= 65) {
-      description = `Clear leaning toward ${dominantTraitName}`;
+      description = `- Light leaning toward ${dominantTraitName}`;
+    } else if (absScore <= 50) {
+      description = `- Moderate leaning toward ${dominantTraitName}`;
+    } else if (absScore <= 75) {
+      description = `- Clear leaning toward ${dominantTraitName}`;
     } else if (absScore <= 85) {
-      description = `Strong leaning toward ${dominantTraitName}`;
+      description = `- Strong leaning toward ${dominantTraitName}`;
     } else {
-      description = `Extreme leaning toward ${dominantTraitName}`;
+      description = `- Extreme leaning toward ${dominantTraitName}`;
     }
 
     text += `${description}\n`;
@@ -157,7 +157,7 @@ const formatAttributesIntoText = (assessmentScores) => {
 };
 
 // Generate prompt for a specific category or section
-export const generateAnalysisPrompt = (assessmentScores, { category, sectionId }) => {
+export const generateAnalysisPrompt = (assessmentScores, { category, sectionId }, userData) => {
   // console.log('generateAnalysisPrompt', assessmentScores, category, '\n');
   // Build prompt
   let prompt = `${SHARED_PROMPT_INSTRUCTIONS}\n\n`;
@@ -171,13 +171,14 @@ export const generateAnalysisPrompt = (assessmentScores, { category, sectionId }
   // Determine which sections to generate
   let sectionsToGenerate = [];
   if (sectionId) {
-    const one = Object.values(PERSONALITY_ANALYSIS_SECTIONS).find((s) => s.id === sectionId);
+    const one = PERSONALITY_ANALYSIS_SECTIONS.find((s) => s.id === sectionId);
     if (!one) {
       throw new Error(`Unknown sectionId: ${sectionId}`);
     }
     sectionsToGenerate = [one];
   } else if (category) {
-    sectionsToGenerate = Object.values(PERSONALITY_ANALYSIS_SECTIONS).filter((s) => s.category === category);
+    // Since sections don't have categories currently, return all sections for any category
+    sectionsToGenerate = PERSONALITY_ANALYSIS_SECTIONS;
     if (!sectionsToGenerate.length) {
       throw new Error(`No sections found for category: ${category}`);
     }
@@ -201,7 +202,14 @@ export const generateAnalysisPrompt = (assessmentScores, { category, sectionId }
   sectionsToGenerate.forEach((section) => {
     prompt += `"${section.id}": {\n`;
     Object.entries(section.promptInstructions).forEach(([field, value]) => {
-      prompt += `"${field}": "${value}",\n`;
+      // Replace &ROLE& with theAwakening title if it exists
+      let processedValue = value;
+      if (value.includes('&ROLE&')) {
+        // Get the user's theAwakening title from their personality analysis
+        const theAwakeningTitle = userData?.personalityAnalysis?.theAwakening?.title || 'the awakened one';
+        processedValue = value.replace(/&ROLE&/g, theAwakeningTitle);
+      }
+      prompt += `"${field}": "${processedValue}",\n`;
     });
     prompt += `},\n`;
   });
