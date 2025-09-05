@@ -41,7 +41,6 @@ export interface UserData {
   id: string;
   assessmentScores: AssessmentScore;
   personalityAnalysis: PersonalityAnalysis;
-  mythicMirror: MythicMirrorEntry[];
   openaiApiCalls: number;
   payments: Payment[];
   createdAt?: any;
@@ -55,15 +54,6 @@ export interface Payment {
   status: string;
   createdAt: any;
   updatedAt: any;
-}
-
-export interface MythicMirrorEntry {
-  challenge: string;
-  response: {
-    title: string;
-    details: string;
-  };
-  createdAt: any;
 }
 
 // Firebase personality analysis
