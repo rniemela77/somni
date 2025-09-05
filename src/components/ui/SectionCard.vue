@@ -47,12 +47,16 @@ const props = defineProps<{
 }
 
 h2 {
-    font-size: 14px;
+    font-size: 13px;
 }
 
 h3 {
     font-size: 20px;
     font-weight: 600;
     color: var(--text-primary);
+}
+
+.section-card-content {
+    max-width: 33rem;
 }
 </style>

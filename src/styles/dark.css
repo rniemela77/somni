@@ -27,7 +27,6 @@ body.dark {
   --bs-emphasis-color-rgb: var(--primary-color-lightest);
 
   --card-bg-color: rgba(0 0 0 / 0.6);
-  --card-bg-color-full-opacity: rgba(0 0 0 / 0.85);
   --card-inset-bg-color: rgba(255 255 255 / 0.1);
 
   --card-fancy-bg-color: linear-gradient(144deg, #44309287 -114%, transparent 75%), #3333336e;

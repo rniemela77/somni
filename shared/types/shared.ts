@@ -97,13 +97,10 @@ export interface PersonalitySectionPromptInstructions {
 // This matches the actual structure in shared/config/personalityAnalysis.js
 export interface PersonalitySection {
   id: string;
-  slug: string;
-  requiredAssessments: number;
   title: string;
-  description: string;
   promptInstructions: PersonalitySectionPromptInstructions;
-  category?: string;
-  icon?: string;
+  category: string;
+  icon: string;
 }
 
 export interface ExtendedPersonalitySection extends PersonalitySection {
@@ -114,8 +111,10 @@ export interface PersonalityAttributes {
   [key: string]: any;
 }
 
-// Type for the sections array
-export type PersonalityAnalysisSections = PersonalitySection[];
+// Type for the sections object
+export interface PersonalityAnalysisSections {
+  [key: string]: PersonalitySection;
+}
 
 
 

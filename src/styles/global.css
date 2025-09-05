@@ -62,7 +62,6 @@ body {
   --neutral-color-lightest: #eee;
 
   --card-bg-color: rgba(255 255 255 / 0.8);
-  --card-bg-color-full-opacity: rgba(255 255 255 / 0.95);
   --card-inset-bg-color: rgba(0, 0, 0, 0.05);
 
   --card-fancy-bg-color: linear-gradient(
@@ -273,23 +272,7 @@ form {
 input:disabled {
   background-color: var(--card-bg-color)!important;
 }
-textarea {
-  background-color: var(--card-bg-color)!important;
-}
 
 .text-primary {
   color: var(--text-primary)!important;
-}
-
-
-/* scrollbars */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: var(--card-bg-color);
-  border: 1px solid var(--primary-color);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
 }
