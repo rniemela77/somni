@@ -60,7 +60,7 @@
                 to="/insights" 
                 class="btn btn-sm btn-outline-primary read-more-btn"
               >
-                Read More
+                View Persona Lore
                 <i class="bi bi-arrow-right ms-1"></i>
               </router-link>
             </div>
@@ -99,12 +99,16 @@ const dominantTraits = computed(() => {
   // Get all traits with their scores
   const traitsWithScores = completedAssessmentsWithScores.value.map(assessment => {
     const score = assessment.score;
-    const dominantTrait = score < 0 ? assessment.traits.negative : assessment.traits.positive;
+    const isPositive = score >= 0;
+    const dominantTrait = isPositive ? assessment.traits.positive : assessment.traits.negative;
     const absScore = Math.abs(score);
+    
+    // Use the new label system
+    const label = isPositive ? assessment.positive_label : assessment.negative_label;
     
     return {
       id: assessment.id,
-      name: dominantTrait.name,
+      name: label || dominantTrait.name, // Fallback to trait name if label not available
       score: absScore,
       dotCount: Math.ceil(absScore / 10) // Convert to dots (0-100 score becomes 0-10 dots)
     };

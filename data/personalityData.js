@@ -4,6 +4,8 @@ const personalityData = [
     displayName: "Introversion-Extraversion",
     positive: "Extraversion",
     negative: "Introversion",
+    positive_label: "Outer World",
+    negative_label: "Inner World",
     title: "Social Dynamics",
     slug: "social_dynamics",
     description:
@@ -61,6 +63,8 @@ const personalityData = [
     displayName: "Neuroticism-Emotional Stability",
     positive: "Emotional Stability",
     negative: "Neuroticism",
+    positive_label: "Stillness",
+    negative_label: "Storm",
     title: "Emotional Landscape",
     slug: "emotional_landscape",
     description:
@@ -118,6 +122,8 @@ const personalityData = [
     displayName: "Openness-Closedness",
     positive: "Openness",
     negative: "Closedness",
+    positive_label: "Seeker",
+    negative_label: "Steward",
     title: "Curiosity Continuum",
     slug: "curiosity_continuum",
     description:
@@ -175,6 +181,8 @@ const personalityData = [
     displayName: "Agreeableness-Antagonism",
     positive: "Agreeableness",
     negative: "Antagonism",
+    positive_label: "Harmony",
+    negative_label: "Edge",
     title: "Interpersonal Harmony",
     slug: "interpersonal_harmony",
     description:
@@ -232,6 +240,8 @@ const personalityData = [
     displayName: "Conscientiousness-Disinhibition",
     positive: "Conscientiousness",
     negative: "Disinhibition",
+    positive_label: "Structure",
+    negative_label: "Flow",
     title: "Duty and Drive",
     slug: "duty_and_drive",
     description:
@@ -289,6 +299,8 @@ const personalityData = [
     displayName: "Humility–Arrogance",
     positive: "Humility",
     negative: "Arrogance",
+    positive_label: "Hidden Light",
+    negative_label: "Shining Crown",
     title: "Integrity Spectrum",
     slug: "integrity_spectrum",
     description:
@@ -346,6 +358,8 @@ const personalityData = [
     displayName: "Sensing-Intuition",
     positive: "Intuition",
     negative: "Sensing",
+    positive_label: "The Unseen",
+    negative_label: "The Known",
     title: "Perception Pathways",
     slug: "perception_pathways",
     description:
@@ -403,6 +417,8 @@ const personalityData = [
     displayName: "Thinking-Feeling",
     positive: "Thinking",
     negative: "Feeling",
+    positive_label: "Clarity",
+    negative_label: "Warmth",
     title: "Decision Dynamics",
     slug: "decision_dynamics",
     description:
@@ -460,6 +476,8 @@ const personalityData = [
     displayName: "Judging-Perceiving",
     positive: "Judging",
     negative: "Perceiving",
+    positive_label: "The Path",
+    negative_label: "The Wind",
     title: "Life Approach",
     slug: "life_approach",
     description:
@@ -517,6 +535,8 @@ const personalityData = [
     displayName: "Psychoticism-Socialization",
     positive: "Socialization",
     negative: "Psychoticism",
+    positive_label: "The Weaver",
+    negative_label: "The Wanderer",
     title: "Social Integration",
     slug: "social_integration",
     description:
@@ -574,6 +594,8 @@ const personalityData = [
     displayName: "Optimism-Pessimism",
     positive: "Optimism",
     negative: "Pessimism",
+    positive_label: "Lightward",
+    negative_label: "Shadowward",
     title: "Outlook Orientation",
     slug: "outlook_orientation",
     description:
@@ -630,6 +652,8 @@ const personalityData = [
     displayName: "Assertiveness-Passivity",
     positive: "Assertiveness",
     negative: "Passivity",
+    positive_label: "Flame",
+    negative_label: "River",
     title: "Influence Style",
     slug: "influence_style",
     description:
@@ -686,6 +710,8 @@ const personalityData = [
     displayName: "Empathy-Callousness",
     positive: "Empathy",
     negative: "Callousness",
+    positive_label: "Open Heart",
+    negative_label: "Iron Veil",
     title: "Emotional Connection",
     slug: "emotional_connection",
     description:
@@ -734,6 +760,8 @@ const personalityData = [
     displayName: "Impulsivity-Self-Control",
     positive: "Self-Control",
     negative: "Impulsivity",
+    positive_label: "Measured Hand",
+    negative_label: "Wild Spark",
     title: "Behavioral Regulation",
     slug: "behavioral_regulation",
     description:
@@ -778,6 +806,8 @@ const personalityData = [
     displayName: "Resilience-Fragility",
     positive: "Resilience",
     negative: "Fragility",
+    positive_label: "Oak",
+    negative_label: "Glass",
     title: "Adversity Response",
     slug: "adversity_response",
     description:
@@ -822,6 +852,8 @@ const personalityData = [
     displayName: "Creativity-Conventionality",
     positive: "Creativity",
     negative: "Conventionality",
+    positive_label: "The Artist",
+    negative_label: "The Architect",
     title: "Innovation Spectrum",
     slug: "innovation_spectrum",
     description:
@@ -866,6 +898,8 @@ const personalityData = [
     displayName: "Religiosity-Secularism",
     positive: "Secularism",
     negative: "Religiosity",
+    positive_label: "The Scholar",
+    negative_label: "The Believer",
     title: "Belief Orientation",
     slug: "belief_orientation",
     description:
@@ -918,6 +952,8 @@ const personalityData = [
     displayName: "Masculinity-Femininity",
     positive: "Femininity",
     negative: "Masculinity",
+    positive_label: "The Nurturer",
+    negative_label: "The Warrior",
     title: "Gender Expression",
     slug: "gender_expression",
     description:
@@ -962,6 +998,8 @@ const personalityData = [
     displayName: "Authoritarianism-Egalitarianism",
     positive: "Egalitarianism",
     negative: "Authoritarianism",
+    positive_label: "The Circle",
+    negative_label: "The Pyramid",
     title: "Power Dynamics",
     slug: "power_dynamics",
     description:
@@ -1010,6 +1048,8 @@ const personalityData = [
     displayName: "Narcissism-Modesty",
     positive: "Modesty",
     negative: "Narcissism",
+    positive_label: "The Mirror",
+    negative_label: "The Spotlight",
     title: "Self-Perception",
     slug: "self_perception",
     description:

@@ -3,6 +3,8 @@ export interface Assessment {
   displayName: string;
   positive: string;
   negative: string;
+  positive_label: string;
+  negative_label: string;
   title: string;
   slug: string;
   description: string;
