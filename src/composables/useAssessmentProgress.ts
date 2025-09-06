@@ -40,10 +40,12 @@ export const useAssessmentProgress = () => {
   });
 
   const completedAssessmentsWithScores = computed(() => {
-    return completedAssessments.value.map((assessment) => ({
-      ...assessment,
-      score: userProfileAssessmentScores.value?.[assessment.id] ?? 0,
-    }));
+    return completedAssessments.value
+      .map((assessment) => ({
+        ...assessment,
+        score: userProfileAssessmentScores.value?.[assessment.id] ?? 0,
+      }))
+      .sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
   });
 
   const isInsightsUnlocked = computed(() => {

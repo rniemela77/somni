@@ -116,6 +116,24 @@
               </div>
               <h4>{{ selectedAssessment?.traits.negative.name }}</h4>
               <p>{{ selectedAssessment?.traits.negative.description }}</p>
+              
+              <!-- Strength and Blindspot for negative trait -->
+              <div class="trait-details">
+                <div class="trait-detail-item">
+                  <h5 class="trait-detail-label">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Strength
+                  </h5>
+                  <p class="trait-detail-text">{{ selectedAssessment?.traits.negative.strength }}</p>
+                </div>
+                <div class="trait-detail-item">
+                  <h5 class="trait-detail-label">
+                    <i class="bi bi-eye-slash me-1"></i>
+                    Blindspot
+                  </h5>
+                  <p class="trait-detail-text">{{ selectedAssessment?.traits.negative.blindspot }}</p>
+                </div>
+              </div>
             </div>
             <div class="trait-description">
               <div class="trait-intensity">
@@ -126,6 +144,24 @@
               </div>
               <h4>{{ selectedAssessment?.traits.positive.name }}</h4>
               <p>{{ selectedAssessment?.traits.positive.description }}</p>
+              
+              <!-- Strength and Blindspot for positive trait -->
+              <div class="trait-details">
+                <div class="trait-detail-item">
+                  <h5 class="trait-detail-label">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Strength
+                  </h5>
+                  <p class="trait-detail-text">{{ selectedAssessment?.traits.positive.strength }}</p>
+                </div>
+                <div class="trait-detail-item">
+                  <h5 class="trait-detail-label">
+                    <i class="bi bi-eye-slash me-1"></i>
+                    Blindspot
+                  </h5>
+                  <p class="trait-detail-text">{{ selectedAssessment?.traits.positive.blindspot }}</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -433,6 +469,41 @@ const retakeAssessment = () => {
   margin-bottom: 0.5rem;
   font-style: italic;
   min-height: 1.5rem;
+}
+
+.trait-details {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--card-border-color);
+}
+
+.trait-detail-item {
+  margin-bottom: 1rem;
+}
+
+.trait-detail-item:last-child {
+  margin-bottom: 0;
+}
+
+.trait-detail-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.trait-detail-label i {
+  color: var(--primary-color);
+  font-size: 0.9rem;
+}
+
+.trait-detail-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
 }
 
 .regenerate-button-container {

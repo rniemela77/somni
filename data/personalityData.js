@@ -4,10 +4,12 @@ const personalityData = [
     displayName: "Introversion-Extraversion",
     positive: "Extraversion",
     negative: "Introversion",
+    positive_label: "Outer World",
+    negative_label: "Inner World",
     title: "Social Dynamics",
     slug: "social_dynamics",
     description:
-      "This quiz assesses your tendency toward introversion or extraversion.",
+      "This quest reveals how you move through the world: inward and deep, or outward and bright.",
     traits: {
       positive: {
         name: "Extraversion",
@@ -61,10 +63,12 @@ const personalityData = [
     displayName: "Neuroticism-Emotional Stability",
     positive: "Emotional Stability",
     negative: "Neuroticism",
+    positive_label: "Stillness",
+    negative_label: "Storm",
     title: "Emotional Landscape",
     slug: "emotional_landscape",
     description:
-      "This quiz explores your level of emotional stability versus neurotic tendencies.",
+      "This quest explores how you carry tension — whether storms pass through you or settle in your bones.",
     traits: {
       positive: {
         name: "Emotional Stability",
@@ -118,10 +122,12 @@ const personalityData = [
     displayName: "Openness-Closedness",
     positive: "Openness",
     negative: "Closedness",
+    positive_label: "Seeker",
+    negative_label: "Steward",
     title: "Curiosity Continuum",
     slug: "curiosity_continuum",
     description:
-      "This quiz evaluates your openness to new experiences versus preference for familiarity.",
+      "This quest unveils your relationship with the unknown: do you seek the uncharted, or walk trusted ground?",
     traits: {
       positive: {
         name: "Openness",
@@ -175,10 +181,12 @@ const personalityData = [
     displayName: "Agreeableness-Antagonism",
     positive: "Agreeableness",
     negative: "Antagonism",
+    positive_label: "Harmony",
+    negative_label: "Edge",
     title: "Interpersonal Harmony",
     slug: "interpersonal_harmony",
     description:
-      "This quiz measures your tendency toward cooperation versus confrontation in relationships.",
+      "This quest reveals how you navigate others — through harmony and trust, or through testing and truth.",
     traits: {
       positive: {
         name: "Agreeableness",
@@ -232,10 +240,12 @@ const personalityData = [
     displayName: "Conscientiousness-Disinhibition",
     positive: "Conscientiousness",
     negative: "Disinhibition",
+    positive_label: "Structure",
+    negative_label: "Flow",
     title: "Duty and Drive",
     slug: "duty_and_drive",
     description:
-      "This quiz assesses your level of discipline versus spontaneity in your actions.",
+      "This quest weighs the rhythm of your will — structured and steady, or spontaneous and free.",
     traits: {
       positive: {
         name: "Conscientiousness",
@@ -289,10 +299,12 @@ const personalityData = [
     displayName: "Humility–Arrogance",
     positive: "Humility",
     negative: "Arrogance",
+    positive_label: "Hidden Light",
+    negative_label: "Shining Crown",
     title: "Integrity Spectrum",
     slug: "integrity_spectrum",
     description:
-      "This quiz evaluates your inclination toward humility versus arrogance in how you view yourself and treat others.",
+      "This quest explores how you hold your worth: quietly, like a hidden ember, or boldly, like a rising flame.",
     traits: {
       positive: {
         name: "Humility",
@@ -346,10 +358,12 @@ const personalityData = [
     displayName: "Sensing-Intuition",
     positive: "Intuition",
     negative: "Sensing",
+    positive_label: "The Unseen",
+    negative_label: "The Known",
     title: "Perception Pathways",
     slug: "perception_pathways",
     description:
-      "This quiz measures your preference for concrete details versus abstract possibilities.",
+      "This quest reveals how you perceive: through what is seen and touched, or what is sensed and felt.",
     traits: {
       positive: {
         name: "Intuition",
@@ -403,10 +417,12 @@ const personalityData = [
     displayName: "Thinking-Feeling",
     positive: "Thinking",
     negative: "Feeling",
+    positive_label: "Clarity",
+    negative_label: "Warmth",
     title: "Decision Dynamics",
     slug: "decision_dynamics",
     description:
-      "This quiz assesses your preference for logic versus values in decision-making.",
+      "This quest explores how you choose — by reason's edge or the heart's pull.",
     traits: {
       positive: {
         name: "Thinking",
@@ -460,10 +476,12 @@ const personalityData = [
     displayName: "Judging-Perceiving",
     positive: "Judging",
     negative: "Perceiving",
+    positive_label: "The Path",
+    negative_label: "The Wind",
     title: "Life Approach",
     slug: "life_approach",
     description:
-      "This quiz evaluates your preference for structure versus flexibility in life.",
+      "This quest uncovers your pathfinding style — clear maps or shifting winds.",
     traits: {
       positive: {
         name: "Judging",
@@ -517,10 +535,12 @@ const personalityData = [
     displayName: "Psychoticism-Socialization",
     positive: "Socialization",
     negative: "Psychoticism",
+    positive_label: "The Weaver",
+    negative_label: "The Wanderer",
     title: "Social Integration",
     slug: "social_integration",
     description:
-      "This quiz measures your adherence to social norms versus nonconformity.",
+      "This quest reveals your place in the pattern — do you walk the circle, or redraw its lines?",
     traits: {
       positive: {
         name: "Socialization",
@@ -574,10 +594,12 @@ const personalityData = [
     displayName: "Optimism-Pessimism",
     positive: "Optimism",
     negative: "Pessimism",
+    positive_label: "Lightward",
+    negative_label: "Shadowward",
     title: "Outlook Orientation",
     slug: "outlook_orientation",
     description:
-      "This quiz assesses your tendency toward hopeful versus cautious outlooks.",
+      "This quest explores your outlook — do you look for dawn, or guard against dusk?",
     traits: {
       positive: {
         name: "Optimism",
@@ -630,10 +652,12 @@ const personalityData = [
     displayName: "Assertiveness-Passivity",
     positive: "Assertiveness",
     negative: "Passivity",
+    positive_label: "Flame",
+    negative_label: "River",
     title: "Influence Style",
     slug: "influence_style",
     description:
-      "This quiz evaluates your tendency to lead versus defer in interactions.",
+      "This quest reveals how you meet resistance — by stepping forward or holding ground.",
     traits: {
       positive: {
         name: "Assertiveness",
@@ -686,10 +710,12 @@ const personalityData = [
     displayName: "Empathy-Callousness",
     positive: "Empathy",
     negative: "Callousness",
+    positive_label: "Open Heart",
+    negative_label: "Iron Veil",
     title: "Emotional Connection",
     slug: "emotional_connection",
     description:
-      "This quiz measures your sensitivity to others’ emotions versus detachment.",
+      "This quest unveils how you hold the feelings of others — close to the chest or at a careful distance.",
     traits: {
       positive: {
         name: "Empathy",
@@ -734,10 +760,12 @@ const personalityData = [
     displayName: "Impulsivity-Self-Control",
     positive: "Self-Control",
     negative: "Impulsivity",
+    positive_label: "Measured Hand",
+    negative_label: "Wild Spark",
     title: "Behavioral Regulation",
     slug: "behavioral_regulation",
     description:
-      "This quiz assesses your tendency toward restraint versus spontaneity.",
+      "This quest explores how you act — in sparks, or in steps.",
     traits: {
       positive: {
         name: "Self-Control",
@@ -778,10 +806,12 @@ const personalityData = [
     displayName: "Resilience-Fragility",
     positive: "Resilience",
     negative: "Fragility",
+    positive_label: "Oak",
+    negative_label: "Glass",
     title: "Adversity Response",
     slug: "adversity_response",
     description:
-      "This quiz evaluates your ability to withstand versus succumb to adversity.",
+      "This quest uncovers how you bend under pressure — and whether you break, or become something new.",
     traits: {
       positive: {
         name: "Resilience",
@@ -822,10 +852,12 @@ const personalityData = [
     displayName: "Creativity-Conventionality",
     positive: "Creativity",
     negative: "Conventionality",
+    positive_label: "The Artist",
+    negative_label: "The Architect",
     title: "Innovation Spectrum",
     slug: "innovation_spectrum",
     description:
-      "This quiz measures your inclination toward originality versus tradition.",
+      "This quest reveals your relationship with creation — do you weave new shapes, or tend the ancient forms?",
     traits: {
       positive: {
         name: "Creativity",
@@ -866,10 +898,12 @@ const personalityData = [
     displayName: "Religiosity-Secularism",
     positive: "Secularism",
     negative: "Religiosity",
+    positive_label: "The Scholar",
+    negative_label: "The Believer",
     title: "Belief Orientation",
     slug: "belief_orientation",
     description:
-      "This quiz assesses your reliance on spiritual versus rational frameworks.",
+      "This quest explores how you seek meaning — through faith in something higher, or trust in what you can hold.",
     traits: {
       positive: {
         name: "Secularism",
@@ -918,10 +952,12 @@ const personalityData = [
     displayName: "Masculinity-Femininity",
     positive: "Femininity",
     negative: "Masculinity",
+    positive_label: "The Nurturer",
+    negative_label: "The Warrior",
     title: "Gender Expression",
     slug: "gender_expression",
     description:
-      "This quiz evaluates your alignment with nurturing versus assertive traits.",
+      "This quest reveals your balance of strength and nurture, direction and depth.",
     traits: {
       positive: {
         name: "Femininity",
@@ -962,10 +998,12 @@ const personalityData = [
     displayName: "Authoritarianism-Egalitarianism",
     positive: "Egalitarianism",
     negative: "Authoritarianism",
+    positive_label: "The Circle",
+    negative_label: "The Pyramid",
     title: "Power Dynamics",
     slug: "power_dynamics",
     description:
-      "This quiz measures your preference for equality versus hierarchy.",
+      "This quest explores your sense of order — built from hierarchy or shared ground.",
     traits: {
       positive: {
         name: "Egalitarianism",
@@ -1010,10 +1048,12 @@ const personalityData = [
     displayName: "Narcissism-Modesty",
     positive: "Modesty",
     negative: "Narcissism",
+    positive_label: "The Mirror",
+    negative_label: "The Spotlight",
     title: "Self-Perception",
     slug: "self_perception",
     description:
-      "This quiz assesses your tendency toward humility versus self-importance.",
+      "This quest uncovers how you reflect the self — as a spotlight, or a mirror turned outward.",
     traits: {
       positive: {
         name: "Modesty",

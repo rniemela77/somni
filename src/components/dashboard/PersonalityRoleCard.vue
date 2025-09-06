@@ -60,7 +60,7 @@
                 to="/insights" 
                 class="btn btn-sm btn-outline-primary read-more-btn"
               >
-                Read More
+                View Persona Lore
                 <i class="bi bi-arrow-right ms-1"></i>
               </router-link>
             </div>
@@ -99,12 +99,16 @@ const dominantTraits = computed(() => {
   // Get all traits with their scores
   const traitsWithScores = completedAssessmentsWithScores.value.map(assessment => {
     const score = assessment.score;
-    const dominantTrait = score < 0 ? assessment.traits.negative : assessment.traits.positive;
+    const isPositive = score >= 0;
+    const dominantTrait = isPositive ? assessment.traits.positive : assessment.traits.negative;
     const absScore = Math.abs(score);
+    
+    // Use the new label system
+    const label = isPositive ? assessment.positive_label : assessment.negative_label;
     
     return {
       id: assessment.id,
-      name: dominantTrait.name,
+      name: label || dominantTrait.name, // Fallback to trait name if label not available
       score: absScore,
       dotCount: Math.ceil(absScore / 10) // Convert to dots (0-100 score becomes 0-10 dots)
     };
@@ -303,13 +307,16 @@ const generateAwakening = async () => {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--bs-gray-300);
+  border: 1px solid var(--primary-color);
+  opacity: 0.5;
   transition: all 0.2s ease;
 }
 
 .dot.filled {
-  background-color: var(--bs-primary);
-  box-shadow: 0 0 4px rgba(var(--bs-primary-rgb), 0.3);
+  background-color: var(--text-primary);
+  box-shadow: 0 0 4px rgba(var(--bs-primary-rgb), 1);
+  filter: brightness(1.9);
+  opacity: 1;
 }
 
 /* Read More button styling */
