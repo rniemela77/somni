@@ -9,7 +9,7 @@ const personalityData = [
     title: "Social Dynamics",
     slug: "social_dynamics",
     description:
-      "This quiz assesses your tendency toward introversion or extraversion.",
+      "This quest reveals how you move through the world: inward and deep, or outward and bright.",
     traits: {
       positive: {
         name: "Extraversion",
@@ -68,7 +68,7 @@ const personalityData = [
     title: "Emotional Landscape",
     slug: "emotional_landscape",
     description:
-      "This quiz explores your level of emotional stability versus neurotic tendencies.",
+      "This quest explores how you carry tension — whether storms pass through you or settle in your bones.",
     traits: {
       positive: {
         name: "Emotional Stability",
@@ -127,7 +127,7 @@ const personalityData = [
     title: "Curiosity Continuum",
     slug: "curiosity_continuum",
     description:
-      "This quiz evaluates your openness to new experiences versus preference for familiarity.",
+      "This quest unveils your relationship with the unknown: do you seek the uncharted, or walk trusted ground?",
     traits: {
       positive: {
         name: "Openness",
@@ -186,7 +186,7 @@ const personalityData = [
     title: "Interpersonal Harmony",
     slug: "interpersonal_harmony",
     description:
-      "This quiz measures your tendency toward cooperation versus confrontation in relationships.",
+      "This quest reveals how you navigate others — through harmony and trust, or through testing and truth.",
     traits: {
       positive: {
         name: "Agreeableness",
@@ -245,7 +245,7 @@ const personalityData = [
     title: "Duty and Drive",
     slug: "duty_and_drive",
     description:
-      "This quiz assesses your level of discipline versus spontaneity in your actions.",
+      "This quest weighs the rhythm of your will — structured and steady, or spontaneous and free.",
     traits: {
       positive: {
         name: "Conscientiousness",
@@ -304,7 +304,7 @@ const personalityData = [
     title: "Integrity Spectrum",
     slug: "integrity_spectrum",
     description:
-      "This quiz evaluates your inclination toward humility versus arrogance in how you view yourself and treat others.",
+      "This quest explores how you hold your worth: quietly, like a hidden ember, or boldly, like a rising flame.",
     traits: {
       positive: {
         name: "Humility",
@@ -363,7 +363,7 @@ const personalityData = [
     title: "Perception Pathways",
     slug: "perception_pathways",
     description:
-      "This quiz measures your preference for concrete details versus abstract possibilities.",
+      "This quest reveals how you perceive: through what is seen and touched, or what is sensed and felt.",
     traits: {
       positive: {
         name: "Intuition",
@@ -422,7 +422,7 @@ const personalityData = [
     title: "Decision Dynamics",
     slug: "decision_dynamics",
     description:
-      "This quiz assesses your preference for logic versus values in decision-making.",
+      "This quest explores how you choose — by reason's edge or the heart's pull.",
     traits: {
       positive: {
         name: "Thinking",
@@ -481,7 +481,7 @@ const personalityData = [
     title: "Life Approach",
     slug: "life_approach",
     description:
-      "This quiz evaluates your preference for structure versus flexibility in life.",
+      "This quest uncovers your pathfinding style — clear maps or shifting winds.",
     traits: {
       positive: {
         name: "Judging",
@@ -540,7 +540,7 @@ const personalityData = [
     title: "Social Integration",
     slug: "social_integration",
     description:
-      "This quiz measures your adherence to social norms versus nonconformity.",
+      "This quest reveals your place in the pattern — do you walk the circle, or redraw its lines?",
     traits: {
       positive: {
         name: "Socialization",
@@ -599,7 +599,7 @@ const personalityData = [
     title: "Outlook Orientation",
     slug: "outlook_orientation",
     description:
-      "This quiz assesses your tendency toward hopeful versus cautious outlooks.",
+      "This quest explores your outlook — do you look for dawn, or guard against dusk?",
     traits: {
       positive: {
         name: "Optimism",
@@ -657,7 +657,7 @@ const personalityData = [
     title: "Influence Style",
     slug: "influence_style",
     description:
-      "This quiz evaluates your tendency to lead versus defer in interactions.",
+      "This quest reveals how you meet resistance — by stepping forward or holding ground.",
     traits: {
       positive: {
         name: "Assertiveness",
@@ -715,7 +715,7 @@ const personalityData = [
     title: "Emotional Connection",
     slug: "emotional_connection",
     description:
-      "This quiz measures your sensitivity to others’ emotions versus detachment.",
+      "This quest unveils how you hold the feelings of others — close to the chest or at a careful distance.",
     traits: {
       positive: {
         name: "Empathy",
@@ -765,7 +765,7 @@ const personalityData = [
     title: "Behavioral Regulation",
     slug: "behavioral_regulation",
     description:
-      "This quiz assesses your tendency toward restraint versus spontaneity.",
+      "This quest explores how you act — in sparks, or in steps.",
     traits: {
       positive: {
         name: "Self-Control",
@@ -811,7 +811,7 @@ const personalityData = [
     title: "Adversity Response",
     slug: "adversity_response",
     description:
-      "This quiz evaluates your ability to withstand versus succumb to adversity.",
+      "This quest uncovers how you bend under pressure — and whether you break, or become something new.",
     traits: {
       positive: {
         name: "Resilience",
@@ -857,7 +857,7 @@ const personalityData = [
     title: "Innovation Spectrum",
     slug: "innovation_spectrum",
     description:
-      "This quiz measures your inclination toward originality versus tradition.",
+      "This quest reveals your relationship with creation — do you weave new shapes, or tend the ancient forms?",
     traits: {
       positive: {
         name: "Creativity",
@@ -903,7 +903,7 @@ const personalityData = [
     title: "Belief Orientation",
     slug: "belief_orientation",
     description:
-      "This quiz assesses your reliance on spiritual versus rational frameworks.",
+      "This quest explores how you seek meaning — through faith in something higher, or trust in what you can hold.",
     traits: {
       positive: {
         name: "Secularism",
@@ -957,7 +957,7 @@ const personalityData = [
     title: "Gender Expression",
     slug: "gender_expression",
     description:
-      "This quiz evaluates your alignment with nurturing versus assertive traits.",
+      "This quest reveals your balance of strength and nurture, direction and depth.",
     traits: {
       positive: {
         name: "Femininity",
@@ -1003,7 +1003,7 @@ const personalityData = [
     title: "Power Dynamics",
     slug: "power_dynamics",
     description:
-      "This quiz measures your preference for equality versus hierarchy.",
+      "This quest explores your sense of order — built from hierarchy or shared ground.",
     traits: {
       positive: {
         name: "Egalitarianism",
@@ -1053,7 +1053,7 @@ const personalityData = [
     title: "Self-Perception",
     slug: "self_perception",
     description:
-      "This quiz assesses your tendency toward humility versus self-importance.",
+      "This quest uncovers how you reflect the self — as a spotlight, or a mirror turned outward.",
     traits: {
       positive: {
         name: "Modesty",
