@@ -8,7 +8,8 @@ Creator: Robert Niemela
 
 ## Website URL
 
-https://somni.netlify.app/
+https://somni.quest/
+
 
 ## Structure
 
