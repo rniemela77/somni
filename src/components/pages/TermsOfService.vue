@@ -23,20 +23,19 @@
         <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities
             under your account. Notify us immediately of any unauthorized use.</p>
 
-        <h3>3. Service Tiers & Subscription</h3>
-        <h4>Free Tier:</h4>
-        <p>Access to basic personality questions and standard AI-generated insights.</p>
-
-        <h4>Premium Tier:</h4>
-        <p>Unlock advanced insights and features by subscribing.</p>
+        <h3>3. Donations & Support</h3>
+        <h4>Optional Donations:</h4>
+        <p>You may choose to make a donation to support the development and maintenance of this service. Donations are
+            completely optional and do not provide any additional benefits, features, or access beyond what is available
+            to all users.</p>
 
         <h4>Payment Processing:</h4>
-        <p>All payments are handled through Stripe. We only receive payment tokens and subscription status; we never see
+        <p>All donations are processed through Stripe. We only receive payment tokens and donation status; we never see
             or store your full payment card data.</p>
 
-        <h4>Billing & Refunds:</h4>
-        <p>Subscription fees are charged in advance on a recurring basis (monthly or annual, as selected). All fees are
-            non-refundable except as required by law.</p>
+        <h4>Donation Policy:</h4>
+        <p>Donations are one-time payments and are non-refundable except as required by law. All users have equal access
+            to all features regardless of donation status.</p>
 
         <h3>4. User Content & AI Processing</h3>
         <h4>Personality Responses:</h4>
