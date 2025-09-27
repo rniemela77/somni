@@ -37,7 +37,7 @@
 							</router-link>
 						</li>
 						<li class="nav-item">
-							<router-link to="/insights" class="nav-link" active-class="active">
+							<router-link to="/mythbook" class="nav-link" active-class="active">
 								<i class="bi bi-journal-bookmark-fill me-2"></i>
 								Mythbook
 							</router-link>

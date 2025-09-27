@@ -1,7 +1,6 @@
 <template>
   <SectionCard
     title="PERSONA"
-    subtitle="Your Mythic Identity"
     iconClass="bi bi-person"
     border="light"
   >

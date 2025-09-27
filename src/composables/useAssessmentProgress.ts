@@ -91,8 +91,8 @@ export const useAssessmentProgress = () => {
     assessment: AssessmentWithScore
   ): AssessmentTrait => {
     return assessment.score < 0
-      ? assessment.traits.negative
-      : assessment.traits.positive;
+      ? assessment.traits.positive
+      : assessment.traits.negative;
   };
 
   const calculatePosition = (score: number): number => {
