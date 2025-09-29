@@ -63,7 +63,7 @@
           >
             <div class="nav-item-content">
               <span class="nav-item-title">{{
-                getDominantTrait(assessment).name
+                getTraitDisplayName(assessment)
               }}</span>
               <span class="nav-item-score"
                 >{{ Math.abs(Math.round(assessment.score)) }}%</span
@@ -144,7 +144,7 @@
             >
               <div class="mobile-nav-item-content">
                 <span class="mobile-nav-item-title">{{
-                  getDominantTrait(assessment).name
+                  getTraitDisplayName(assessment)
                 }}</span>
                 <span class="mobile-nav-item-score"
                   >{{ Math.abs(Math.round(assessment.score)) }}%</span
@@ -182,6 +182,19 @@ const emit = defineEmits<{
 
 const { getDominantTrait } = useAssessmentProgress();
 
+// Function to get display name with both label and trait name
+const getTraitDisplayName = (assessment: AssessmentWithScore): string => {
+  const dominantTrait = getDominantTrait(assessment);
+  const isPositive = assessment.score >= 0;
+  const label = isPositive ? assessment.positive_label : assessment.negative_label;
+  
+  if (label) {
+    return `${label} (${dominantTrait.name})`;
+  }
+  
+  return dominantTrait.name;
+};
+
 // Mobile menu state
 const isMobileMenuOpen = ref(false);
 
@@ -218,7 +231,7 @@ const getCurrentSelectionTitle = () => {
     return section?.title || "Revelation";
   } else {
     const assessment = props.completedAssessmentsWithScores.find(a => a.slug === props.selectedItem!.id);
-    return assessment ? getDominantTrait(assessment).name : "Discovery";
+    return assessment ? getTraitDisplayName(assessment) : "Discovery";
   }
 };
 </script>

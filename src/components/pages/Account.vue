@@ -2,7 +2,7 @@
   <div class="container">
     <h2 class="mb-4 text-cinzel page-title">ACCOUNT</h2>
 
-    <!-- Payment Success Banner -->
+    <!-- Donation Success Banner -->
     <Alert
       v-if="paymentSuccess"
       type="success"
@@ -12,15 +12,7 @@
       class="my-4"
     />
 
-    vCpsrxtaZVQm0Zv8bAiynlK2Lqp2
-    uT3hojMzWSNouKDxsAFvc1scbpP2
-    zpipokoUbmhNjr5gCSXkFUTfshI3
-    v1l4hHUAAmOkRock7CBewiQyDSH2
-    M68XyEpRuaTeT3lsQfd5UzdiJOH3
-
-
-
-    <!-- Payment Error Banner -->
+    <!-- Donation Error Banner -->
     <Alert
       v-if="paymentError"
       type="error"
@@ -30,7 +22,7 @@
       class="my-4"
     />
 
-    <!-- Payment Canceled Banner -->
+    <!-- Donation Canceled Banner -->
     <Alert
       v-if="paymentCanceled"
       type="warning"
@@ -59,7 +51,7 @@
               }}</span>
             </div>
             <div class="detail-item d-flex" v-if="userStore.user?.payments.length">
-              <p class="label fw-bold me-2">Payments:</p>
+              <p class="label fw-bold me-2">Donations:</p>
               <div>
                 <p
                   class="value d-flex align-items-center"
@@ -81,36 +73,35 @@
         </Card>
       </div>
 
-      <!-- Subscription Section -->
+      <!-- Donation Section -->
       <div class="col-md-6 mb-4">
         <Card>
-          <div class="subscription-benefits">
-            <h4>Purchase to unlock:</h4>
-            <ul class="list-unstyled">
-              <li class="d-flex align-items-start mb-2">
-                <span class="benefit-icon text-success me-2">✓</span>
-                <span>10 additional AI personality analysis requests</span>
-              </li>
-            </ul>
+          <div class="donation-info">
+            <h4>Support Somni</h4>
+            <p class="text-muted mb-3">
+              If you find value in Somni and would like to support its development and maintenance, 
+              you can make an optional donation. All features are available to everyone regardless 
+              of donation status.
+            </p>
           </div>
 
-          <div class="payment-section mt-3">
+          <div class="donation-section mt-3">
             <div class="price-display">
               <div class="price-amount d-flex align-items-baseline">
                 <span class="currency fs-5 fw-bold me-1">$</span>
                 <span class="amount display-4">1.99</span>
               </div>
               <div class="price-details text-muted">
-                One-time payment • Instant access
+                Optional donation • Support development
               </div>
             </div>
 
             <button
-              @click="startCheckout"
+              @click="startDonation"
               class="btn btn-primary mt-3"
               :disabled="isLoading"
             >
-              {{ isLoading ? "Processing..." : "Buy Now" }}
+              {{ isLoading ? "Processing..." : "Donate" }}
             </button>
           </div>
         </Card>
@@ -140,11 +131,11 @@ const isLoading = ref(false);
 const paymentError = ref<string | null>(null);
 const paymentSuccess = ref(false);
 const paymentSuccessMessage = ref(
-  "Payment successful! Enjoy all the benefits!"
+  "Thank you for your donation! Your support helps keep Somni running."
 );
 const paymentCanceled = ref(false);
 const paymentCanceledMessage = ref(
-  "Your payment was canceled. No charges were made to your account."
+  "Your donation was canceled. No charges were made to your account."
 );
 
 onMounted(async () => {
@@ -174,7 +165,7 @@ const formatDate = (dateString: { seconds: number } | undefined) => {
   }).format(date);
 };
 
-const startCheckout = async () => {
+const startDonation = async () => {
   try {
     isLoading.value = true;
     paymentError.value = null;
@@ -197,7 +188,7 @@ const startCheckout = async () => {
       );
     }
 
-    // Create a checkout session on the backend
+    // Create a donation session on the backend
     const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
       method: "POST",
       headers: {
@@ -208,28 +199,28 @@ const startCheckout = async () => {
         userId: userStore.firebaseUser?.uid,
         userEmail: userStore.firebaseUser?.email,
         price: 199,
-        productName: "Premium Subscription",
+        productName: "Somni Donation",
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to create checkout session");
+      throw new Error(errorData.message || "Failed to create donation session");
     }
 
     const data = await response.json();
 
-    // Redirect to Stripe Checkout
+    // Redirect to Stripe donation page
     window.location.href = data.url;
   } catch (error) {
-    console.error("Checkout error:", error);
+    console.error("Donation error:", error);
     if (error instanceof Error) {
       if (error.message.includes("Unexpected token")) {
         paymentError.value =
-          "Error connecting to the payment server. Please try again later.";
+          "Error connecting to the donation server. Please try again later.";
       } else {
         paymentError.value =
-          error.message || "An error occurred during checkout";
+          error.message || "An error occurred during donation";
       }
     }
   } finally {

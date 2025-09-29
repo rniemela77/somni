@@ -67,10 +67,15 @@ const routes: AppRouteRecord[] = [
     meta: { requiresAuth: true }
   },
   { 
-    path: "/insights", 
+    path: "/mythbook", 
     component: Insights,
-    name: 'insights',
+    name: 'mythbook',
     meta: { requiresAuth: true }
+  },
+  // Keep old route for backward compatibility
+  { 
+    path: "/insights", 
+    redirect: '/mythbook'
   },
   { 
     path: "/account", 

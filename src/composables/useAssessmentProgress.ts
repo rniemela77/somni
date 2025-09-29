@@ -40,10 +40,12 @@ export const useAssessmentProgress = () => {
   });
 
   const completedAssessmentsWithScores = computed(() => {
-    return completedAssessments.value.map((assessment) => ({
-      ...assessment,
-      score: userProfileAssessmentScores.value?.[assessment.id] ?? 0,
-    }));
+    return completedAssessments.value
+      .map((assessment) => ({
+        ...assessment,
+        score: userProfileAssessmentScores.value?.[assessment.id] ?? 0,
+      }))
+      .sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
   });
 
   const isInsightsUnlocked = computed(() => {
@@ -89,8 +91,8 @@ export const useAssessmentProgress = () => {
     assessment: AssessmentWithScore
   ): AssessmentTrait => {
     return assessment.score < 0
-      ? assessment.traits.negative
-      : assessment.traits.positive;
+      ? assessment.traits.positive
+      : assessment.traits.negative;
   };
 
   const calculatePosition = (score: number): number => {

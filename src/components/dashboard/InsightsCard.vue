@@ -13,7 +13,7 @@
 
     <template #button>
       <router-link
-        to="/insights"
+        to="/mythbook"
         class="btn btn-outline-primary"
       >
         <span>Open Mythbook</span>

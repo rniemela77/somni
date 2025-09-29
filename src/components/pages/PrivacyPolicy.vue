@@ -19,9 +19,9 @@
             selecting vague, non'identifying options (e.g., “rarely,” “sometimes,” “often”). We store your
             responses, but never any directly identifying information alongside them.</p>
 
-        <h3>Payment Data</h3>
-        <p>If you upgrade to Premium, payments are processed through Stripe. We only receive
-            a payment token and subscription status; we do not store or view your full payment card data.
+        <h3>Donation Data</h3>
+        <p>If you choose to make a donation, payments are processed through Stripe. We only receive
+            a payment token and donation status; we do not store or view your full payment card data.
         </p>
 
         <h3>Usage & Analytics Data</h3>
@@ -31,13 +31,13 @@
 
         <h2>3. How We Use Your Information</h2>
 
-        <p>To Provide and Maintain the Service: Authenticate you via Google SSO, manage your subscription
+        <p>To Provide and Maintain the Service: Authenticate you via Google SSO, manage your donation
             status, and deliver personalized AI-generated insights based on your questionnaire answers.</p>
 
         <p>To Improve the Service: Analyze usage patterns and crash reports to fix bugs and enhance
             features.</p>
 
-        <p>To Communicate With You: Send important account or security notices, subscription receipts, and
+        <p>To Communicate With You: Send important account or security notices, donation receipts, and
             support responses.</p>
 
         <p>For AI Analysis: We transmit your questionnaire responses (without your name or email) to
@@ -48,7 +48,7 @@
 
         <ul>
             <li>Google: For authentication and basic profile data.</li>
-            <li>Stripe: For payment processing and subscription management.</li>
+            <li>Stripe: For payment processing and donation management.</li>
             <li>OpenAI: To analyze your anonymized questionnaire responses and generate insights.</li>
             <li>Firebase & Other Service Providers: Hosting, analytics, and crash-reporting services, all
                 bound
@@ -58,7 +58,7 @@
         </ul>
 
         <h2>5. Data Retention</h2>
-        <p>We retain your Google profile data, questionnaire responses, and subscription records as long as
+        <p>We retain your Google profile data, questionnaire responses, and donation records as long as
             your account is active. If you delete your account or request deletion, we will permanently
             erase your data from our systems within 30 days, unless retention is required by law.</p>
 
