@@ -1,8 +1,7 @@
 <template>
   <div>
-    <Card class="mx-auto" style="max-width: 400px;" shadow="dark">
+    <Card class="mx-auto" shadow="dark">
       <h2 class="card-title text-center">Welcome Back</h2>
-      <p class="text-center text-muted">Sign in to continue your learning journey</p>
 
       <form @submit.prevent="handleSignIn" class="mt-4">
         <div class="mb-3">
@@ -16,6 +15,10 @@
           <input id="password" v-model="password" type="password" class="form-control"
             placeholder="Enter your password" required :disabled="userStore.isLoading" />
         </div>
+
+        <p v-if="userStore.error" class="text-center mt-3 text-danger">
+          {{ userStore.error }}
+        </p>
 
         <button type="submit" class="btn btn-primary w-100" :disabled="userStore.isLoading">
           {{ userStore.isLoading ? 'Signing in...' : 'Sign In' }}
@@ -35,10 +38,6 @@
         </svg>
         Continue with Google
       </button>
-
-      <p v-if="userStore.error" class="text-center mt-3 text-danger">
-        {{ userStore.error }}
-      </p>
 
       <div class="text-center mt-4">
         <p>Don't have an account?

@@ -1,8 +1,7 @@
 <template>
   <div>
-    <Card class="mx-auto" style="max-width: 400px;" shadow="dark">
+    <Card class="mx-auto" shadow="dark">
         <h2 class="card-title text-center">Create Account</h2>
-        <p class="text-center text-muted">Join our community of learners</p>
         
         <form @submit.prevent="handleSignUp" class="mt-4">
           <div class="mb-3">
@@ -30,6 +29,7 @@
               required
               :disabled="userStore.isLoading"
             />
+            <small class="form-text text-muted">Password should be at least 6 characters</small>
           </div>
 
           <div class="mb-3">
@@ -44,6 +44,15 @@
               :disabled="userStore.isLoading"
             />
           </div>
+
+          <p v-if="!isPasswordMatch && password && confirmPassword" 
+             class="text-danger text-center mt-3">
+            Passwords do not match
+          </p>
+
+          <p v-if="userStore.error" class="text-center mt-3 text-danger">
+            {{ userStore.error }}
+          </p>
 
           <button 
             type="submit" 
@@ -68,16 +77,6 @@
           </svg>
           Continue with Google
         </button>
-
-        <p v-if="!isPasswordMatch && password && confirmPassword" 
-           class="text-danger text-center mt-3">
-          Passwords do not match
-        </p>
-
-        <p v-if="userStore.error" 
-           class="text-center mt-3 text-danger">
-          {{ userStore.error }}
-        </p>
 
         <div class="text-center mt-4">
           <p>Already have an account? 
