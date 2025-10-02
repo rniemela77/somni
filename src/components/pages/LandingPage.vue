@@ -4,17 +4,13 @@
     <section class="hero-section text-center mb-6">
       <div class="hero-content">
         <h1 class="hero-title text-cinzel mb-4">
-          <span class="hero-main">Unveil Your</span>
-          <span class="hero-accent text-primary">Myth</span>
+          <span class="hero-main">Discover</span>
+          <span class="hero-accent text-primary">Your Archetype</span>
         </h1>
         <p class="hero-subtitle lead col-lg-8 mx-auto mb-4">
-          Embark on a journey of self-discovery through <span class="text-primary fw-semibold">20+ personality dimensions</span>, 
-          where science meets mysticism and your unique traits become the foundation of your personal legend.
+          Take fun quizzes to uncover your core traits, then see them come alive as your own AI-crafted character story.
         </p>
         <div class="hero-cta d-flex justify-content-center gap-3 mt-5">
-          <router-link to="/signin" class="btn btn-outline-primary btn-lg px-5" :disabled="!userStore.isReady">
-            <i class="bi bi-door-open me-2"></i>Enter the Realm
-          </router-link>
           <router-link to="/signup" class="btn btn-primary btn-lg px-5" :disabled="!userStore.isReady">
             <i class="bi bi-compass me-2"></i>Begin Your Quest
           </router-link>
@@ -24,7 +20,8 @@
 
     <!-- Mystical Features -->
     <section class="mystical-features mb-6 mt-5">
-      <h2 class="section-title text-cinzel text-center mb-5">Ancient Wisdom, Modern Science</h2>
+
+      <h2 class="text-center text-cinzel mb-2">What's inside?</h2>
       
       <div class="row justify-content-center">
         <div class="col-lg-10">
@@ -35,42 +32,24 @@
                   <i class="bi bi-stars"></i>
                 </div>
                 <div class="feature-content">
-                  <h3 class="feature-title text-cinzel">The Dimensions</h3>
+                  <h3 class="feature-title text-cinzel">Traits & Dimensions</h3>
                   <p class="feature-description">
-                    Your primal essence awakens through <span class="text-primary fw-semibold">20+ personality dimensions</span>, 
-                    revealing traits from the familiar (Extraversion vs Introversion) to the profound (Authority Acceptance vs Rejection). 
-                    Each spectrum illuminates a facet of your unique nature.
-                  </p>
-                  <p class="feature-description mt-3">
-                    Inspired by frameworks like Big Five, MBTI, and Enneagram for a more detailed profile.
+                    Uncover <span class="text-primary fw-semibold">20+ dimensions</span> with fast, engaging quizzes that surface your core traits.
+                    Clear results, no fluff.
                   </p>
                 </div>
               </div>
 
-              <div class="feature-item">
-                <div class="feature-icon">
-                  <i class="bi bi-magic"></i>
-                </div>
-                <div class="feature-content">
-                  <h3 class="feature-title text-cinzel">The Oracle</h3>
-                  <p class="feature-description">
-                    Our AI oracle weaves your results into <span class="text-primary fw-semibold">personalized revelations</span>—not generic reports, 
-                    but mythic narratives that transform your traits into actionable wisdom. Discover details like your Spirit Animal, 
-                    Tarot Archetype, and more.
-                  </p>
-                </div>
-              </div>
+              
 
               <div class="feature-item">
                 <div class="feature-icon">
                   <i class="bi bi-book"></i>
                 </div>
                 <div class="feature-content">
-                  <h3 class="feature-title text-cinzel">The Mythbook</h3>
+                  <h3 class="feature-title text-cinzel">Your Archetype Story</h3>
                   <p class="feature-description">
-                    Your complete personality profile unfolds as a <span class="text-primary fw-semibold">living legend</span>, 
-                    where strengths become superpowers, blindspots become growth opportunities, and your unique combination 
-                    of traits reveals your destined path.
+                    Watch your traits assemble into a personalized persona- AI-crafted character story you can revisit and share.
                   </p>
                 </div>
               </div>
@@ -82,26 +61,7 @@
 
 
 
-    <!-- Call to Action -->
-    <section class="cta-section text-center">
-      <Card class="cta-card">
-        <div class="cta-content">
-          <h2 class="cta-title text-cinzel mb-4">Your Legend Awaits</h2>
-          <p class="cta-description lead mb-4">
-            Join thousands who have discovered their myth through Somni's mystical personality analysis. 
-            Transform your unique traits into practical wisdom for life, love, and purpose.
-          </p>
-          <div class="cta-buttons d-flex justify-content-center gap-3">
-            <router-link to="/signup" class="btn btn-primary btn-lg px-5" :disabled="!userStore.isReady">
-              <i class="bi bi-compass me-2"></i>Begin Your Quest
-            </router-link>
-            <router-link to="/signin" class="btn btn-outline-primary btn-lg px-5" :disabled="!userStore.isReady">
-              <i class="bi bi-door-open me-2"></i>Return to Your Realm
-            </router-link>
-          </div>
-        </div>
-      </Card>
-    </section>
+    
   </div>
 </template>
 
@@ -129,6 +89,7 @@ const userStore = useUserStore();
 .hero-main {
   display: block;
   color: var(--body-text-color);
+  font-size: 0.65em;
 }
 
 .hero-accent {
@@ -148,6 +109,7 @@ const userStore = useUserStore();
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
+  font-size: 1.125rem;
 }
 
 .hero-cta .btn:hover {
