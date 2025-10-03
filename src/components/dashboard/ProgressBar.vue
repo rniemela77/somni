@@ -49,27 +49,13 @@
               :to="{ name: 'revelation', params: { revelationSlug: rev.slug } }"
               class="revelation-icon-link"
             >
-              <span
-                class="revelation-badge"
-                :class="{ completed: rev.completed, upcoming: !rev.completed }"
-              >
-                <i
-                  :class="
-                    rev.completed ? 'bi bi-check' : 'bi bi-question'
-                  "
-                ></i>
+              <span class="revelation-badge completed">
+                <i class="bi bi-check"></i>
               </span>
             </router-link>
             <span v-else class="revelation-icon-hitbox">
-              <span
-                class="revelation-badge"
-                :class="{ completed: rev.completed, upcoming: !rev.completed }"
-              >
-                <i
-                  :class="
-                    rev.completed ? 'bi bi-exclamation' : 'bi bi-question'
-                  "
-                ></i>
+              <span class="revelation-badge upcoming">
+                <i class="bi bi-question"></i>
               </span>
             </span>
           </template>
@@ -83,65 +69,53 @@
 import { computed } from "vue";
 import { REVELATION_MILESTONES } from "../../../shared/config/personalityAnalysis";
 
-// props
-const props = defineProps({
-  completedAssessments: {
-    type: Number,
-    default: 0,
-    required: true,
-  },
-  totalAssessments: {
-    type: Number,
-    default: 0,
-    required: true,
-  },
+interface ProgressBarProps {
+  completedAssessments: number;
+  totalAssessments: number;
+}
+
+interface RevelationData {
+  slug: string;
+  completed: boolean;
+}
+
+const props = withDefaults(defineProps<ProgressBarProps>(), {
+  completedAssessments: 0,
+  totalAssessments: 0,
 });
 
-// build an array representing each assessment segment
+/**
+ * Creates an array of segment indices for the progress bar
+ * Each segment represents one assessment
+ */
 const segments = computed(() => {
-  const count = Math.max(0, props.totalAssessments || 0);
+  const count = Math.max(0, props.totalAssessments);
   return Array.from({ length: count }, (_, i) => i);
 });
 
-// group revelations by the segment index that unlocks them
-const segmentRevelations = computed<
-  Record<
-    number,
-    Array<{
-      slug: string;
-      icon: string;
-      color: string;
-      background: string;
-      completed: boolean;
-    }>
-  >
->(() => {
-  const map: Record<
-    number,
-    Array<{
-      slug: string;
-      icon: string;
-      color: string;
-      background: string;
-      completed: boolean;
-    }>
-  > = {};
+/**
+ * Groups revelations by the assessment segment that unlocks them
+ * Returns a map where key is segment index (0-based) and value is array of revelations
+ */
+const segmentRevelations = computed<Record<number, RevelationData[]>>(() => {
+  const map: Record<number, RevelationData[]> = {};
+  
   REVELATION_MILESTONES.forEach((revelation) => {
-    const required = revelation.requiredAssessments || 0;
-    const segmentIndex = Math.max(0, required - 1);
-    const isCompleted = props.completedAssessments >= required;
-    const entry = {
-      background: isCompleted ? "var(--body-bg-color)" : "transparent",
-      color: isCompleted ? "var(--text-muted)" : "var(--primary-color)",
-      icon: isCompleted
-        ? "bi bi-exclamation-circle-fill"
-        : "bi bi-question-circle",
+    const requiredAssessments = revelation.requiredAssessments || 0;
+    const segmentIndex = Math.max(0, requiredAssessments - 1); // Convert to 0-based index
+    const isCompleted = props.completedAssessments >= requiredAssessments;
+    
+    const revelationData: RevelationData = {
       slug: revelation.slug,
       completed: isCompleted,
     };
-    if (!map[segmentIndex]) map[segmentIndex] = [];
-    map[segmentIndex].push(entry);
+    
+    if (!map[segmentIndex]) {
+      map[segmentIndex] = [];
+    }
+    map[segmentIndex].push(revelationData);
   });
+  
   return map;
 });
 </script>
