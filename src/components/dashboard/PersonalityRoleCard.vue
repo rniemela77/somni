@@ -59,7 +59,7 @@
                 to="/insights" 
                 class="btn btn-sm btn-outline-primary read-more-btn"
               >
-                View Persona Lore
+                View Full Persona
                 <i class="bi bi-arrow-right ms-1"></i>
               </router-link>
             </div>

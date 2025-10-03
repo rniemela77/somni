@@ -55,7 +55,7 @@
               >
                 <i
                   :class="
-                    rev.completed ? 'bi bi-exclamation' : 'bi bi-question'
+                    rev.completed ? 'bi bi-check' : 'bi bi-question'
                   "
                 ></i>
               </span>
@@ -158,7 +158,7 @@ const segmentRevelations = computed<
 
 .segmented-progress {
   display: flex;
-  gap: 3px;
+  gap: 0.5px;
   position: relative;
   overflow: visible;
 }
@@ -168,7 +168,7 @@ const segmentRevelations = computed<
   flex: 1 1 0;
   height: 15px;
   background: var(--card-bg-color);
-  border: 1px solid var(--primary-color);
+  border: 1px solid rgba(0,0,0, 0.1);
 }
 
 .segment:first-child {
@@ -223,28 +223,17 @@ const segmentRevelations = computed<
 }
 
 .revelation-badge {
-  width: clamp(14px, 4vw, 20px);
-  height: clamp(14px, 4vw, 20px);
-  border-radius: 50%;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid;
 }
 
 .revelation-badge.completed {
-  background: var(--primary-color);
   border-color: #ffffff;
 }
 
-.revelation-badge.upcoming {
-  background: var(--card-bg-color);
-  border-color: var(--primary-color);
-}
-
 .revelation-badge i {
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1;
 }
 
