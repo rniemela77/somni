@@ -1,7 +1,6 @@
 <template>
   <div class="py-2">
     <div>
-
       <Card class="text-center mb-3" padding="sm">
         You lean <span class="fw-bold text-primary">{{ Math.abs(Math.round(assessment.score)) }}%</span> towards <span class="fw-bold text-primary">{{ getDominantTraitLabel(assessment) }} ({{ getDominantTrait(assessment).name.toLowerCase() }})</span>
       </Card>
