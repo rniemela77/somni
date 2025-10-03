@@ -1,12 +1,15 @@
 <template>
 	<nav class="navbar navbar-expand-sm navbar-light mb-sm-3">
 		<div class="container">
-			<router-link to="/" class="navbar-brand">
-				<h1 class="h3 mb-0 d-flex flex-column justify-content-center">
-					<span class="somni-text text-cinzel">Somni</span>
-					<small class="text-muted d-block lead">Quests for Self-Discovery</small>
-				</h1>
-			</router-link>
+			<h1 class="h3 mb-0 d-flex flex-column justify-content-center">
+				<div class="d-flex align-items-center">
+					<router-link to="/" class="navbar-brand p-0">
+						<span class="somni-text text-cinzel">Somni</span>
+					</router-link>
+					<span class="ml-1 mb-4 border" style="font-size: 0.65rem;font-family: 'Inter', sans-serif; padding:0.15rem 0.25rem;border-radius:0.25rem;">BETA</span>
+				</div>
+				<small class="text-muted d-block" style="font-size: 1rem; font-weight: 400;">Quests for Self-Discovery</small>
+			</h1>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
 				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
