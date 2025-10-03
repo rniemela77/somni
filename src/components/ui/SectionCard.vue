@@ -25,7 +25,7 @@ import Card from '../ui/Card.vue';
 
 const props = defineProps<{
     title: string;
-    subtitle: string;
+    subtitle: string | null;
     iconClass: string;
 }>();
 </script>

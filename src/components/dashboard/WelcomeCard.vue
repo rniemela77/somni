@@ -1,5 +1,5 @@
 <template>
-    <Alert class="container" closable>
+    <Alert class="container border-primary" closable>
         <h1>Welcome to Somni!</h1>
 
         <p>Somni is a journey of self-discovery. It's a quest to understand yourself better, and to become the best version of yourself.</p>
