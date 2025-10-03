@@ -68,7 +68,7 @@
         
         <!-- Placeholder when no role yet -->
         <div v-else class="role-placeholder">
-          <p class="text-muted mb-2">Complete 3 assessments to unlock your mythic identity</p>
+          <p class="text-muted mb-2">Complete 3 quests to unlock your mythic identity</p>
           <div class="progress-indicator">
             <span class="badge bg-secondary">{{ completedAssessments }}/3</span>
           </div>

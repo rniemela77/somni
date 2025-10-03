@@ -8,7 +8,7 @@
           <span class="hero-accent text-primary">Your Archetype</span>
         </h1>
         <p class="hero-subtitle lead col-lg-8 mx-auto mb-4">
-          Take fun quizzes to uncover your core traits, then see them come alive as your own AI-crafted character story.
+          Uncover  hidden strengths through quick quizzes, then read AI-crafted stories that bring your traits to life through a mythic character.
         </p>
         <div class="hero-cta d-flex justify-content-center gap-3 mt-5">
           <router-link to="/signup" class="btn btn-primary btn-lg px-5" :disabled="!userStore.isReady">
@@ -34,13 +34,11 @@
                 <div class="feature-content">
                   <h3 class="feature-title text-cinzel">Traits & Dimensions</h3>
                   <p class="feature-description">
-                    Uncover <span class="text-primary fw-semibold">20+ dimensions</span> with fast, engaging quizzes that surface your core traits.
+                    Uncover your persona archetype in <span class="text-primary fw-semibold">20+ dimensions</span> resembling those found in the Myers-Briggs Type Indicator (MBTI), Big Five, and more.
                     Clear results, no fluff.
                   </p>
                 </div>
               </div>
-
-              
 
               <div class="feature-item">
                 <div class="feature-icon">
@@ -49,7 +47,7 @@
                 <div class="feature-content">
                   <h3 class="feature-title text-cinzel">Your Archetype Story</h3>
                   <p class="feature-description">
-                    Watch your traits assemble into a personalized persona- AI-crafted character story you can revisit and share.
+                    Watch your traits assemble into a personalized persona tailored to your unique personality- a timeless AI-crafted character story.
                   </p>
                 </div>
               </div>
