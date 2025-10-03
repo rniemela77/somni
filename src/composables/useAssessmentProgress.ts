@@ -95,6 +95,14 @@ export const useAssessmentProgress = () => {
       : assessment.traits.negative;
   };
 
+  const getDominantTraitLabel = (
+    assessment: AssessmentWithScore
+  ): string => {
+    return assessment.score < 0
+      ? assessment.negative_label
+      : assessment.positive_label;
+  };
+
   const calculatePosition = (score: number): number => {
     return (score + 100) / 2;
   };
@@ -113,6 +121,7 @@ export const useAssessmentProgress = () => {
     getTraitIntensityText,
     getDominantTrait,
     getWeakerTrait,
+    getDominantTraitLabel,
     calculatePosition,
   };
 };

@@ -30,7 +30,7 @@
           
           <!-- Dominant traits -->
           <div v-if="dominantTraits.length > 0" class="dominant-traits">
-            <h6 class="traits-title mb-2">Core Traits</h6>
+            <h6 class="traits-title mb-2 text-muted">Core Traits</h6>
             <div class="traits-list">
               <div 
                 v-for="trait in dominantTraits" 

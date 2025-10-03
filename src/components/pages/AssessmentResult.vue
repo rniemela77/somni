@@ -11,7 +11,7 @@
     <Card class="text-left mt-4" padding="sm" shadow="dark" border="medium">
       <Card class="inner-card-section" padding="sm">
         <p class="text-muted mb-0 text-cinzel">Dominant Trait</p>
-        <p class="display-5 text-primary my-1">{{ dominantTrait?.name }}</p>
+        <p class="display-5 text-primary my-1">{{ getDominantTraitLabel(thisAssessmentWithScore) }} ({{ dominantTrait?.name.toLowerCase() }})</p>
       </Card>
 
       <Card class="inner-card-section" padding="sm">
@@ -47,6 +47,7 @@ const {
   getAssessmentWithScore,
   getDominantTrait,
   getTraitIntensityText,
+  getDominantTraitLabel,
 } = useAssessmentProgress();
 
 const { getContinueButtonDestination } = useRevelations();
