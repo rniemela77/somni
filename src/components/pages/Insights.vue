@@ -92,21 +92,22 @@
 
         <!-- Discovery Detail View -->
         <div v-else-if="showDiscoveryDetail && selectedDiscovery">
-          <div class="mb-4">
-            <button @click="goBackToDiscoveries" class="btn btn-outline-secondary mb-3">
-              <i class="bi bi-arrow-left me-2"></i>
-              Back to Discoveries
-            </button>
-            <div>
+          <button @click="goBackToDiscoveries" class="btn btn-outline-secondary mb-3">
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Discoveries
+          </button>
+          
+          <Card>
+            <div class="mb-4">
               <h2 class="h3 fw-bold mb-0">{{ getTraitDisplayName(selectedDiscovery) }}</h2>
               <p class="text-muted mb-0">{{ selectedDiscovery.displayName }}</p>
             </div>
-          </div>
-          
-          <DiscoveryContent
-            :assessment="selectedDiscovery"
-            @retakeAssessment="retakeAssessment"
-          />
+            
+            <DiscoveryContent
+              :assessment="selectedDiscovery"
+              @retakeAssessment="retakeAssessment"
+            />
+          </Card>
         </div>
       </div>
     </div>
