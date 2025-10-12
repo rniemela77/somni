@@ -49,27 +49,16 @@
               :to="{ name: 'revelation', params: { revelationSlug: rev.slug } }"
               class="revelation-icon-link"
             >
-              <span
-                class="revelation-badge"
-                :class="{ completed: rev.completed, upcoming: !rev.completed }"
-              >
-                <i
-                  :class="
-                    rev.completed ? 'bi bi-check' : 'bi bi-question'
-                  "
-                ></i>
+              <span class="revelation-badge completed">
+                <i class="bi bi-check"></i>
               </span>
             </router-link>
             <span v-else class="revelation-icon-hitbox">
-              <span
-                class="revelation-badge"
-                :class="{ completed: rev.completed, upcoming: !rev.completed }"
+              <span 
+                class="revelation-badge upcoming tooltip-trigger"
+                data-tooltip="Your story awaits..."
               >
-                <i
-                  :class="
-                    rev.completed ? 'bi bi-exclamation' : 'bi bi-question'
-                  "
-                ></i>
+                <i class="bi bi-question"></i>
               </span>
             </span>
           </template>
@@ -83,67 +72,56 @@
 import { computed } from "vue";
 import { REVELATION_MILESTONES } from "../../../shared/config/personalityAnalysis";
 
-// props
-const props = defineProps({
-  completedAssessments: {
-    type: Number,
-    default: 0,
-    required: true,
-  },
-  totalAssessments: {
-    type: Number,
-    default: 0,
-    required: true,
-  },
+interface ProgressBarProps {
+  completedAssessments: number;
+  totalAssessments: number;
+}
+
+interface RevelationData {
+  slug: string;
+  completed: boolean;
+}
+
+const props = withDefaults(defineProps<ProgressBarProps>(), {
+  completedAssessments: 0,
+  totalAssessments: 0,
 });
 
-// build an array representing each assessment segment
+/**
+ * Creates an array of segment indices for the progress bar
+ * Each segment represents one assessment
+ */
 const segments = computed(() => {
-  const count = Math.max(0, props.totalAssessments || 0);
+  const count = Math.max(0, props.totalAssessments);
   return Array.from({ length: count }, (_, i) => i);
 });
 
-// group revelations by the segment index that unlocks them
-const segmentRevelations = computed<
-  Record<
-    number,
-    Array<{
-      slug: string;
-      icon: string;
-      color: string;
-      background: string;
-      completed: boolean;
-    }>
-  >
->(() => {
-  const map: Record<
-    number,
-    Array<{
-      slug: string;
-      icon: string;
-      color: string;
-      background: string;
-      completed: boolean;
-    }>
-  > = {};
+/**
+ * Groups revelations by the assessment segment that unlocks them
+ * Returns a map where key is segment index (0-based) and value is array of revelations
+ */
+const segmentRevelations = computed<Record<number, RevelationData[]>>(() => {
+  const map: Record<number, RevelationData[]> = {};
+  
   REVELATION_MILESTONES.forEach((revelation) => {
-    const required = revelation.requiredAssessments || 0;
-    const segmentIndex = Math.max(0, required - 1);
-    const isCompleted = props.completedAssessments >= required;
-    const entry = {
-      background: isCompleted ? "var(--body-bg-color)" : "transparent",
-      color: isCompleted ? "var(--text-muted)" : "var(--primary-color)",
-      icon: isCompleted
-        ? "bi bi-exclamation-circle-fill"
-        : "bi bi-question-circle",
+    const requiredAssessments = revelation.requiredAssessments || 0;
+    const segmentIndex = Math.max(0, requiredAssessments - 1); // Convert to 0-based index
+    const isCompleted = props.completedAssessments >= requiredAssessments;
+    
+    const revelationData: RevelationData = {
       slug: revelation.slug,
       completed: isCompleted,
     };
-    if (!map[segmentIndex]) map[segmentIndex] = [];
-    map[segmentIndex].push(entry);
+    
+    if (!map[segmentIndex]) {
+      map[segmentIndex] = [];
+    }
+    map[segmentIndex].push(revelationData);
   });
+  
   return map;
 });
+
 </script>
 
 <style scoped>
@@ -253,5 +231,52 @@ const segmentRevelations = computed<
 .revelation-icon-link:active,
 .revelation-icon-link:focus {
   transform: scale(1.25);
+}
+
+/* Custom tooltip styles */
+.tooltip-trigger {
+  position: relative;
+}
+
+.tooltip-trigger::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+  margin-bottom: 5px;
+  pointer-events: none;
+}
+
+.tooltip-trigger::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+  margin-bottom: 1px;
+  pointer-events: none;
+}
+
+.tooltip-trigger:hover::before,
+.tooltip-trigger:hover::after {
+  opacity: 1;
+  visibility: visible;
 }
 </style>

@@ -1,9 +1,8 @@
 <template>
   <div class="py-2">
     <div>
-
       <Card class="text-center mb-3" padding="sm">
-        You lean <span class="fw-bold text-primary">{{ Math.abs(Math.round(assessment.score)) }}%</span> towards <span class="fw-bold text-primary">{{ getDominantTrait(assessment).name }}</span>
+        You lean <span class="fw-bold text-primary">{{ Math.abs(Math.round(assessment.score)) }}%</span> towards <span class="fw-bold text-primary">{{ getDominantTraitLabel(assessment) }} ({{ getDominantTrait(assessment).name.toLowerCase() }})</span>
       </Card>
 
       <!-- Traits Description - Dominant trait first, then weaker trait -->
@@ -14,7 +13,7 @@
             {{ getTraitIntensityText(Math.abs(assessment.score)) }} {{
               getDominantTrait(assessment).name.toLowerCase() }}
           </div>
-          <h4 class="h5 fw-bold mb-2">{{ getDominantTrait(assessment).name }}</h4>
+          <h4 class="h5 fw-bold mb-2">{{ getDominantTraitLabel(assessment) }} ({{ getDominantTrait(assessment).name }})</h4>
           <p class="text-muted">{{ getDominantTrait(assessment).description }}</p>
           
           <!-- Strength and Blindspot for dominant trait -->
@@ -90,7 +89,7 @@ const emit = defineEmits<{
   retakeAssessment: [assessment: AssessmentWithScore];
 }>();
 
-const { getTraitIntensityText, getDominantTrait, getWeakerTrait } = useAssessmentProgress();
+const { getTraitIntensityText, getDominantTrait, getWeakerTrait, getDominantTraitLabel } = useAssessmentProgress();
 
 const retakeAssessment = () => {
   emit('retakeAssessment', props.assessment);
