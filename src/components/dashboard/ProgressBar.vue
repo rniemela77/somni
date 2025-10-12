@@ -54,7 +54,10 @@
               </span>
             </router-link>
             <span v-else class="revelation-icon-hitbox">
-              <span class="revelation-badge upcoming">
+              <span 
+                class="revelation-badge upcoming tooltip-trigger"
+                data-tooltip="Your story awaits..."
+              >
                 <i class="bi bi-question"></i>
               </span>
             </span>
@@ -118,6 +121,7 @@ const segmentRevelations = computed<Record<number, RevelationData[]>>(() => {
   
   return map;
 });
+
 </script>
 
 <style scoped>
@@ -227,5 +231,52 @@ const segmentRevelations = computed<Record<number, RevelationData[]>>(() => {
 .revelation-icon-link:active,
 .revelation-icon-link:focus {
   transform: scale(1.25);
+}
+
+/* Custom tooltip styles */
+.tooltip-trigger {
+  position: relative;
+}
+
+.tooltip-trigger::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+  margin-bottom: 5px;
+  pointer-events: none;
+}
+
+.tooltip-trigger::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+  margin-bottom: 1px;
+  pointer-events: none;
+}
+
+.tooltip-trigger:hover::before,
+.tooltip-trigger:hover::after {
+  opacity: 1;
+  visibility: visible;
 }
 </style>
