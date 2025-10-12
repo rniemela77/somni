@@ -20,7 +20,8 @@ export interface Assessment {
 export interface Question {
   id: string;
   points: number;
-  text: string;
+  statementA: string;
+  statementB: string;
 }
 
 export interface AssessmentWithScore extends Assessment {

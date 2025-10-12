@@ -29,20 +29,20 @@
         <Card v-for="(question, index) in currentAssessment.questions" padding="sm" :key="question.id" class="mb-4">
           <div>
             <p class="fw-bold">Question {{ index + 1 }}</p>
-            <p class="mb-4">{{ question.text }}</p>
-
-            <div class="slider-value text-center">
-              <div class="score-label">
-                <strong>{{ getScoreLabel(assessmentAnswers[question.id] || '0') }}</strong>
+            
+            <!-- Statement Pair Display -->
+            <div class="statement-pair mb-4">
+              <div class="statement-container d-flex justify-content-between">
+                <div class="statement statement-left" :class="{ 'statement--active': parseFloat(assessmentAnswers[question.id] || '0') < 0 }">
+                  <p class="statement-text">{{ getStatementA(question) }}</p>
+                </div>
+                <div class="statement statement-right" :class="{ 'statement--active': parseFloat(assessmentAnswers[question.id] || '0') > 0 }">
+                  <p class="statement-text">{{ getStatementB(question) }}</p>
+                </div>
               </div>
             </div>
 
             <div class="slider-container">
-              <div class="slider-labels d-flex justify-content-between mb-2">
-                <span>Almost Never</span>
-                <span>Sometimes</span>
-                <span>Almost Always</span>
-              </div>
               <div class="slider-track position-relative">
                 <!-- Negative fill (from 0 to negative values) -->
                 <div class="slider-fill negative" :style="{
@@ -88,6 +88,22 @@ const assessmentStore = useAssessmentStore();
 const userStore = useUserStore();
 
 const currentAssessment = assessmentStore.allAssessments.find(assessment => assessment.slug === assessmentSlug);
+
+// Randomize statement positions for each question
+const randomizedQuestions = ref<Record<string, { statementA: string; statementB: string; isReversed: boolean }>>({});
+
+// Initialize randomization
+if (currentAssessment) {
+  currentAssessment.questions.forEach(question => {
+    const isReversed = Math.random() < 0.5;
+    randomizedQuestions.value[question.id] = {
+      statementA: isReversed ? question.statementB : question.statementA,
+      statementB: isReversed ? question.statementA : question.statementB,
+      isReversed
+    };
+  });
+}
+
 // create '0' for each question in the assessment
 const assessmentAnswers = ref<Record<string, string>>(
   Object.fromEntries(
@@ -104,15 +120,28 @@ const tips = ref([
   "Take your time - there's no rush to complete the assessment"
 ]);
 
+const getStatementA = (question: any) => {
+  return randomizedQuestions.value[question.id]?.statementA || question.statementA;
+};
+
+const getStatementB = (question: any) => {
+  return randomizedQuestions.value[question.id]?.statementB || question.statementB;
+};
+
 const submitAssessment = async () => {
   if (!currentAssessment) return;
     
-  // average score answers. multiply each score by the points value
+  // Calculate score based on randomized positioning
   let assessmentScore = 0;
-  Object.values(assessmentAnswers.value).forEach((answer, index) => {
-    assessmentScore += Number(answer) * currentAssessment.questions[index].points;
+  currentAssessment.questions.forEach((question, index) => {
+    const answer = parseFloat(assessmentAnswers.value[question.id] || '0');
+    const randomized = randomizedQuestions.value[question.id];
+    
+    // If statements were reversed, flip the score
+    const adjustedAnswer = randomized?.isReversed ? -answer : answer;
+    assessmentScore += adjustedAnswer * question.points;
   });
-  assessmentScore = Math.round(assessmentScore / Object.values(assessmentAnswers.value).length);
+  assessmentScore = Math.round(assessmentScore / currentAssessment.questions.length);
 
   //submit to user store
   await userStore.submitAssessment(currentAssessment.id , assessmentScore);
@@ -123,22 +152,56 @@ const goBack = () => {
   router.push({ name: 'home' });
 };
 
-const getScoreLabel = (score: string | number): string => {
-  const numScore = parseFloat(score.toString());
-  if (numScore >= 75) return "Almost Always";
-  if (numScore >= 40) return "Frequently";
-  if (numScore >= 10) return "Often";
-  if (numScore >= -9) return "Sometimes";
-  if (numScore >= -39) return "Seldom";
-  if (numScore >= -74) return "Rarely";
-  return "Almost Never";
-};
 </script>
 
 <style scoped>
+/* Statement pair styles */
+.statement-pair {
+  margin: 1.5rem 0;
+}
+
+.statement-container {
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.statement {
+  width: 400px;
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--card-inset-bg-color);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.statement--active {
+  border-color: var(--primary-color);
+  background: rgba(var(--primary-color), 0.1);
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.statement-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--text-primary);
+  text-align: center;
+  width: 100%;
+}
+
+.statement-left {
+  text-align: left;
+}
+
+.statement-right {
+  text-align: right;
+}
+
 /* Assessment slider styles */
 .slider-container {
-  padding: 1.5rem 0;
   position: relative;
 }
 
@@ -255,51 +318,6 @@ const getScoreLabel = (score: string | number): string => {
   transform: scale(0.98);
 }
 
-.slider-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-  color: var(--body-text-color);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.slider-labels span {
-  position: relative;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  background: var(--card-inset-bg-color);
-  transition: all 0.2s ease;
-}
-
-.slider-value {
-  position: relative;
-  top: auto;
-  left: auto;
-  transform: none;
-  background: transparent;
-  color: inherit;
-  padding: 0;
-  border-radius: 0;
-  font-size: 0.875rem;
-  font-weight: 500;
-  opacity: 1;
-  transition: all 0.2s ease;
-  pointer-events: auto;
-}
-
-.form-range:hover+.slider-value,
-.form-range:focus+.slider-value {
-  opacity: 1;
-  top: auto;
-}
-
-.score-label {
-  color: var(--text-primary);
-  font-size: 1.1rem;
-  font-weight: 100;
-  font-style: italic;
-}
 
 .success-icon {
   color: #28a745;
