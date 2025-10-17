@@ -6,7 +6,7 @@
                     <i class="card-icon" :class="iconClass"></i>
                     <h2 class="mb-0 text-cinzel">{{ title }}</h2>
                 </div>
-                <h3>{{ subtitle }}</h3>
+                <h3 v-if="subtitle">{{ subtitle }}</h3>
 
                 <div class="section-card-content">
                     <slot name="content" />
