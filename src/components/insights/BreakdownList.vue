@@ -7,18 +7,18 @@
           <p class="mb-0">Generate a comprehensive AI analysis of your personality based on your assessment results.</p>
         </div>
 
-        <button @click="generateCluster('innerRealm')" class="btn btn-primary btn-lg" :disabled="false">
+        <Button @click="generateCluster('innerRealm')" variant="primary" class="btn-lg" :disabled="false">
           Cluster innerRealm
-        </button>
+        </Button>
 
 
-        <button @click="generateCluster('mythicMirror')" class="btn btn-primary btn-lg" :disabled="false">
+        <Button @click="generateCluster('mythicMirror')" variant="primary" class="btn-lg" :disabled="false">
           Cluster mythicMirror
-        </button>
+        </Button>
 
-        <button @click="generateCluster('cosmicPath')" class="btn btn-primary btn-lg" :disabled="false">
+        <Button @click="generateCluster('cosmicPath')" variant="primary" class="btn-lg" :disabled="false">
           Cluster cosmicPath
-        </button>
+        </Button>
       </div>
 
       <!-- Analysis Results -->

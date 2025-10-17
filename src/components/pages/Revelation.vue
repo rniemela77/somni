@@ -40,9 +40,7 @@
         thisRevelation
       "
     >
-      <router-link class="btn btn-primary mx-auto" :to="{ name: 'home' }">
-        Continue
-      </router-link>
+      <Button class="mx-auto" variant="primary" :to="{ name: 'home' }">Continue</Button>
     </div>
   </div>
 </template>
@@ -54,6 +52,7 @@ import { useUserStore } from "../../stores/user";
 import { useRevelations } from "../../composables/useRevelations";
 import { useAssessmentProgress } from "../../composables/useAssessmentProgress";
 import BeamParticleAnimation from "../ui/BeamParticleAnimation.vue";
+import Button from "../ui/Button.vue";
 
 const userStore = useUserStore();
 const { getRevelationContent, getRevelationBySlug } = useRevelations();

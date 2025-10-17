@@ -23,14 +23,14 @@
 						<li class="nav-item">
 							<router-link to="/signin" class="nav-link" active-class="active">Sign In</router-link>
 						</li>
-						<li class="nav-item">
-							<router-link to="/signup" class="btn btn-primary">Sign Up</router-link>
-						</li>
-						<button class="btn btn-outline-secondary" @click="isDark = !isDark">
+					<li class="nav-item">
+						<Button :to="'/signup'" variant="primary">Sign Up</Button>
+					</li>
+					<Button class="btn btn-outline-secondary" @click="isDark = !isDark" outline variant="secondary">
 							<span class="me-2" :class="{ 'bi-moon-fill': !isDark, 'bi-sun-fill': isDark }"></span>
 							<span v-if="isDark">Light Mode</span>
 							<span v-else>Dark Mode</span>
-						</button>
+					</Button>
 					</template>
 					<template v-else>
 						<li class="nav-item">
@@ -48,13 +48,13 @@
 						
 						<!-- Desktop dropdown (hidden on mobile) -->
 						<li class="nav-item dropdown d-none d-sm-block">
-							<a class="btn btn-outline-secondary nav-link dropdown-toggle d-flex align-items-center justify-content-center"
-								href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
-								aria-expanded="false">
+						<Button class="btn btn-outline-secondary nav-link dropdown-toggle d-flex align-items-center justify-content-center"
+							href="#" id="userDropdown" data-bs-toggle="dropdown" outline variant="secondary"
+							>
 								<div class="user-avatar me-2">
 									<i class="bi bi-person-circle"></i>
 								</div>
-							</a>
+						</Button>
 							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
 								<li>
 									<router-link to="/account" class="dropdown-item">
@@ -108,6 +108,7 @@
 <script setup lang="ts">
 import { useUserStore } from '../../stores/user'
 import { useRouter } from 'vue-router'
+import Button from '../ui/Button.vue'
 
 const userStore = useUserStore()
 const router = useRouter()

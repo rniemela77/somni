@@ -17,13 +17,13 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary w-100" :disabled="userStore.isLoading">
+      <Button type="submit" variant="primary" class="w-100" :disabled="userStore.isLoading">
         {{ userStore.isLoading ? 'Sending email...' : 'Send Reset Email' }}
-      </button>
+      </Button>
 
       <p v-if="successMessage" class="text-success text-center mt-3">{{ successMessage }}</p>
       <p v-if="userStore.error" class="text-danger text-center mt-3">{{ userStore.error }}</p>
-      <router-link v-if="successMessage" to="/signin" class="btn text-primary w-100 mt-2">Back to Sign In</router-link>
+      <Button v-if="successMessage" :to="'/signin'" variant="text" class="w-100 mt-2">Back to Sign In</Button>
     </form>
   </Card>
 </template>
@@ -32,6 +32,7 @@
 import { ref } from 'vue';
 import { useUserStore } from '../../stores/user';
 import Card from '../ui/Card.vue';
+import Button from '../ui/Button.vue';
 
 const userStore = useUserStore();
 const successMessage = ref<string>('');

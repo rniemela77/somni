@@ -65,10 +65,10 @@
 
       <!-- Action Buttons -->
       <div class="text-center mt-4 pt-3">
-        <button @click="retakeAssessment" class="btn btn-outline-primary">
+          <Button @click="retakeAssessment" outline variant="primary">
           <i class="bi bi-arrow-clockwise me-1"></i>
           Retake Assessment
-        </button>
+          </Button>
       </div>
     </div>
   </div>
@@ -78,6 +78,7 @@
 import { useAssessmentProgress } from '../../composables/useAssessmentProgress';
 import type { AssessmentWithScore } from '../../../shared/types/shared';
 import Card from '../ui/Card.vue';
+import Button from '../ui/Button.vue';
 
 interface Props {
   assessment: AssessmentWithScore;

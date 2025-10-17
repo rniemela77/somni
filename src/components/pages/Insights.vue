@@ -64,7 +64,7 @@
           <div v-else class="mb-4">
             <!-- Discovery Buttons -->
             <div class="discovery-buttons">
-              <button
+              <Button unstyled
                 v-for="assessment in completedAssessmentsWithScores"
                 :key="assessment.slug"
                 @click="selectDiscovery(assessment)"
@@ -80,7 +80,7 @@
                     <i class="bi bi-chevron-right discovery-button__arrow"></i>
                   </div>
                 </div>
-              </button>
+              </Button>
             </div>
             
             <!-- Progress Message -->
@@ -92,10 +92,10 @@
 
         <!-- Discovery Detail View -->
         <div v-else-if="showDiscoveryDetail && selectedDiscovery">
-          <button @click="goBackToDiscoveries" class="btn btn-outline-secondary mb-3">
+          <Button @click="goBackToDiscoveries" outline variant="secondary" class="mb-3">
             <i class="bi bi-arrow-left me-2"></i>
             Back to Discoveries
-          </button>
+          </Button>
           
           <Card>
             <div class="mb-4">
@@ -126,6 +126,7 @@ import RevelationContent from '../insights/RevelationContent.vue';
 import DiscoveryContent from '../insights/DiscoveryContent.vue';
 import type { AssessmentWithScore } from '../../../shared/types/shared';
 import Card from '../ui/Card.vue';
+import Button from '../ui/Button.vue';
 
 // Store and state
 const userStore = useUserStore();

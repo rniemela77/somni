@@ -1,8 +1,8 @@
 <template>
   <div class="assessment-view container">
-    <button class="btn btn-outline-secondary mb-4" @click="goBack">
+    <Button outline variant="secondary" class="mb-4" @click="goBack">
       <i class="bi bi-arrow-left me-2"></i>Back
-    </button>
+    </Button>
 
     <!-- Tips Section -->
     <div class="tips-section mb-4">
@@ -66,12 +66,12 @@
           </div>
         </Card>
         <div class="d-flex justify-content-between gap-2 mt-4">
-          <button type="button" class="btn btn-secondary" @click="goBack">
+          <Button type="button" variant="secondary" @click="goBack">
             Cancel
-          </button>
-          <button type="submit" class="btn btn-primary" :disabled="isSubmittingAssessment">
+          </Button>
+          <Button type="submit" variant="primary" :disabled="isSubmittingAssessment">
             {{ isSubmittingAssessment ? 'Completing...' : 'Complete Quest' }}
-          </button>
+          </Button>
         </div>
       </form>
     </div>
@@ -84,6 +84,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAssessmentStore } from '../../stores/assessment';
 import { useUserStore } from '../../stores/user';
 import Card from '../ui/Card.vue';
+import Button from '../ui/Button.vue';
 
 const route = useRoute();
 const router = useRouter();

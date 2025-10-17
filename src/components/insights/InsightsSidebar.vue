@@ -13,7 +13,7 @@
           >
         </h3>
         <div class="nav-items">
-          <button
+          <Button unstyled
             v-for="section in allSections"
             :key="section.id"
             @click="selectRevelation(section.id)"
@@ -32,7 +32,7 @@
                 <i class="bi bi-lock-fill"></i>
               </span>
             </div>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -50,7 +50,7 @@
           >
         </h3>
         <div class="nav-items">
-          <button
+          <Button unstyled
             v-for="assessment in completedAssessmentsWithScores"
             :key="assessment.slug"
             @click="selectDiscovery(assessment.slug)"
@@ -69,7 +69,7 @@
                 >{{ Math.abs(Math.round(assessment.score)) }}%</span
               >
             </div>
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -79,16 +79,16 @@
   <div class="mobile-menu d-md-none">
     <!-- Mobile Menu Toggle Button -->
     <div class="mobile-menu-header">
-      <button 
+      <Button 
         @click="toggleMobileMenu" 
-        class="mobile-menu-toggle btn btn-outline-primary w-100 d-flex justify-content-between align-items-center"
+        outline variant="primary" class="mobile-menu-toggle w-100 d-flex justify-content-between align-items-center"
       >
         <span class="mobile-menu-title">
           <i class="bi bi-list me-2"></i>
           {{ getCurrentSelectionTitle() }}
         </span>
         <i class="bi bi-chevron-down" :class="{ 'rotate-180': isMobileMenuOpen }"></i>
-      </button>
+      </Button>
     </div>
 
     <!-- Mobile Menu Dropdown -->
@@ -101,7 +101,7 @@
             <small class="text-muted fw-light">Your archetypal journey</small>
           </h4>
           <div class="mobile-nav-items">
-            <button
+            <Button unstyled
               v-for="section in allSections"
               :key="section.id"
               @click="selectRevelation(section.id); closeMobileMenu()"
@@ -120,7 +120,7 @@
                   <i class="bi bi-lock-fill"></i>
                 </span>
               </div>
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -131,7 +131,7 @@
             <small class="text-muted fw-light">Your unique traits</small>
           </h4>
           <div class="mobile-nav-items">
-            <button
+            <Button unstyled
               v-for="assessment in completedAssessmentsWithScores"
               :key="assessment.slug"
               @click="selectDiscovery(assessment.slug); closeMobileMenu()"
@@ -150,7 +150,7 @@
                   >{{ Math.abs(Math.round(assessment.score)) }}%</span
                 >
               </div>
-            </button>
+            </Button>
           </div>
         </div>
       </div>

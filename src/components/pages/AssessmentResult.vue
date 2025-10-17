@@ -24,13 +24,13 @@
         <p class="text-muted mb-0 text-cinzel">Your blindspot</p>
         <p class="my-3">{{ dominantTrait?.blindspot }}</p>
       </Card>
-
-      <div class="text-center">
-        <router-link class="btn btn-primary" :to="getContinueButtonDestination()"
-          >Continue</router-link
-        >
-      </div>
     </Card>
+
+    <div class="text-center mt-3">
+      <router-link class="btn btn-primary" :to="getContinueButtonDestination()"
+        >Continue</router-link
+      >
+    </div>
   </div>
 </template>
 
@@ -47,7 +47,6 @@ const {
   getAssessmentFromSlug,
   getAssessmentWithScore,
   getDominantTrait,
-  getTraitIntensityText,
   getDominantTraitLabel,
 } = useAssessmentProgress();
 
@@ -56,7 +55,6 @@ const { getContinueButtonDestination } = useRevelations();
 const assessment = getAssessmentFromSlug(assessmentSlug);
 const thisAssessmentWithScore = getAssessmentWithScore(assessment);
 const dominantTrait = getDominantTrait(thisAssessmentWithScore);
-const isBalanced = thisAssessmentWithScore.score === 0;
 </script>
 
 <style scoped>
