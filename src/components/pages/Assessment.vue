@@ -42,6 +42,11 @@
               </div>
             </div>
 
+            <!-- Instruction message -->
+            <p class="text-muted text-center mb-3">
+              <small>Slide toward the statement you agree with more. Center means you're balanced between both.</small>
+            </p>
+
             <div class="slider-container">
               <div class="slider-track position-relative">
                 <!-- Negative fill (from 0 to negative values) -->
