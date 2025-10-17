@@ -140,10 +140,6 @@ const generateAwakening = async () => {
 </script>
 
 <style scoped>
-.personality-role-container {
-  padding: 1rem 0;
-}
-
 .avatar-placeholder {
   display: flex;
   justify-content: center;
