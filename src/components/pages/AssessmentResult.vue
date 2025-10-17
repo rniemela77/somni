@@ -1,14 +1,14 @@
 <template>
   <div class="assessment-result text-center pt-0">
-    <img src="/images/compass.png" class="icon icon-light" loading="lazy" />
+    <img src="/images/compass.png" class="icon icon-light result-icon" loading="lazy" />
 
-    <h1 class="mb-3 text-cinzel">Your Discovery</h1>
+    <h1 class="mb-3 text-cinzel result-title">Your Discovery</h1>
 
-    <i class="text-primary mb-3">
+    <i class="mb-3 result-subtitle">
       From this quest, a fragment of your myth is revealed
     </i>
 
-    <Card class="text-left mt-4" padding="sm" shadow="dark" border="medium">
+    <Card class="text-left mt-4 result-card" padding="sm" shadow="dark" border="medium">
       <Card class="inner-card-section text-capitalize" padding="sm">
         <p class="text-muted mb-0 text-cinzel">Dominant Trait</p>
         <p class="display-5 text-primary my-1">{{ getDominantTraitLabel(thisAssessmentWithScore) }}</p> 
@@ -26,7 +26,7 @@
       </Card>
     </Card>
 
-    <div class="text-center mt-3">
+    <div class="text-center mt-3 continue-button-container">
       <router-link class="btn btn-primary" :to="getContinueButtonDestination()"
         >Continue</router-link
       >
@@ -90,5 +90,36 @@ const dominantTrait = getDominantTrait(thisAssessmentWithScore);
 
 .icon-light {
   filter: invert(1);
+}
+
+/* Staggered fade-in sequence */
+.result-icon,
+.result-title,
+.result-subtitle,
+.result-card,
+.continue-button-container {
+  opacity: 0;
+  transform: translateY(6px);
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+.result-icon { animation-delay: 0s; }
+.result-title { animation-delay: 0.4s; }
+.result-subtitle { animation-delay: 0.8s; }
+.result-card { animation-delay: 1.2s; }
+.continue-button-container { animation-delay: 1.8s; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Subtitle visual treatment to match other pages */
+.result-subtitle {
+  display: block;
+  margin: 0 auto;
+  max-width: 420px;
+  color: var(--text-secondary);
+  font-style: italic;
 }
 </style>
