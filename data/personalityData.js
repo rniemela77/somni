@@ -19,6 +19,7 @@ const personalityData = [
           "Often chase external validation, missing subtle internal cues that signal burnout before it crashes your momentum",
         description:
           "Extraverts thrive in chaotic environments, turning social noise into fuel for innovation, like DJs remixing a crowd's energy into breakthroughs. They draw energy from social interaction and external stimulation. They tend to think out loud, seek out group activities, and feel energized by being around others. They often process experiences by discussing them and prefer active engagement with the world around them.",
+        keywords: ["sociable", "energetic", "outgoing", "expressive"],
       },
       negative: {
         name: "Introversion",
@@ -28,6 +29,7 @@ const personalityData = [
           "Tendency to over-rehearse responses, delaying action in fast-paced scenarios where spontaneity could seize unexpected opportunities",
         description:
           "Introverts excel in 'mental marathons', sustaining deep dives into complex problems where others tire, uncovering hidden patterns in data or ideas. They gain energy from solitude and internal reflection. They prefer deep one-on-one conversations, need quiet time to recharge, and process experiences internally before sharing. They often have rich inner lives and value meaningful, intimate connections over broad social networks.",
+        keywords: ["reflective", "reserved", "independent", "introspective"],
       },
     },
     questions: [
@@ -83,6 +85,7 @@ const personalityData = [
           "Underestimating emotional undercurrents in others, leading to overlooked interpersonal frictions that could erupt unexpectedly",
         description:
           "Emotionally stable individuals serve as anchors in storms, maintaining clarity amid chaos, allowing teams to navigate crises without panic. They maintain a balanced emotional state, experience fewer mood swings, and are better able to manage stress. They tend to be more resilient and have a more positive outlook on life.",
+        keywords: ["calm", "resilient", "composed", "steady"],
       },
       negative: {
         name: "Neuroticism",
@@ -92,6 +95,7 @@ const personalityData = [
           "Over-amplifying minor setbacks into catastrophes, draining energy on imagined worst-cases that rarely materialize",
         description:
           "Neurotics act as human seismographs, detecting emotional tremors early, which can preempt disasters in relationships or projects by sensing unspoken tensions. They experience more frequent mood fluctuations, are more sensitive to stress, and may struggle with anxiety and depression. They often have a more negative outlook on life and may be more prone to emotional outbursts.",
+        keywords: ["vigilant", "emotionally-attuned", "caution-oriented", "risk-aware"],
       },
     },
     questions: [
@@ -147,6 +151,7 @@ const personalityData = [
           "May overlook practical constraints, chasing visionary ideas that are hard to implement",
         description:
           "Open individuals are intellectual explorers, diving into uncharted ideas with curiosity, like artists weaving new patterns from chaos. They embrace novelty, value creativity, and seek diverse experiences, often thriving in ambiguity and abstract thinking.",
+        keywords: ["curious", "imaginative", "adventurous", "open-minded"],
       },
       negative: {
         name: "Closedness",
@@ -156,6 +161,7 @@ const personalityData = [
           "May resist innovative approaches, missing opportunities for growth in rapidly changing contexts",
         description:
           "Closed individuals are guardians of tradition, finding comfort in the familiar, like craftsmen perfecting a time-tested skill. They prioritize practicality, prefer routine, and value stability, often excelling in structured settings.",
+        keywords: ["traditional", "practical", "routine", "consistent"],
       },
     },
     questions: [
@@ -211,6 +217,7 @@ const personalityData = [
           "May avoid necessary conflict, allowing unresolved issues to fester",
         description:
           "Agreeable individuals are social glue, fostering harmony with kindness, like mediators calming a stormy debate. They prioritize cooperation, empathy, and altruism, often putting others' needs first.",
+        keywords: ["cooperative", "empathetic", "trusting", "kind"],
       },
       negative: {
         name: "Antagonism",
@@ -220,6 +227,7 @@ const personalityData = [
           "May alienate allies with bluntness, undermining collaboration when tact is needed",
         description:
           "Antagonistic individuals are bold truth-seekers, unafraid to confront, like debaters exposing weak arguments. They value honesty and competition, often prioritizing goals over feelings.",
+        keywords: ["competitive", "direct", "truth-testing", "challenging"],
       },
     },
     questions: [
@@ -275,6 +283,7 @@ const personalityData = [
           "May over-plan, missing opportunities that require quick, intuitive decisions",
         description:
           "Conscientious individuals are the architects of order, building success with discipline, like navigators charting a precise course. They are organized, reliable, and goal-driven, prioritizing duty and structure.",
+        keywords: ["organized", "disciplined", "reliable", "goal-oriented"],
       },
       negative: {
         name: "Disinhibition",
@@ -284,6 +293,7 @@ const personalityData = [
           "May neglect long-term goals, derailed by impulsive choices or distractions",
         description:
           "Disinhibited individuals are free-spirited opportunists, thriving in the moment, like improvisers on a stage. They act on impulse, embrace flexibility, and often resist rigid plans.",
+        keywords: ["spontaneous", "free-spirited", "flexible", "improvisational"],
       },
     },
     questions: [
@@ -339,6 +349,7 @@ const personalityData = [
           "May undervalue self-promotion, missing chances to showcase strengths and contributions",
         description:
           "Humble individuals are grounded and sincere, acting with honesty and fairness, like guides who prioritize truth over status. They are modest, cooperative, and avoid manipulation or entitlement.",
+        keywords: ["humble", "unassuming", "credit-sharing", "reserved"],
       },
       negative: {
         name: "Arrogance",
@@ -348,6 +359,7 @@ const personalityData = [
           "May overestimate their abilities, dismissing valuable input and undermining collaboration",
         description:
           "Arrogant individuals are self-assured trailblazers, projecting dominance like leaders claiming the spotlight. They prioritize recognition and status, sometimes bending fairness to maintain superiority.",
+        keywords: ["self-promoting", "recognition-oriented", "image-conscious", "confidence-forward"],
       },
     },
     questions: [
@@ -403,6 +415,7 @@ const personalityData = [
           "May overlook present realities, chasing ideas detached from practicality",
         description:
           "Intuitive individuals are visionaries, weaving possibilities from abstract clues, like poets seeing meaning in the unseen. They focus on future potential, patterns, and big-picture thinking.",
+        keywords: ["abstract", "future-focused", "pattern-seeking", "imaginative"],
       },
       negative: {
         name: "Sensing",
@@ -412,6 +425,7 @@ const personalityData = [
           "May miss broader implications, sticking too closely to immediate facts",
         description:
           "Sensing individuals are grounded observers, excelling in the present, like artisans perfecting the details of their craft. They prioritize concrete facts, sensory input, and practical realities.",
+        keywords: ["practical", "detail-oriented", "present-focused", "observant"],
       },
     },
     questions: [
@@ -467,6 +481,7 @@ const personalityData = [
           "May neglect emotional impacts, causing unintended relational strain",
         description:
           "Thinkers are analytical judges, weighing decisions with logic, like scientists testing hypotheses. They prioritize objectivity, consistency, and rational analysis over emotions.",
+        keywords: ["analytical", "logical", "objective", "evaluative"],
       },
       negative: {
         name: "Feeling",
@@ -476,6 +491,7 @@ const personalityData = [
           "May compromise logic for harmony, leading to inconsistent outcomes",
         description:
           "Feelers are compassionate decision-makers, guided by values, like diplomats balancing human needs. They prioritize empathy, personal beliefs, and relational harmony.",
+        keywords: ["values-driven", "compassionate", "harmonious", "empathic"],
       },
     },
     questions: [
@@ -531,6 +547,7 @@ const personalityData = [
           "May resist adapting to unexpected changes, limiting flexibility",
         description:
           "Judging individuals are master planners, creating order, like conductors leading a symphony. They prefer structure, decisiveness, and clear goals, thriving in organized settings.",
+        keywords: ["decisive", "structured", "planned", "orderly"],
       },
       negative: {
         name: "Perceiving",
@@ -540,6 +557,7 @@ const personalityData = [
           "May procrastinate, leaving tasks unfinished due to indecision",
         description:
           "Perceiving individuals are adaptable explorers, embracing flexibility, like sailors navigating shifting winds. They prefer spontaneity, openness, and freedom from rigid plans.",
+        keywords: ["adaptable", "open-ended", "spontaneous", "flexible"],
       },
     },
     questions: [
@@ -595,6 +613,7 @@ const personalityData = [
           "May conform excessively, stifling personal expression or innovation",
         description:
           "Socialized individuals are community builders, aligning with norms, like citizens strengthening a society. They value cooperation, social harmony, and adherence to rules.",
+        keywords: ["norm-following", "cooperative", "community-minded", "norm-aligned"],
       },
       negative: {
         name: "Psychoticism",
@@ -604,6 +623,7 @@ const personalityData = [
           "May disrupt group dynamics, creating conflict with nonconformity",
         description:
           "Psychotic individuals are rebels, defying conventions, like pioneers breaking new ground. They prioritize individuality, risk-taking, and unconventional thinking.",
+        keywords: ["independent-minded", "boundary-pushing", "unconventional", "risk-embracing"],
       },
     },
     questions: [
@@ -659,6 +679,7 @@ const personalityData = [
           "May underestimate risks, leading to unpreparedness for setbacks",
         description:
           "Optimists are beacons of hope, seeing possibilities, like adventurers expecting treasure. They focus on positive outcomes, resilience, and opportunity-driven thinking.",
+        keywords: ["positive", "hopeful", "confident", "upbeat"],
       },
       negative: {
         name: "Pessimism",
@@ -667,6 +688,7 @@ const personalityData = [
         blindspot: "May dwell on negatives, dampening motivation or innovation",
         description:
           "Pessimists are cautious sentinels, guarding against failure, like watchmen scanning for danger. They focus on risks, challenges, and potential pitfalls.",
+        keywords: ["cautious", "skeptical", "risk-focused", "guarded"],
       },
     },
     questions: [
@@ -721,6 +743,7 @@ const personalityData = [
         blindspot: "May dominate discussions, overlooking quieter voices",
         description:
           "Assertive individuals are bold influencers, shaping their world, like captains steering a ship. They express needs clearly, take initiative, and lead decisively.",
+        keywords: ["confident", "direct", "bold", "self-assured"],
       },
       negative: {
         name: "Passivity",
@@ -730,6 +753,7 @@ const personalityData = [
           "May avoid leadership, missing chances to shape critical outcomes",
         description:
           "Passive individuals are quiet supporters, yielding to others, like crew members harmonizing a team. They avoid conflict, defer decisions, and prioritize group consensus.",
+        keywords: ["accommodating", "quiet", "supportive", "peace-preserving"],
       },
     },
     questions: [
@@ -785,6 +809,7 @@ const personalityData = [
           "May over-prioritize others’ feelings, neglecting personal needs",
         description:
           "Empathetic individuals are emotional bridges, connecting hearts, like healers soothing pain. They sense others’ feelings, prioritize compassion, and nurture relationships.",
+        keywords: ["compassionate", "understanding", "caring", "attuned"],
       },
       negative: {
         name: "Callousness",
@@ -793,6 +818,7 @@ const personalityData = [
         blindspot: "May harm relationships by ignoring others’ emotional needs",
         description:
           "Callous individuals are pragmatic taskmasters, prioritizing outcomes, like generals focused on victory. They detach from emotions, value efficiency, and may seem cold.",
+        keywords: ["objective", "dispassionate", "task-focused", "pragmatic"],
       },
     },
     questions: [
@@ -848,6 +874,7 @@ const personalityData = [
           "May miss spontaneous opportunities by over-regulating actions",
         description:
           "Self-controlled individuals are disciplined navigators, steering steadily, like pilots avoiding turbulence. They prioritize restraint, planning, and long-term outcomes.",
+        keywords: ["disciplined", "restrained", "patient", "goal-focused"],
       },
       negative: {
         name: "Impulsivity",
@@ -856,6 +883,7 @@ const personalityData = [
         blindspot: "May act recklessly, undermining goals with hasty decisions",
         description:
           "Impulsive individuals are bold opportunists, diving into action, like dancers moving to a sudden beat. They act on instinct, embrace risk, and prioritize immediate rewards.",
+        keywords: ["spontaneous", "decisive", "quick-acting", "present-driven"],
       },
     },
     questions: [
@@ -910,6 +938,7 @@ const personalityData = [
         blindspot: "May push through pain, ignoring needed rest or support",
         description:
           "Resilient individuals are sturdy oaks, bending but not breaking, like warriors enduring storms. They recover quickly, adapt to challenges, and maintain optimism.",
+        keywords: ["tough", "adaptive", "persistent", "gritty"],
       },
       negative: {
         name: "Fragility",
@@ -919,6 +948,7 @@ const personalityData = [
           "May crumble under pressure, amplifying setbacks into crises",
         description:
           "Fragile individuals are delicate sensors, highly aware of stress, like glass attuned to cracks. They may struggle to recover, feeling overwhelmed by challenges.",
+        keywords: ["sensitive", "delicate", "care-oriented", "impact-aware"],
       },
     },
     questions: [
@@ -974,6 +1004,7 @@ const personalityData = [
           "May prioritize originality over practicality, risking inefficiency",
         description:
           "Creative individuals are idea alchemists, crafting novelty, like artists painting new worlds. They value originality, imagination, and unconventional approaches.",
+        keywords: ["innovative", "original", "imaginative", "inventive"],
       },
       negative: {
         name: "Conventionality",
@@ -982,6 +1013,7 @@ const personalityData = [
         blindspot: "May resist change, missing innovative breakthroughs",
         description:
           "Conventional individuals are stewards of tradition, perfecting the known, like builders using proven blueprints. They prioritize reliability, tradition, and practicality.",
+        keywords: ["traditional", "consistent", "methodical", "time-tested"],
       },
     },
     questions: [
@@ -1037,6 +1069,7 @@ const personalityData = [
           "May dismiss spiritual insights, missing deeper meaning or motivation",
         description:
           "Secular individuals are rational navigators, guided by evidence, like scientists probing reality. They prioritize logic, skepticism, and empirical reasoning.",
+        keywords: ["rational", "evidence-based", "skeptical", "analytical"],
       },
       negative: {
         name: "Religiosity",
@@ -1045,6 +1078,7 @@ const personalityData = [
         blindspot: "May cling to beliefs, overlooking contradictory evidence",
         description:
           "Religious individuals are spiritual anchors, finding meaning in faith, like pilgrims seeking divine guidance. They prioritize spiritual values, tradition, and community.",
+        keywords: ["faithful", "devout", "spiritual", "traditional"],
       },
     },
     questions: [
@@ -1100,6 +1134,7 @@ const personalityData = [
           "May prioritize others’ needs, neglecting personal ambitions",
         description:
           "Feminine individuals are relational caregivers, weaving connection, like gardeners tending bonds. They emphasize nurturing, empathy, and collaboration.",
+        keywords: ["nurturing", "warm", "collaborative", "empathetic"],
       },
       negative: {
         name: "Masculinity",
@@ -1108,6 +1143,7 @@ const personalityData = [
         blindspot: "May suppress emotions, straining interpersonal connections",
         description:
           "Masculine individuals are action-oriented leaders, pushing forward, like warriors claiming victory. They prioritize assertiveness, independence, and achievement.",
+        keywords: ["assertive", "driven", "independent", "decisive"],
       },
     },
     questions: [
@@ -1163,6 +1199,7 @@ const personalityData = [
           "May struggle with leadership voids in high-stakes scenarios",
         description:
           "Egalitarian individuals are champions of fairness, leveling power, like mediators ensuring all are heard. They value equality, collaboration, and shared responsibility.",
+        keywords: ["fair", "inclusive", "collaborative", "equitable"],
       },
       negative: {
         name: "Authoritarianism",
@@ -1171,6 +1208,7 @@ const personalityData = [
         blindspot: "May suppress dissent, stifling creativity or fairness",
         description:
           "Authoritarian individuals are decisive commanders, enforcing order, like generals leading with authority. They prioritize hierarchy, control, and swift decision-making.",
+        keywords: ["directive", "structure-focused", "hierarchical", "decisive"],
       },
     },
     questions: [
@@ -1226,6 +1264,7 @@ const personalityData = [
           "May undervalue own contributions, missing leadership opportunities",
         description:
           "Modest individuals are quiet contributors, deflecting praise, like team players sharing glory. They prioritize humility, teamwork, and collective achievement.",
+        keywords: ["humble", "unassuming", "credit-sharing", "reserved"],
       },
       negative: {
         name: "Narcissism",
@@ -1234,6 +1273,7 @@ const personalityData = [
         blindspot: "May alienate others by seeking excessive admiration",
         description:
           "Narcissistic individuals are self-focused stars, craving the spotlight, like performers commanding a stage. They prioritize personal recognition, confidence, and status.",
+        keywords: ["self-promoting", "recognition-oriented", "image-conscious", "confidence-forward"],
       },
     },
     questions: [

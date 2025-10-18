@@ -41,28 +41,28 @@
               <p class="text-muted mb-4">
                 Generate your insights to get started.
               </p>
-              <button 
+              <Button 
                 @click="generateCluster(currentSection?.id || 'theFlame')" 
-                class="btn btn-primary" 
+                variant="primary" 
                 :disabled="userStore.generatingPersonalityAnalysis"
               >
                 <span v-if="userStore.generatingPersonalityAnalysis" class="spinner-border spinner-border-sm me-2"></span>
                 Generate Insights
-              </button>
+              </Button>
             </div>
           </template>
         </div>
 
         <!-- Re-generate Button - only when current section is unlocked and has content -->
         <div v-if="!isCurrentSectionLocked && currentSection?.analysis?.details" class="regenerate-button-container text-center mt-4 pt-3 border-top">
-          <button 
+          <Button 
             @click="generateCluster(currentSection?.id || 'theFlame')" 
-            class="btn btn-outline-primary" 
+            outline variant="primary" 
             :disabled="userStore.generatingPersonalityAnalysis"
           >
             <span v-if="userStore.generatingPersonalityAnalysis" class="spinner-border spinner-border-sm me-2"></span>
             Re-generate
-          </button>
+          </Button>
         </div>
       </Card>
     </div>
@@ -71,7 +71,7 @@
     <div v-else-if="selectedItem?.type === 'discovery'" class="discovery-content">
       <Card class="insights-card" padding="0">
         <div class="discovery-header mb-4">
-          <h3 class="discovery-title">{{ selectedAssessment?.name || 'Assessment Details' }}</h3>
+          <h3 class="discovery-title">{{ selectedAssessment?.title || 'Assessment Details' }}</h3>
           <div class="discovery-score">
             <span class="score-label">Score:</span>
             <span class="score-value">{{ Math.abs(Math.round(selectedAssessment?.score || 0)) }}%</span>
@@ -195,6 +195,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '../../stores/user';
 import { useAssessmentProgress } from '../../composables/useAssessmentProgress';
 import Card from '../ui/Card.vue';
+import Button from '../ui/Button.vue';
 import { PERSONALITY_ANALYSIS_SECTIONS, REVELATION_MILESTONES } from '../../../shared/config/personalityAnalysis';
 import type { AssessmentWithScore } from '../../../shared/types/shared';
 
@@ -215,8 +216,8 @@ const router = useRouter();
 const { getTraitIntensityText, calculatePosition } = useAssessmentProgress();
 
 const currentSection = computed(() => {
-  if (props.selectedItem?.type !== 'revelation') return null;
-  const section = PERSONALITY_ANALYSIS_SECTIONS.find(s => s.id === props.selectedItem.id);
+  if (!props.selectedItem || props.selectedItem.type !== 'revelation') return null;
+  const section = PERSONALITY_ANALYSIS_SECTIONS.find(s => s.id === props.selectedItem!.id);
   if (!section) return null;
   return {
     ...section,
@@ -225,8 +226,8 @@ const currentSection = computed(() => {
 });
 
 const selectedAssessment = computed(() => {
-  if (props.selectedItem?.type !== 'discovery') return null;
-  return props.completedAssessmentsWithScores.find(a => a.slug === props.selectedItem.id);
+  if (!props.selectedItem || props.selectedItem.type !== 'discovery') return null;
+  return props.completedAssessmentsWithScores.find(a => a.slug === props.selectedItem!.id) || null;
 });
 
 const isCurrentSectionLocked = computed(() => {

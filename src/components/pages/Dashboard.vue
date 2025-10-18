@@ -15,12 +15,12 @@
 
       <!-- Cards Section -->
       <div class="row g-4">
-        <div class="col-12 col-md-5 col-lg-4">
+        <div class="col-12 col-md-5">
           <!-- Personality Role Section -->
           <PersonalityRoleCard/>
         </div>
         
-        <div class="col-12 col-md-7 col-lg-8">
+        <div class="col-12 col-md-7">
           <!-- Right side cards wrapper -->
           <div class="right-cards-wrapper d-flex flex-column gap-4 h-100">
             <NextAssessment v-if="nextAssessment" :assessment="nextAssessment"/>

@@ -12,19 +12,20 @@
     </template>
 
     <template #button>
-      <router-link
-        to="/mythbook"
-        class="btn btn-outline-primary"
+      <Button
+        :to="'/mythbook'"
+        outline variant="primary"
       >
         <span>Open Mythbook</span>
         <i class="bi bi-arrow-right ms-2"></i>
-      </router-link>
+      </Button>
     </template>
   </SectionCard>
 </template>
 
 <script setup lang="ts">
 import SectionCard from "../ui/SectionCard.vue";
+import Button from "../ui/Button.vue";
 </script>
 
 <style scoped>

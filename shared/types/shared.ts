@@ -33,6 +33,7 @@ export interface AssessmentTrait {
   strength: string;
   blindspot: string;
   description: string;
+  keywords?: string[];
 }
 
 export interface AssessmentScore {

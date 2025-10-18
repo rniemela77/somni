@@ -35,14 +35,14 @@
 
       <!-- Re-generate Button -->
       <div class="text-center mt-4 pt-3 border-top">
-        <button 
+        <Button 
           @click="generateCluster(section.id)" 
-          class="btn btn-outline-primary" 
+          outline variant="primary" 
           :disabled="isGenerating"
         >
           <span v-if="isGenerating" class="spinner-border spinner-border-sm me-2"></span>
           Re-generate
-        </button>
+        </Button>
       </div>
     </div>
   </div>
@@ -51,6 +51,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useUserStore } from '../../stores/user';
+import Button from '../ui/Button.vue';
 
 interface Props {
   section: {

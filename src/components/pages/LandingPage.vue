@@ -11,9 +11,9 @@
           Uncover  hidden strengths through quick quizzes, then read AI-crafted stories that bring your traits to life through a mythic character.
         </p>
         <div class="hero-cta d-flex justify-content-center gap-3 mt-5">
-          <router-link to="/signup" class="btn btn-primary btn-lg px-5" :disabled="!userStore.isReady">
+          <Button :to="'/signup'" variant="primary" class="btn-lg px-5" :disabled="!userStore.isReady">
             <i class="bi bi-compass me-2"></i>Begin Your Quest
-          </router-link>
+          </Button>
         </div>
       </div>
     </section>
@@ -66,6 +66,7 @@
 <script setup lang="ts">
 import Card from '../ui/Card.vue';
 import { useUserStore } from '../../stores/user';
+import Button from '../ui/Button.vue';
 const userStore = useUserStore();
 
 

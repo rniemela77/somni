@@ -33,6 +33,18 @@
               <p class="small text-muted mb-0">{{ getDominantTrait(assessment).blindspot }}</p>
             </div>
           </div>
+
+          <!-- Keywords for dominant trait -->
+          <div v-if="getDominantTrait(assessment).keywords?.length" class="mt-3">
+            <h6 class="small fw-semibold mb-2 text-muted">Keywords</h6>
+            <div>
+              <span
+                v-for="kw in (getDominantTrait(assessment).keywords || [])"
+                :key="kw"
+                class="badge rounded-pill bg-primary text-white me-1 mb-1"
+              >{{ kw }}</span>
+            </div>
+          </div>
         </div>
 
         <!-- Weaker Trait -->
@@ -60,15 +72,27 @@
               <p class="small text-muted mb-0">{{ getWeakerTrait(assessment).blindspot }}</p>
             </div>
           </div>
+
+          <!-- Keywords for weaker trait -->
+          <div v-if="getWeakerTrait(assessment).keywords?.length" class="mt-3">
+            <h6 class="small fw-semibold mb-2 text-muted">Keywords</h6>
+            <div>
+              <span
+                v-for="kw in (getWeakerTrait(assessment).keywords || [])"
+                :key="kw"
+                class="badge rounded-pill bg-primary text-white me-1 mb-1"
+              >{{ kw }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="text-center mt-4 pt-3">
-        <button @click="retakeAssessment" class="btn btn-outline-primary">
+          <Button @click="retakeAssessment" outline variant="primary">
           <i class="bi bi-arrow-clockwise me-1"></i>
           Retake Assessment
-        </button>
+          </Button>
       </div>
     </div>
   </div>
@@ -78,6 +102,7 @@
 import { useAssessmentProgress } from '../../composables/useAssessmentProgress';
 import type { AssessmentWithScore } from '../../../shared/types/shared';
 import Card from '../ui/Card.vue';
+import Button from '../ui/Button.vue';
 
 interface Props {
   assessment: AssessmentWithScore;

@@ -96,13 +96,13 @@
               </div>
             </div>
 
-            <button
+            <Button
               @click="startDonation"
-              class="btn btn-primary mt-3"
+              variant="primary" class="mt-3"
               :disabled="isLoading"
             >
               {{ isLoading ? "Processing..." : "Donate" }}
-            </button>
+            </Button>
           </div>
         </Card>
       </div>
@@ -114,10 +114,10 @@
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { useUserStore } from "../../stores/user";
 import { useRoute, useRouter } from "vue-router";
-import { computed, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import Card from "../ui/Card.vue";
 import Alert from "../ui/Alert.vue";
-import { API_LIMITS } from "../../config/limits";
+import Button from "../ui/Button.vue";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "/.netlify/functions";
 const STRIPE_PUBLIC_KEY =
