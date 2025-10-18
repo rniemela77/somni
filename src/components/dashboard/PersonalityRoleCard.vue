@@ -38,9 +38,11 @@
               <div 
                 v-for="trait in dominantTraits" 
                 :key="trait.id" 
-                class="trait-item"
+                class="trait-item flex-wrap"
               >
-                <span class="trait-name">{{ trait.name }}</span>
+                <div class="flex-grow-1 me-2 min-w-0">
+                  <span class="trait-name d-block">{{ trait.name }}</span>
+                </div>
                 <div class="trait-dots">
                   <span 
                     v-for="i in trait.dotCount" 
@@ -52,6 +54,13 @@
                     :key="i + trait.dotCount" 
                     class="dot"
                   ></span>
+                </div>
+                <div v-if="trait.keywords?.length" class="trait-keywords">
+                  <em>
+                    <span v-for="(kw, idx) in trait.keywords" :key="kw">
+                      {{ kw }}<span v-if="idx < trait.keywords.length - 1">, </span>
+                    </span>
+                  </em>
                 </div>
               </div>
             </div>
@@ -111,6 +120,7 @@ const dominantTraits = computed(() => {
     return {
       id: assessment.id,
       name: label || dominantTrait.name, // Fallback to trait name if label not available
+      keywords: dominantTrait.keywords || [],
       score: absScore,
       dotCount: Math.ceil(absScore / 10) // Convert to dots (0-100 score becomes 0-10 dots)
     };
@@ -119,24 +129,8 @@ const dominantTraits = computed(() => {
   // Sort by score (highest first) and take top 3
   return traitsWithScores
     .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
+    .slice(0, 4);
 });
-
-// Generate The Awakening section
-const generateAwakening = async () => {
-  if (userStore.generatingPersonalityAnalysis) return;
-  
-  try {
-    const result = await userStore.generatePersonalityAnalysisForCluster('theAwakening');
-    if (result.success) {
-      console.log('The Awakening generated successfully');
-    } else {
-      console.error('Failed to generate The Awakening:', result.error);
-    }
-  } catch (error) {
-    console.error('Error generating The Awakening:', error);
-  }
-};
 </script>
 
 <style scoped>
@@ -274,20 +268,28 @@ const generateAwakening = async () => {
 .traits-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .trait-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
+  column-gap: 0.75rem;
+  row-gap: 0.2rem;
+}
+
+.trait-keywords {
+  width: 100%;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-primary);
 }
 
 .trait-name {
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--body-text-color);
   flex-shrink: 0;
   min-width: 0;
   overflow: hidden;

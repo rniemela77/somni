@@ -24,6 +24,17 @@
         <p class="text-muted mb-0 text-cinzel">Your blindspot</p>
         <p class="my-3">{{ dominantTrait?.blindspot }}</p>
       </Card>
+
+      <Card v-if="dominantTrait?.keywords?.length" class="inner-card-section" padding="sm">
+        <p class="text-muted mb-2 text-cinzel">Keywords</p>
+        <div>
+          <span
+            v-for="kw in (dominantTrait?.keywords || [])"
+            :key="kw"
+            class="badge rounded-pill bg-primary text-white me-1 mb-1"
+          >{{ kw }}</span>
+        </div>
+      </Card>
     </Card>
 
     <div class="text-center mt-3 continue-button-container">

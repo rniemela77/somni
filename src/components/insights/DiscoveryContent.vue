@@ -33,6 +33,18 @@
               <p class="small text-muted mb-0">{{ getDominantTrait(assessment).blindspot }}</p>
             </div>
           </div>
+
+          <!-- Keywords for dominant trait -->
+          <div v-if="getDominantTrait(assessment).keywords?.length" class="mt-3">
+            <h6 class="small fw-semibold mb-2 text-muted">Keywords</h6>
+            <div>
+              <span
+                v-for="kw in (getDominantTrait(assessment).keywords || [])"
+                :key="kw"
+                class="badge rounded-pill bg-primary text-white me-1 mb-1"
+              >{{ kw }}</span>
+            </div>
+          </div>
         </div>
 
         <!-- Weaker Trait -->
@@ -58,6 +70,18 @@
                 Blindspot
               </h5>
               <p class="small text-muted mb-0">{{ getWeakerTrait(assessment).blindspot }}</p>
+            </div>
+          </div>
+
+          <!-- Keywords for weaker trait -->
+          <div v-if="getWeakerTrait(assessment).keywords?.length" class="mt-3">
+            <h6 class="small fw-semibold mb-2 text-muted">Keywords</h6>
+            <div>
+              <span
+                v-for="kw in (getWeakerTrait(assessment).keywords || [])"
+                :key="kw"
+                class="badge rounded-pill bg-primary text-white me-1 mb-1"
+              >{{ kw }}</span>
             </div>
           </div>
         </div>
