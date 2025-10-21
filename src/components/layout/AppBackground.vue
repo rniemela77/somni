@@ -11,8 +11,6 @@
 	position: fixed;
 	inset: 0;
 	z-index: -1;
-	/*light mode*/
-	filter: contrast(0.9) saturate(0.4) brightness(8.1);
 	pointer-events: none;
 	user-select: none;
 }

@@ -26,11 +26,6 @@
 					<li class="nav-item">
 						<Button :to="'/signup'" variant="primary">Sign Up</Button>
 					</li>
-					<Button class="btn btn-outline-secondary" @click="isDark = !isDark" outline variant="secondary">
-							<span class="me-2" :class="{ 'bi-moon-fill': !isDark, 'bi-sun-fill': isDark }"></span>
-							<span v-if="isDark">Light Mode</span>
-							<span v-else>Dark Mode</span>
-					</Button>
 					</template>
 					<template v-else>
 						<li class="nav-item">
@@ -62,14 +57,6 @@
 									</router-link>
 								</li>
 								<li>
-									<button class="dropdown-item" @click="isDark = !isDark">
-										<span class="me-2"
-											:class="{ 'bi-moon-fill': !isDark, 'bi-sun-fill': isDark }"></span>
-										<span v-if="isDark">Light Mode</span>
-										<span v-else>Dark Mode</span>
-									</button>
-								</li>
-								<li>
 									<hr class="dropdown-divider">
 								</li>
 								<li>
@@ -85,13 +72,6 @@
 							<router-link to="/account" class="nav-link">
 								<i class="bi bi-gear me-2"></i>Account
 							</router-link>
-						</li>
-						<li class="nav-item d-sm-none">
-							<button class="nav-link" @click="isDark = !isDark">
-								<span class="me-2" :class="{ 'bi-moon-fill': !isDark, 'bi-sun-fill': isDark }"></span>
-								<span v-if="isDark">Light Mode</span>
-								<span v-else>Dark Mode</span>
-							</button>
 						</li>
 						<li class="nav-item d-sm-none">
 							<button @click="handleSignOut" class="nav-link">
@@ -121,9 +101,6 @@ const handleSignOut = async (): Promise<void> => {
 }
 
 
-import { useDarkMode } from '../../composables/useDarkMode';
-
-const { isDark } = useDarkMode();
 </script>
 
 <style scoped>
