@@ -8,7 +8,6 @@
 					</router-link>
 					<span class="ml-1 mb-4 border" style="font-size: 0.65rem;font-family: 'Inter', sans-serif; padding:0.15rem 0.25rem;border-radius:0.25rem;">BETA</span>
 				</div>
-				<small class="text-muted d-block" style="font-size: 1rem; font-weight: 400;">Quests for Self-Discovery</small>
 			</h1>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
 				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,6 +108,7 @@ const handleSignOut = async (): Promise<void> => {
 }
 
 .somni-text {
+	text-shadow: 0px 0px 6px black, 0 2px 18px rgb(47 80 255 / 82%);
 	font-weight: 900;
 	font-size: 3rem;
 	text-transform: uppercase;

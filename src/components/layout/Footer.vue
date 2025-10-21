@@ -6,7 +6,7 @@
 				<div class="col-lg-4 col-md-6 mb-4">
 					<div class="footer-brand">
 						<h5 class="fw-bold mb-2 text-cinzel">Somni</h5>
-						<p class="text-muted mb-3">Quests for self-discovery</p>
+						<p class="text-muted mb-3">Discover your unique archetype</p>
 						<p class="small text-muted">
 							Unlock the mysteries of your personality through ancient wisdom and modern psychology.
 						</p>
