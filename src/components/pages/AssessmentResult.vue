@@ -4,8 +4,8 @@
 
     <h1 class="mb-3 text-cinzel result-title">Your Discovery</h1>
 
-    <i class="mb-3 result-subtitle">
-      From this quest, a fragment of your myth is revealed
+    <i class="mb-3 result-subtitle text-primary">
+      From this quest, a fragment of your myth is revealed...
     </i>
 
     <Card class="text-left mt-4 result-card" padding="sm" shadow="dark" border="medium">
@@ -100,10 +100,6 @@ const dominantTrait = getDominantTrait(thisAssessmentWithScore);
 
 .text-left {
   text-align: left;
-}
-
-.icon-light {
-  filter: invert(1);
 }
 
 /* Staggered fade-in sequence */

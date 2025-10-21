@@ -25,16 +25,16 @@
 
     <!-- Analysis Content -->
     <div v-else>
-      <div class="mb-3 pb-3 border-bottom">
+      <div class="mb-3">
         <h3 class="h4 fw-bold">{{ analysis.title }}</h3>
       </div>
       
-      <div class="mb-3">
+      <div class="mb-3 text-primary">
         <p class="fs-5 lh-lg">{{ analysis.details }}</p>
       </div>
 
       <!-- Re-generate Button -->
-      <div class="text-center mt-4 pt-3 border-top">
+      <div class="text-center mt-4 pt-3">
         <Button 
           @click="generateCluster(section.id)" 
           outline variant="primary" 
