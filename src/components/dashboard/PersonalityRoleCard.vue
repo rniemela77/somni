@@ -16,6 +16,12 @@
         <!-- Role name -->
         <div v-if="userStore.user?.personalityAnalysis?.theAwakening?.title" class="role-display">
           <h3 class="role-name mb-2">{{ userStore.user.personalityAnalysis.theAwakening.title }}</h3>
+          <p
+            v-if="userStore.user?.personalityAnalysis?.theAwakening?.personaQuote"
+            class="role-subtitle text-muted mb-3"
+          >
+            &ldquo;{{ userStore.user.personalityAnalysis.theAwakening.personaQuote }}&rdquo;
+          </p>
           
           <!-- Regenerate button, disabled for now -->
           <!-- <button 

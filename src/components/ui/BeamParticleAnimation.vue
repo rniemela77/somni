@@ -1,19 +1,47 @@
 <template>
-  <div class="beam-animation-container">
+  <div class="beam-animation-overlay" ref="overlayRef">
+    <div class="darkening-layer"></div>
+    <div class="masked-effects">
+      <div class="beam-effect"></div>
+      <div class="particle-effect"></div>
+    </div>
+  </div>
+  <div class="revelation-content-masked">
     <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
-// No props needed - this is a pure animation wrapper
+import { onMounted, ref } from 'vue';
+
+const overlayRef = ref<HTMLElement>();
+
+onMounted(() => {
+  // Calculate total animation time from CSS variables
+  const getCSSValue = (property: string) => {
+    const value = getComputedStyle(overlayRef.value!).getPropertyValue(property);
+    return parseFloat(value) * (value.includes('s') ? 1000 : 1);
+  };
+  
+  const autoRemovalDelay = getCSSValue('--auto-removal-delay');
+  
+  // Remove the overlay after the animation completes
+  setTimeout(() => {
+    if (overlayRef.value) {
+      overlayRef.value.style.opacity = '0';
+      overlayRef.value.style.transition = 'opacity 0.5s ease-out';
+      setTimeout(() => {
+        if (overlayRef.value) {
+          overlayRef.value.remove();
+        }
+      }, 500);
+    }
+  }, autoRemovalDelay);
+});
 </script>
 
-<style scoped>
-.beam-animation-container {
-  position: relative;
-  overflow: hidden;
-  --reveal-progress: 0%;
-
+<style>
+:root {
   /* Soft edge width for the moving right edge */
   --soft-edge-width: 30px;
 
@@ -34,7 +62,47 @@
   --particle-opacity-4: 0.7;
   --particle-opacity-5: 0.5;
 
-  /* Soft-edged reveal mask (standard + webkit) */
+  /* Animation timing variables */
+  --darkness-duration: 7s;
+  --mask-delay: 1s;
+  --mask-duration: 0.7s;
+  --particle-delay: 1s;
+  --particle-duration: 3s;
+  --auto-removal-delay: 7s;
+}
+
+.beam-animation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  --reveal-progress: 0%;
+}
+
+.darkening-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  animation: darkenPage var(--darkness-duration) ease-out forwards;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.masked-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  
+  /* Soft-edged reveal mask (standard + webkit) - only for beam/particles */
   mask-image: linear-gradient(
     90deg,
     black 0%,
@@ -52,11 +120,35 @@
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
 
-  animation: revealMask 2s ease-out forwards;
+  animation: revealMask var(--mask-duration) ease-out var(--mask-delay) forwards;
 }
 
-.beam-animation-container::after {
-  content: '';
+.revelation-content-masked {
+  position: relative;
+  z-index: 2;
+  
+  /* Apply the same mask as the effects */
+  mask-image: linear-gradient(
+    90deg,
+    black 0%,
+    black calc(100% - var(--soft-edge-width)),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    black 0%,
+    black calc(100% - var(--soft-edge-width)),
+    transparent 100%
+  );
+  mask-size: 0% 100%;
+  -webkit-mask-size: 0% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+
+  animation: revealMask var(--mask-duration) ease-out var(--mask-delay) forwards;
+}
+
+.beam-effect {
   position: absolute;
   top: 0;
   left: -100%;
@@ -74,14 +166,12 @@
     rgba(var(--beam-color), var(--beam-opacity-7)) 90%,
     transparent 100%
   );
-  animation: beam-sweep 2s ease-out;
-  z-index: 10;
+  animation: beam-sweep var(--mask-duration) ease-out var(--mask-delay);
+  z-index: 3;
   pointer-events: none;
 }
 
-/* Particle effects */
-.beam-animation-container::before {
-  content: '';
+.particle-effect {
   position: absolute;
   top: 0;
   left: 0;
@@ -110,10 +200,22 @@
     radial-gradient(2px 2px at 185px 45px, rgba(var(--particle-color), var(--particle-opacity-4)), transparent);
   background-repeat: repeat;
   background-size: 200px 100px;
-  animation: particle-float 3.4s ease-out;
+  animation: particle-float var(--particle-duration) ease-out var(--particle-delay);
   opacity: 0;
-  z-index: 9;
+  z-index: 2;
   pointer-events: none;
+}
+
+@keyframes darkenPage {
+  0% {
+    background: rgba(0, 0, 0, 0);
+}
+10%, 70% {
+    background: rgba(0, 0, 0, 0.4);
+}
+100% {
+      background: rgba(0, 0, 0, 0);
+  }
 }
 
 @keyframes revealMask {
@@ -156,11 +258,14 @@
     opacity: 1;
     transform: translateY(-10px) scale(1);
   }
-  50% {
+  40% {
       backdrop-filter: blur(0px);
   }
-  60% {
-    opacity: 0.8;
+  50% {
+    opacity: 0.2;
+  }
+  70% {
+    opacity: 0.05;
   }
   100% {
     opacity: 0;
@@ -168,3 +273,4 @@
   }
 }
 </style>
+

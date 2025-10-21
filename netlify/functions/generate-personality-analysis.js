@@ -116,15 +116,14 @@ export async function handler(event, context) {
   }
 }
 
-const formatAttributesIntoText = (assessmentScores, limit = 5) => {
-  let text = "Personality Traits:\n";
-
+const formatAttributesIntoText = (assessmentScores, limit = 7) => {
   // put most intense traits first
   const sortedKeys = Object.keys(assessmentScores).sort(
     (a, b) => Math.abs(assessmentScores[b]) - Math.abs(assessmentScores[a])
   );
 
-  // each line: descriptive leaning text per absolute score range
+  const items = [];
+
   sortedKeys.slice(0, limit).forEach((key) => {
     const scale = PersonalityData.find((scale) => scale.id === key);
     if (!scale) return;
@@ -133,27 +132,26 @@ const formatAttributesIntoText = (assessmentScores, limit = 5) => {
     const absScore = Math.abs(score);
 
     const dominantTraitName = score >= 0 ? scale.positive : scale.negative;
-    const oppositeTraitName = score >= 0 ? scale.negative : scale.positive;
-
-    let description = "";
+    // Map score intensity to concise descriptor
+    let descriptor = "";
     if (absScore <= 10) {
-      description = `- Balanced between ${dominantTraitName} and ${oppositeTraitName}`;
+      descriptor = "Balanced";
     } else if (absScore <= 25) {
-      description = `- Light leaning toward ${dominantTraitName}`;
+      descriptor = "Light";
     } else if (absScore <= 50) {
-      description = `- Moderate leaning toward ${dominantTraitName}`;
+      descriptor = "Moderate";
     } else if (absScore <= 75) {
-      description = `- Clear leaning toward ${dominantTraitName}`;
+      descriptor = "Clear";
     } else if (absScore <= 85) {
-      description = `- Strong leaning toward ${dominantTraitName}`;
+      descriptor = "Strong";
     } else {
-      description = `- Extreme leaning toward ${dominantTraitName}`;
+      descriptor = "Extreme";
     }
 
-    text += `${description}\n`;
+    items.push(`${dominantTraitName} (${descriptor})`);
   });
 
-  return text.trim();
+  return `Personality Traits: ${items.join(", ")}`.trim();
 };
 
 // Generate prompt for a specific category or section

@@ -24,10 +24,10 @@
       <h1 class="mt-0">Uncovering your revelation...</h1>
       <p>Something went wrong. Please try refreshing the page.</p>
     </div>
-    <BeamParticleAnimation v-else>
+    <BeamParticleAnimation v-if="thisRevelation">
       <div class="revelation-content">
         <h1 class="mt-0 mb-4 display-4 text-cinzel revelation-title">{{ thisRevelation.title }}</h1>
-        <i class="text-primary my-4 text-description">{{ revelationConfig.description }}</i>
+        <i class="text-primary my-4 text-description">{{ revelationConfig?.description }}</i>
         <p class="my-4 text-details">{{ thisRevelation.details }}</p>
       </div>
     </BeamParticleAnimation>
@@ -102,6 +102,10 @@ watch([
 </script>
 
 <style scoped>
+.revelation-content {
+  position: relative;
+}
+
 .image-container {
   position: relative;
   height: 150px;
@@ -195,4 +199,5 @@ watch([
     opacity: 1;
   }
 }
+
 </style>
