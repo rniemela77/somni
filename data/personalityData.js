@@ -594,10 +594,10 @@ const personalityData = [
     ],
   },
   {
-    id: "psychoticism_socialization",
-    displayName: "Psychoticism-Socialization",
-    positive: "Socialization",
-    negative: "Psychoticism",
+    id: "conformity_rebellion",
+    displayName: "Conformity-Rebellion",
+    positive: "Conformity",
+    negative: "Rebellion",
     positive_label: "The Weaver",
     negative_label: "The Wanderer",
     title: "Social Integration",
@@ -612,7 +612,7 @@ const personalityData = [
         blindspot:
           "May conform excessively, stifling personal expression or innovation",
         description:
-          "Socialized individuals are community builders, aligning with norms, like citizens strengthening a society. They value cooperation, social harmony, and adherence to rules.",
+          "Conformed individuals are community builders, aligning with norms, like citizens strengthening a society. They value cooperation, social harmony, and adherence to rules.",
         keywords: ["norm-following", "cooperative", "community-minded", "norm-aligned"],
       },
       negative: {
@@ -622,7 +622,7 @@ const personalityData = [
         blindspot:
           "May disrupt group dynamics, creating conflict with nonconformity",
         description:
-          "Psychotic individuals are rebels, defying conventions, like pioneers breaking new ground. They prioritize individuality, risk-taking, and unconventional thinking.",
+          "Rebellious individuals are independent thinkers, defying conventions, like pioneers breaking new ground. They prioritize individuality, risk-taking, and unconventional thinking.",
         keywords: ["independent-minded", "boundary-pushing", "unconventional", "risk-embracing"],
       },
     },
