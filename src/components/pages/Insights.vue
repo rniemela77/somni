@@ -11,7 +11,7 @@
 
     <!-- Content Area -->
     <div class="row justify-content-center">
-      <div class="col-12 col-lg-8">
+      <div class="col-12">
         <!-- Loading State -->
         <div v-if="userStore.generatingPersonalityAnalysis" class="text-center py-5">
           <div class="spinner-border mb-2" role="status">
