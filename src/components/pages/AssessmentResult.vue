@@ -37,7 +37,9 @@
       </Card>
     </Card>
 
-    <div class="text-center mt-3 continue-button-container">
+    <!-- Share Buttons and Continue Button -->
+    <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
+      <ShareButtons :trait-label="getDominantTraitLabel(thisAssessmentWithScore)" />
       <router-link class="btn btn-primary" :to="getContinueButtonDestination()"
         >Continue</router-link
       >
@@ -50,6 +52,7 @@ import { useRoute } from "vue-router";
 import { useAssessmentProgress } from "../../composables/useAssessmentProgress";
 import { useRevelations } from "../../composables/useRevelations";
 import Card from "../ui/Card.vue";
+import ShareButtons from "../ui/ShareButtons.vue";
 
 const route = useRoute();
 const assessmentSlug = route.params.assessmentSlug as string;
