@@ -606,7 +606,7 @@ const personalityData = [
       "This quest reveals your place in the pattern — do you walk the circle, or redraw its lines?",
     traits: {
       positive: {
-        name: "Socialization",
+        name: "Conformity",
         strength:
           "Fosters group cohesion by upholding shared norms, building trust",
         blindspot:
@@ -616,7 +616,7 @@ const personalityData = [
         keywords: ["norm-following", "cooperative", "community-minded", "norm-aligned"],
       },
       negative: {
-        name: "Psychoticism",
+        name: "Rebellion",
         strength:
           "Challenges norms boldly, sparking unconventional ideas and change",
         blindspot:
