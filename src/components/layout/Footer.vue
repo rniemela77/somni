@@ -24,6 +24,9 @@
 							<router-link to="/mythbook" class="text-decoration-none text-muted small">Mythbook</router-link>
 						</li>
 						<li class="mb-2">
+							<router-link to="/contact" class="text-decoration-none text-muted small">Contact</router-link>
+						</li>
+						<li class="mb-2">
 							<router-link to="/account" class="text-decoration-none text-muted small">Account</router-link>
 						</li>
 						<li class="mb-2">
@@ -76,7 +79,7 @@
 			<div class="row align-items-center">
 				<div class="col-12 text-center">
 					<p class="mb-0 small text-muted">
-						&copy; {{ new Date().getFullYear() }} Somni Personality Analyzer. All rights reserved.
+						&copy; {{ new Date().getFullYear() }} Somni Quest. All rights reserved.
 					</p>
 				</div>
 			</div>

@@ -20,6 +20,9 @@
 							<router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
 						</li>
 						<li class="nav-item">
+							<router-link to="/contact" class="nav-link" active-class="active">Contact</router-link>
+						</li>
+						<li class="nav-item">
 							<router-link to="/signin" class="nav-link" active-class="active">Sign In</router-link>
 						</li>
 					<li class="nav-item">
@@ -56,6 +59,11 @@
 									</router-link>
 								</li>
 								<li>
+									<router-link to="/contact" class="dropdown-item">
+										<i class="bi bi-envelope me-2"></i>Contact
+									</router-link>
+								</li>
+								<li>
 									<hr class="dropdown-divider">
 								</li>
 								<li>
@@ -70,6 +78,11 @@
 						<li class="nav-item d-sm-none">
 							<router-link to="/account" class="nav-link">
 								<i class="bi bi-gear me-2"></i>Account
+							</router-link>
+						</li>
+						<li class="nav-item d-sm-none">
+							<router-link to="/contact" class="nav-link">
+								<i class="bi bi-envelope me-2"></i>Contact
 							</router-link>
 						</li>
 						<li class="nav-item d-sm-none">

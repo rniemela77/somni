@@ -3,9 +3,9 @@
         <h1 class="mb-4 fw-bold">Terms of Service</h1>
         <p class="text-muted mb-4">Last updated: July 17, 2025</p>
 
-        <h2 class="mb-4 fw-bold">Terms of Service for Somni Personality Analyzer</h2>
+        <h2 class="mb-4 fw-bold">Terms of Service for Somni Quest</h2>
 
-        <p>Welcome to Somni Personality Analyzer! These Terms of Service ("Terms") govern your access to and use of our
+        <p>Welcome to Somni Quest! These Terms of Service ("Terms") govern your access to and use of our
             mobile application and any related services (collectively, the "Service") operated by us (the "Developer,"
             "we," or "us"). By downloading, installing, or using the Service, you agree to be bound by these Terms. If
             you do not agree, please do not use the Service.</p>
