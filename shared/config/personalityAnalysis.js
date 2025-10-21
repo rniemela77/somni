@@ -13,6 +13,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = [
         "<Archetypal role name, 1-2 words (e.g., Silent Sage, Radiant Guide, Steadfast Champion)>",
       details:
         "<Write a clear introduction to this character as a 3-4 sentence narrative, ending with a hook about the core essence of the character and their depth that will want the reader to learn more.>",
+      personaQuote: "<Write a clear quote from the character that will be used as a tagline for the character.>",
     },
   },
   {
@@ -67,7 +68,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = [
   {
     id: "theShadow",
     slug: "the-shadow",
-    requiredAssessments: 17,
+    requiredAssessments: 18,
     title: "The Shadow",
     description: "The persona's shadow side.",
     promptInstructions: {
@@ -79,7 +80,7 @@ export const PERSONALITY_ANALYSIS_SECTIONS = [
   {
     id: "untoldStrengths",
     slug: "untold-strengths",
-    requiredAssessments: 18,
+    requiredAssessments: 20,
     title: "Untold Strengths",
     description: "The persona's untold strengths.",
     promptInstructions: {

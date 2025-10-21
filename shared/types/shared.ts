@@ -75,6 +75,7 @@ export interface PersonalityAnalysis {
   [key: string]: {
     title: string;
     details: string;
+    personaQuote?: string;
   };
 }
 
@@ -96,6 +97,7 @@ export interface PersonalityCategory {
 export interface PersonalitySectionPromptInstructions {
   title: string;
   details: string;
+  personaQuote?: string;
 }
 
 // This matches the actual structure in shared/config/personalityAnalysis.js
