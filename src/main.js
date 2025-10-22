@@ -7,7 +7,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 void import(/* webpackChunkName: "bootstrap" */ "bootstrap/dist/js/bootstrap.bundle.min.js");
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./styles/global.css";
-import "./styles/dark.css";
 import { useUserStore } from "./stores/user";
 
 // Create Vue application

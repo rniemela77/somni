@@ -8,7 +8,6 @@
 					</router-link>
 					<span class="ml-1 mb-4 border" style="font-size: 0.65rem;font-family: 'Inter', sans-serif; padding:0.15rem 0.25rem;border-radius:0.25rem;">BETA</span>
 				</div>
-				<small class="text-muted d-block" style="font-size: 1rem; font-weight: 400;">Quests for Self-Discovery</small>
 			</h1>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
 				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,16 +20,14 @@
 							<router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
 						</li>
 						<li class="nav-item">
+							<router-link to="/contact" class="nav-link" active-class="active">Contact</router-link>
+						</li>
+						<li class="nav-item">
 							<router-link to="/signin" class="nav-link" active-class="active">Sign In</router-link>
 						</li>
 					<li class="nav-item">
 						<Button :to="'/signup'" variant="primary">Sign Up</Button>
 					</li>
-					<Button class="btn btn-outline-secondary" @click="isDark = !isDark" outline variant="secondary">
-							<span class="me-2" :class="{ 'bi-moon-fill': !isDark, 'bi-sun-fill': isDark }"></span>
-							<span v-if="isDark">Light Mode</span>
-							<span v-else>Dark Mode</span>
-					</Button>
 					</template>
 					<template v-else>
 						<li class="nav-item">
@@ -62,12 +59,9 @@
 									</router-link>
 								</li>
 								<li>
-									<button class="dropdown-item" @click="isDark = !isDark">
-										<span class="me-2"
-											:class="{ 'bi-moon-fill': !isDark, 'bi-sun-fill': isDark }"></span>
-										<span v-if="isDark">Light Mode</span>
-										<span v-else>Dark Mode</span>
-									</button>
+									<router-link to="/contact" class="dropdown-item">
+										<i class="bi bi-envelope me-2"></i>Contact
+									</router-link>
 								</li>
 								<li>
 									<hr class="dropdown-divider">
@@ -87,11 +81,9 @@
 							</router-link>
 						</li>
 						<li class="nav-item d-sm-none">
-							<button class="nav-link" @click="isDark = !isDark">
-								<span class="me-2" :class="{ 'bi-moon-fill': !isDark, 'bi-sun-fill': isDark }"></span>
-								<span v-if="isDark">Light Mode</span>
-								<span v-else>Dark Mode</span>
-							</button>
+							<router-link to="/contact" class="nav-link">
+								<i class="bi bi-envelope me-2"></i>Contact
+							</router-link>
 						</li>
 						<li class="nav-item d-sm-none">
 							<button @click="handleSignOut" class="nav-link">
@@ -121,9 +113,6 @@ const handleSignOut = async (): Promise<void> => {
 }
 
 
-import { useDarkMode } from '../../composables/useDarkMode';
-
-const { isDark } = useDarkMode();
 </script>
 
 <style scoped>
@@ -132,6 +121,7 @@ const { isDark } = useDarkMode();
 }
 
 .somni-text {
+	text-shadow: 0px 0px 6px black, 0 2px 18px rgb(47 80 255 / 82%);
 	font-weight: 900;
 	font-size: 3rem;
 	text-transform: uppercase;

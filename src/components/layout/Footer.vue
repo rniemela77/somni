@@ -6,7 +6,7 @@
 				<div class="col-lg-4 col-md-6 mb-4">
 					<div class="footer-brand">
 						<h5 class="fw-bold mb-2 text-cinzel">Somni</h5>
-						<p class="text-muted mb-3">Quests for self-discovery</p>
+						<p class="text-muted mb-3">Discover your unique archetype</p>
 						<p class="small text-muted">
 							Unlock the mysteries of your personality through ancient wisdom and modern psychology.
 						</p>
@@ -22,6 +22,9 @@
 						</li>
 						<li class="mb-2">
 							<router-link to="/mythbook" class="text-decoration-none text-muted small">Mythbook</router-link>
+						</li>
+						<li class="mb-2">
+							<router-link to="/contact" class="text-decoration-none text-muted small">Contact</router-link>
 						</li>
 						<li class="mb-2">
 							<router-link to="/account" class="text-decoration-none text-muted small">Account</router-link>
@@ -76,7 +79,7 @@
 			<div class="row align-items-center">
 				<div class="col-12 text-center">
 					<p class="mb-0 small text-muted">
-						&copy; {{ new Date().getFullYear() }} Somni Personality Analyzer. All rights reserved.
+						&copy; {{ new Date().getFullYear() }} Somni Quest. All rights reserved.
 					</p>
 				</div>
 			</div>

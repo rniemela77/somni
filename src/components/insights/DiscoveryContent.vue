@@ -87,12 +87,13 @@
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="text-center mt-4 pt-3">
-          <Button @click="retakeAssessment" outline variant="primary">
+      <!-- Share Buttons and Action Buttons -->
+      <div class="d-flex justify-content-center align-items-center gap-3 mt-4 pt-3">
+        <ShareButtons :trait-label="getDominantTraitLabel(assessment)" />
+        <Button @click="retakeAssessment" outline variant="primary">
           <i class="bi bi-arrow-clockwise me-1"></i>
           Retake Assessment
-          </Button>
+        </Button>
       </div>
     </div>
   </div>
@@ -103,6 +104,7 @@ import { useAssessmentProgress } from '../../composables/useAssessmentProgress';
 import type { AssessmentWithScore } from '../../../shared/types/shared';
 import Card from '../ui/Card.vue';
 import Button from '../ui/Button.vue';
+import ShareButtons from '../ui/ShareButtons.vue';
 
 interface Props {
   assessment: AssessmentWithScore;
@@ -119,6 +121,7 @@ const { getTraitIntensityText, getDominantTrait, getWeakerTrait, getDominantTrai
 const retakeAssessment = () => {
   emit('retakeAssessment', props.assessment);
 };
+
 </script>
 
 <style scoped>

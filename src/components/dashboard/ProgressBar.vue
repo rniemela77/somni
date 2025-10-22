@@ -146,7 +146,7 @@ const segmentRevelations = computed<Record<number, RevelationData[]>>(() => {
   flex: 1 1 0;
   height: 15px;
   background: var(--card-bg-color);
-  border: 1px solid rgba(0,0,0, 0.1);
+  border: 1px solid rgba(0,0,0, 0.5);
 }
 
 .segment:first-child {
@@ -164,7 +164,7 @@ const segmentRevelations = computed<Record<number, RevelationData[]>>(() => {
 }
 
 .segment.upcoming {
-  background: var(--card-bg-color);
+  background: rgba(0,0,0,0.3);
 }
 
 .segment .segment-fill {

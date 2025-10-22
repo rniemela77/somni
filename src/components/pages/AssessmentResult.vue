@@ -4,8 +4,8 @@
 
     <h1 class="mb-3 text-cinzel result-title">Your Discovery</h1>
 
-    <i class="mb-3 result-subtitle">
-      From this quest, a fragment of your myth is revealed
+    <i class="mb-3 result-subtitle text-primary">
+      From this quest, a fragment of your myth is revealed...
     </i>
 
     <Card class="text-left mt-4 result-card" padding="sm" shadow="dark" border="medium">
@@ -37,7 +37,9 @@
       </Card>
     </Card>
 
-    <div class="text-center mt-3 continue-button-container">
+    <!-- Share Buttons and Continue Button -->
+    <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
+      <ShareButtons :trait-label="getDominantTraitLabel(thisAssessmentWithScore)" />
       <router-link class="btn btn-primary" :to="getContinueButtonDestination()"
         >Continue</router-link
       >
@@ -50,6 +52,7 @@ import { useRoute } from "vue-router";
 import { useAssessmentProgress } from "../../composables/useAssessmentProgress";
 import { useRevelations } from "../../composables/useRevelations";
 import Card from "../ui/Card.vue";
+import ShareButtons from "../ui/ShareButtons.vue";
 
 const route = useRoute();
 const assessmentSlug = route.params.assessmentSlug as string;
@@ -97,10 +100,6 @@ const dominantTrait = getDominantTrait(thisAssessmentWithScore);
 
 .text-left {
   text-align: left;
-}
-
-.icon-light {
-  filter: invert(1);
 }
 
 /* Staggered fade-in sequence */
