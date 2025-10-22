@@ -20,9 +20,6 @@
 							<router-link to="/" class="nav-link" exact-active-class="active">Home</router-link>
 						</li>
 						<li class="nav-item">
-							<router-link to="/contact" class="nav-link" active-class="active">Contact</router-link>
-						</li>
-						<li class="nav-item">
 							<router-link to="/signin" class="nav-link" active-class="active">Sign In</router-link>
 						</li>
 					<li class="nav-item">

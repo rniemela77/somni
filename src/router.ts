@@ -6,6 +6,7 @@ const Account = () => import("./components/pages/Account.vue");
 const Insights = () => import("./components/pages/Insights.vue");
 const PrivacyPolicy = () => import("./components/pages/PrivacyPolicy.vue");
 const TermsOfService = () => import("./components/pages/TermsOfService.vue");
+const Contact = () => import("./components/pages/Contact.vue");
 const AssessmentView = () => import('./components/pages/Assessment.vue');
 const AssessmentResult = () => import('./components/pages/AssessmentResult.vue');
 const ResetPassword = () => import('./components/pages/ResetPassword.vue');
@@ -92,6 +93,11 @@ const routes: AppRouteRecord[] = [
     path: "/terms-of-service", 
     component: TermsOfService,
     name: 'terms-of-service'
+  },
+  { 
+    path: "/contact", 
+    component: Contact,
+    name: 'contact'
   }
 ];
 
