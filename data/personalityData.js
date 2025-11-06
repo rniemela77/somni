@@ -264,10 +264,10 @@ const personalityData = [
     ],
   },
   {
-    id: "conscientiousness_disinhibition",
-    displayName: "Conscientiousness-Disinhibition",
-    positive: "Conscientiousness",
-    negative: "Disinhibition",
+    id: "structure_spontaneity",
+    displayName: "Structure–Spontaneity",
+    positive: "Structure",
+    negative: "Spontaneity",
     positive_label: "Structure",
     negative_label: "Flow",
     title: "Duty and Drive",
@@ -276,23 +276,23 @@ const personalityData = [
       "This quest weighs the rhythm of your will — structured and steady, or spontaneous and free.",
     traits: {
       positive: {
-        name: "Conscientiousness",
+        name: "Structure",
         strength:
           "Delivers consistent results through meticulous planning, ensuring long-term success",
         blindspot:
           "May over-plan, missing opportunities that require quick, intuitive decisions",
         description:
-          "Conscientious individuals are the architects of order, building success with discipline, like navigators charting a precise course. They are organized, reliable, and goal-driven, prioritizing duty and structure.",
+          "Structured individuals are the architects of order, building success with discipline, like navigators charting a precise course. They are organized, reliable, and goal-driven, prioritizing duty and structure.",
         keywords: ["organized", "disciplined", "reliable", "goal-oriented"],
       },
       negative: {
-        name: "Disinhibition",
+        name: "Spontaneity",
         strength:
           "Embraces spontaneity, seizing fleeting opportunities others miss due to hesitation",
         blindspot:
           "May neglect long-term goals, derailed by impulsive choices or distractions",
         description:
-          "Disinhibited individuals are free-spirited opportunists, thriving in the moment, like improvisers on a stage. They act on impulse, embrace flexibility, and often resist rigid plans.",
+          "Spontaneous individuals are free-spirited opportunists, thriving in the moment, like improvisers on a stage. They act on impulse, embrace flexibility, and often resist rigid plans.",
         keywords: ["spontaneous", "free-spirited", "flexible", "improvisational"],
       },
     },
