@@ -66,10 +66,10 @@ const personalityData = [
     ],
   },
   {
-    id: "neuroticism_emotional_stability",
-    displayName: "Neuroticism-Emotional Stability",
-    positive: "Emotional Stability",
-    negative: "Neuroticism",
+    id: "sensitivity_stability",
+    displayName: "Sensitivity-Stability",
+    positive: "Stability",
+    negative: "Sensitivity",
     positive_label: "Stillness",
     negative_label: "Storm",
     title: "Emotional Landscape",
@@ -88,13 +88,13 @@ const personalityData = [
         keywords: ["calm", "resilient", "composed", "steady"],
       },
       negative: {
-        name: "Neuroticism",
+        name: "Sensitivity",
         strength:
           "Heightened vigilance that turns potential threats into opportunities for proactive fixes, like spotting flaws in plans before they derail success",
         blindspot:
           "Over-amplifying minor setbacks into catastrophes, draining energy on imagined worst-cases that rarely materialize",
         description:
-          "Neurotics act as human seismographs, detecting emotional tremors early, which can preempt disasters in relationships or projects by sensing unspoken tensions. They experience more frequent mood fluctuations, are more sensitive to stress, and may struggle with anxiety and depression. They often have a more negative outlook on life and may be more prone to emotional outbursts.",
+          "Sensitivity individuals act as human seismographs, detecting emotional tremors early, which can preempt disasters in relationships or projects by sensing unspoken tensions. They experience more frequent mood fluctuations, are more sensitive to stress, and may struggle with anxiety and depression. They often have a more negative outlook on life and may be more prone to emotional outbursts.",
         keywords: ["vigilant", "emotionally-attuned", "caution-oriented", "risk-aware"],
       },
     },
