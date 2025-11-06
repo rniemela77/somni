@@ -198,10 +198,10 @@ const personalityData = [
     ],
   },
   {
-    id: "agreeableness_antagonism",
-    displayName: "Agreeableness-Antagonism",
-    positive: "Agreeableness",
-    negative: "Antagonism",
+    id: "cooperation_challenge",
+    displayName: "Cooperation–Challenge",
+    positive: "Cooperation",
+    negative: "Challenge",
     positive_label: "Harmony",
     negative_label: "Edge",
     title: "Interpersonal Harmony",
@@ -210,23 +210,23 @@ const personalityData = [
       "This quest reveals how you navigate others — through harmony and trust, or through testing and truth.",
     traits: {
       positive: {
-        name: "Agreeableness",
+        name: "Cooperation",
         strength:
           "Builds trust through empathy, creating cohesive teams that thrive on mutual support",
         blindspot:
           "May avoid necessary conflict, allowing unresolved issues to fester",
         description:
-          "Agreeable individuals are social glue, fostering harmony with kindness, like mediators calming a stormy debate. They prioritize cooperation, empathy, and altruism, often putting others' needs first.",
+          "Cooperative individuals are social glue, fostering harmony with kindness, like mediators calming a stormy debate. They prioritize collaboration, empathy, and altruism, often putting others' needs first.",
         keywords: ["cooperative", "empathetic", "trusting", "kind"],
       },
       negative: {
-        name: "Antagonism",
+        name: "Challenge",
         strength:
           "Drives progress by challenging flawed ideas, ensuring decisions are rigorously vetted",
         blindspot:
           "May alienate allies with bluntness, undermining collaboration when tact is needed",
         description:
-          "Antagonistic individuals are bold truth-seekers, unafraid to confront, like debaters exposing weak arguments. They value honesty and competition, often prioritizing goals over feelings.",
+          "Challenging individuals are bold truth-seekers, unafraid to confront, like debaters exposing weak arguments. They value honesty and competition, often prioritizing goals over feelings.",
         keywords: ["competitive", "direct", "truth-testing", "challenging"],
       },
     },
