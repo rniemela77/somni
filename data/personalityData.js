@@ -1180,10 +1180,10 @@ const personalityData = [
     ],
   },
   {
-    id: "authoritarianism_egalitarianism",
-    displayName: "Authoritarianism-Egalitarianism",
-    positive: "Egalitarianism",
-    negative: "Authoritarianism",
+    id: "directive_participative",
+    displayName: "Directive-Participative",
+    positive: "Participative",
+    negative: "Directive",
     positive_label: "The Circle",
     negative_label: "The Pyramid",
     title: "Power Dynamics",
@@ -1192,22 +1192,22 @@ const personalityData = [
       "This quest explores your sense of order — built from hierarchy or shared ground.",
     traits: {
       positive: {
-        name: "Egalitarianism",
+        name: "Participative",
         strength:
           "Promotes fairness, empowering diverse voices in group decisions",
         blindspot:
           "May struggle with leadership voids in high-stakes scenarios",
         description:
-          "Egalitarian individuals are champions of fairness, leveling power, like mediators ensuring all are heard. They value equality, collaboration, and shared responsibility.",
+          "Participative individuals are champions of fairness, leveling power, like mediators ensuring all are heard. They value equality, collaboration, and shared responsibility.",
         keywords: ["fair", "inclusive", "collaborative", "equitable"],
       },
       negative: {
-        name: "Authoritarianism",
+        name: "Directive",
         strength:
           "Provides clear direction, ensuring efficiency in critical moments",
         blindspot: "May suppress dissent, stifling creativity or fairness",
         description:
-          "Authoritarian individuals are decisive commanders, enforcing order, like generals leading with authority. They prioritize hierarchy, control, and swift decision-making.",
+          "Directive individuals are decisive commanders, enforcing order, like generals leading with authority. They prioritize hierarchy, control, and swift decision-making.",
         keywords: ["directive", "structure-focused", "hierarchical", "decisive"],
       },
     },
