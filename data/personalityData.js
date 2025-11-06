@@ -132,10 +132,10 @@ const personalityData = [
     ],
   },
   {
-    id: "openness_closedness",
-    displayName: "Openness-Closedness",
+    id: "openness_conservation",
+    displayName: "Openness–Conservation",
     positive: "Openness",
-    negative: "Closedness",
+    negative: "Conservation",
     positive_label: "Seeker",
     negative_label: "Steward",
     title: "Curiosity Continuum",
@@ -154,13 +154,13 @@ const personalityData = [
         keywords: ["curious", "imaginative", "adventurous", "open-minded"],
       },
       negative: {
-        name: "Closedness",
+        name: "Conservation",
         strength:
           "Excels at refining proven methods, ensuring reliability and efficiency in stable environments",
         blindspot:
           "May resist innovative approaches, missing opportunities for growth in rapidly changing contexts",
         description:
-          "Closed individuals are guardians of tradition, finding comfort in the familiar, like craftsmen perfecting a time-tested skill. They prioritize practicality, prefer routine, and value stability, often excelling in structured settings.",
+          "Conservation individuals are guardians of tradition, finding comfort in the familiar, like craftsmen perfecting a time-tested skill. They prioritize practicality, prefer routine, and value stability, often excelling in structured settings.",
         keywords: ["traditional", "practical", "routine", "consistent"],
       },
     },
