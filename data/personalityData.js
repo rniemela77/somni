@@ -101,32 +101,42 @@ const personalityData = [
     questions: [
       {
         id: 1,
-        statementA: "I worry extensively about possible future misfortunes, even when things are going well",
-        statementB: "I remain calm and focused during unexpected challenges or setbacks",
+        statementA:
+          "When plans change at the last minute, I slow down to anticipate what could go wrong and rework the details",
+        statementB:
+          "When plans change at the last minute, I stay relaxed and adjust on the fly without overthinking the details",
         points: 1,
       },
       {
         id: 2,
-        statementA: "I experience intense mood swings in response to daily events",
-        statementB: "I maintain a steady emotional state regardless of daily ups and downs",
+        statementA:
+          "After receiving critical feedback, I keep revisiting it to make sure I’ve understood every implication",
+        statementB:
+          "After receiving critical feedback, I take the main point on board and then move on quickly",
         points: 1,
       },
       {
         id: 3,
-        statementA: "I feel overwhelmed by stress from minor issues in my routine",
-        statementB: "I bounce back quickly from disappointments without dwelling on them",
+        statementA:
+          "During high-stakes tasks, I scan for small signals and possible hiccups so they don’t snowball",
+        statementB:
+          "During high-stakes tasks, I focus on the main objective and let minor issues pass unless they’re repeated",
         points: 1,
       },
       {
         id: 4,
-        statementA: "I often feel anxious about things that might go wrong",
-        statementB: "I approach challenges with confidence and optimism",
+        statementA:
+          "If something important is unresolved, I prefer to keep working it through rather than set it aside",
+        statementB:
+          "If something important is unresolved, I can set it aside, rest, and revisit it with a fresh mind",
         points: 1,
       },
       {
         id: 5,
-        statementA: "I tend to dwell on negative experiences and setbacks",
-        statementB: "I focus on solutions and positive outcomes when facing difficulties",
+        statementA:
+          "When I notice an unusual sign (e.g., a weird noise in my car), I investigate promptly to rule out risks",
+        statementB:
+          "When I notice an unusual sign (e.g., a weird noise in my car), I wait to see if it persists before taking action",
         points: 1,
       },
     ],
