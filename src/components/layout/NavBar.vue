@@ -121,7 +121,6 @@ const handleSignOut = async (): Promise<void> => {
 	text-shadow: 0px 0px 6px black, 0 2px 18px rgb(47 80 255 / 82%);
 	font-weight: 900;
 	font-size: 3rem;
-	text-transform: uppercase;
 	letter-spacing: -2.5px;
 	color: var(--text-primary);
 
